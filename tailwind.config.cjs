@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -9,8 +11,13 @@ module.exports = {
         'brand': '#F69E2E',
         'dark-accent': '#905D3F',
         'dark-shade': '#14202A'
-      }
+      },
+      fontFamily: {
+        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+      },
     }
   },
-  plugins: []
+  plugins: [
+    require('@tailwindcss/forms'),
+  ]
 };
