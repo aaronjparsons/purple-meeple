@@ -1,0 +1,115 @@
+:root {
+    /* =~= Theme Properties =~= */
+    --theme-font-family-base: system-ui;
+    --theme-font-family-heading: system-ui;
+    --theme-font-color-base: 0 0 0;
+    --theme-font-color-dark: 255 255 255;
+    --theme-rounded-base: 9999px;
+    --theme-rounded-container: 8px;
+    --theme-border-base: 1px;
+    /* =~= Theme On-X Colors =~= */
+    --on-primary: 255 255 255;
+    --on-secondary: 0 0 0;
+    --on-tertiary: 0 0 0;
+    --on-success: 0 0 0;
+    --on-warning: 255 255 255;
+    --on-error: 0 0 0;
+    --on-surface: 255 255 255;
+    /* =~= Theme Colors  =~= */
+    /* primary | #8615c9 */
+	--color-primary-50: 237 220 247; /* ⬅ #eddcf7 */
+	--color-primary-100: 231 208 244; /* ⬅ #e7d0f4 */
+	--color-primary-200: 225 197 242; /* ⬅ #e1c5f2 */
+	--color-primary-300: 207 161 233; /* ⬅ #cfa1e9 */
+	--color-primary-400: 170 91 217; /* ⬅ #aa5bd9 */
+	--color-primary-500: 134 21 201; /* ⬅ #8615c9 */
+	--color-primary-600: 121 19 181; /* ⬅ #7913b5 */
+	--color-primary-700: 101 16 151; /* ⬅ #651097 */
+	--color-primary-800: 80 13 121; /* ⬅ #500d79 */
+	--color-primary-900: 66 10 98; /* ⬅ #420a62 */
+	/* secondary | #52e195 */
+	--color-secondary-50: 229 251 239; /* ⬅ #e5fbef */
+	--color-secondary-100: 220 249 234; /* ⬅ #dcf9ea */
+	--color-secondary-200: 212 248 229; /* ⬅ #d4f8e5 */
+	--color-secondary-300: 186 243 213; /* ⬅ #baf3d5 */
+	--color-secondary-400: 134 234 181; /* ⬅ #86eab5 */
+	--color-secondary-500: 82 225 149; /* ⬅ #52e195 */
+	--color-secondary-600: 74 203 134; /* ⬅ #4acb86 */
+	--color-secondary-700: 62 169 112; /* ⬅ #3ea970 */
+	--color-secondary-800: 49 135 89; /* ⬅ #318759 */
+	--color-secondary-900: 40 110 73; /* ⬅ #286e49 */
+	/* tertiary | #b196c2 */
+	--color-tertiary-50: 243 239 246; /* ⬅ #f3eff6 */
+	--color-tertiary-100: 239 234 243; /* ⬅ #efeaf3 */
+	--color-tertiary-200: 236 229 240; /* ⬅ #ece5f0 */
+	--color-tertiary-300: 224 213 231; /* ⬅ #e0d5e7 */
+	--color-tertiary-400: 200 182 212; /* ⬅ #c8b6d4 */
+	--color-tertiary-500: 177 150 194; /* ⬅ #b196c2 */
+	--color-tertiary-600: 159 135 175; /* ⬅ #9f87af */
+	--color-tertiary-700: 133 113 146; /* ⬅ #857192 */
+	--color-tertiary-800: 106 90 116; /* ⬅ #6a5a74 */
+	--color-tertiary-900: 87 74 95; /* ⬅ #574a5f */
+	/* success | #35fd71 */
+	--color-success-50: 225 255 234; /* ⬅ #e1ffea */
+	--color-success-100: 215 255 227; /* ⬅ #d7ffe3 */
+	--color-success-200: 205 255 220; /* ⬅ #cdffdc */
+	--color-success-300: 174 254 198; /* ⬅ #aefec6 */
+	--color-success-400: 114 254 156; /* ⬅ #72fe9c */
+	--color-success-500: 53 253 113; /* ⬅ #35fd71 */
+	--color-success-600: 48 228 102; /* ⬅ #30e466 */
+	--color-success-700: 40 190 85; /* ⬅ #28be55 */
+	--color-success-800: 32 152 68; /* ⬅ #209844 */
+	--color-success-900: 26 124 55; /* ⬅ #1a7c37 */
+	/* warning | #d156a7 */
+	--color-warning-50: 248 230 242; /* ⬅ #f8e6f2 */
+	--color-warning-100: 246 221 237; /* ⬅ #f6dded */
+	--color-warning-200: 244 213 233; /* ⬅ #f4d5e9 */
+	--color-warning-300: 237 187 220; /* ⬅ #edbbdc */
+	--color-warning-400: 223 137 193; /* ⬅ #df89c1 */
+	--color-warning-500: 209 86 167; /* ⬅ #d156a7 */
+	--color-warning-600: 188 77 150; /* ⬅ #bc4d96 */
+	--color-warning-700: 157 65 125; /* ⬅ #9d417d */
+	--color-warning-800: 125 52 100; /* ⬅ #7d3464 */
+	--color-warning-900: 102 42 82; /* ⬅ #662a52 */
+	/* error | #a68ca9 */
+	--color-error-50: 242 238 242; /* ⬅ #f2eef2 */
+	--color-error-100: 237 232 238; /* ⬅ #ede8ee */
+	--color-error-200: 233 226 234; /* ⬅ #e9e2ea */
+	--color-error-300: 219 209 221; /* ⬅ #dbd1dd */
+	--color-error-400: 193 175 195; /* ⬅ #c1afc3 */
+	--color-error-500: 166 140 169; /* ⬅ #a68ca9 */
+	--color-error-600: 149 126 152; /* ⬅ #957e98 */
+	--color-error-700: 125 105 127; /* ⬅ #7d697f */
+	--color-error-800: 100 84 101; /* ⬅ #645465 */
+	--color-error-900: 81 69 83; /* ⬅ #514553 */
+	/* surface | #70708d */
+	--color-surface-50: 234 234 238; /* ⬅ #eaeaee */
+	--color-surface-100: 226 226 232; /* ⬅ #e2e2e8 */
+	--color-surface-200: 219 219 227; /* ⬅ #dbdbe3 */
+	--color-surface-300: 198 198 209; /* ⬅ #c6c6d1 */
+	--color-surface-400: 155 155 175; /* ⬅ #9b9baf */
+	--color-surface-500: 112 112 141; /* ⬅ #70708d */
+	--color-surface-600: 101 101 127; /* ⬅ #65657f */
+	--color-surface-700: 84 84 106; /* ⬅ #54546a */
+	--color-surface-800: 67 67 85; /* ⬅ #434355 */
+	--color-surface-900: 55 55 69; /* ⬅ #373745 */
+
+}
+
+[data-theme='skeleton'] {
+	/* prettier-ignore */
+	background-image:
+		radial-gradient(at 73% 84%, hsla(213,80%,69%,0.30) 0px, transparent 50%),
+		radial-gradient(at 16% 79%, hsla(268,79%,73%,0.30) 0px, transparent 50%),
+		radial-gradient(at 88% 64%, hsla(290,68%,62%,0.30) 0px, transparent 50%),
+		radial-gradient(at 67% 14%, hsla(167,87%,76%,0.30) 0px, transparent 50%),
+		radial-gradient(at 70% 75%, hsla(170,71%,68%,0.30) 0px, transparent 50%),
+		radial-gradient(at 98% 62%, hsla(244,77%,60%,0.18) 0px, transparent 50%),
+		radial-gradient(at 50% 19%, hsla(322,97%,63%,0.30) 0px, transparent 50%);
+}
+.dark [data-theme='skeleton'] {
+	/* prettier-ignore */
+	background-image:
+		radial-gradient(at 36% 0%, hsla(240,73%,56%,0.25) 0px, transparent 50%),
+		radial-gradient(at 71% 4%, hsla(330,78%,46%,0.25) 0px, transparent 50%);
+}

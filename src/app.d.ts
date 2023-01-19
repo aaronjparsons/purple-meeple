@@ -7,3 +7,48 @@ declare namespace App {
 	// interface PageData {}
 	// interface Platform {}
 }
+
+interface Game {
+	'@_id': string,
+	'@_type': string,
+	description: string,
+	image: string,
+	link: ValueObject[],
+	maxplayers: ValueObject,
+	maxplaytime: ValueObject,
+	minage: ValueObject,
+	minplayers: ValueObject,
+	minplaytime: ValueObject,
+	name: ValueObject[],
+	playingtime: ValueObject,
+	poll: object[],
+	statistics: Statistics,
+	yearpublished: ValueObject
+}
+
+interface ValueObject {
+	'@_id': ?string,
+	'@_type': ?string,
+	'@_value': string
+}
+
+interface Statistics {
+	'@_page': string,
+	ratings: Ratings
+}
+
+interface Ratings {
+	average: ValueObject,
+	averageweight: ValueObject,
+	bayesaverage: ValueObject,
+	median: ValueObject,
+	numcomments: ValueObject,
+	numweights: ValueObject,
+	owned: ValueObject,
+	ranks: ValueObject[],
+	stddev: ValueObject,
+	trading: ValueObject,
+	usersrated: ValueObject,
+	wanting: ValueObject,
+	wishing: ValueObject
+}

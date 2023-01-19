@@ -18,11 +18,10 @@
                 bind:value={username}
                 type="text"
                 name="name"
-                class="rounded-md border-gray-300 px-4 focus:border-indigo-500 focus:ring-indigo-500"
                 placeholder="BGG Username"
             >
             <button
-                class="rounded-md bg-indigo-500 px-4 py-1 text-white"
+                class="btn btn-filled-primary btn-base"
                 on:click={handleSubmit}
             >
                 Submit
