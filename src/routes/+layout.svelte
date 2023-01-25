@@ -3,7 +3,7 @@
     import '../purp-theme.postcss';
     import '@skeletonlabs/skeleton/styles/all.css';
     import "../app.css";
-    import { LightSwitch } from '@skeletonlabs/skeleton';
+    import { LightSwitch, Modal } from '@skeletonlabs/skeleton';
     import { page } from "$app/stores";
     import { Library } from "$lib/store";
 
@@ -19,3 +19,4 @@
         <slot />
     </div>
 </div>
+<Modal />

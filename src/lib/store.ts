@@ -6,3 +6,11 @@ export const Library = writable({
     loaded: false
 });
 export const libraryLoaded = writable(false);
+export const libraryOptions = writable({
+    includeExpansions: false,
+    selectedSort: 'alphabetical',
+    filters: {
+        playtime: 'any',
+        playerCount: 'any',
+    }
+})

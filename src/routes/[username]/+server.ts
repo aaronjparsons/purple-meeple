@@ -1,4 +1,3 @@
-import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { XMLParser } from 'fast-xml-parser';
 import { sleep } from '$lib/utils';
@@ -7,12 +6,34 @@ import { sleep } from '$lib/utils';
 export const GET = async ({ url }) => {
     const username = url.searchParams.get('username');
     const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&want=0&wishlist=0&preordered=0&prevowned=0`;
-    const collectionResponse = await fetch(collectionUrl);
+    let collectionResponse = await fetch(collectionUrl);
+    console.log('fetching collections')
     if (collectionResponse.ok) {
+        if (collectionResponse.status === 202) {
+            // TODO: This should probably loop until successful??
+            // BGG preparing request. Fetch again soon
+            console.log('202 - bgg preparing, wait 1500ms and fetch again')
+            await sleep(1500);
+            collectionResponse = await fetch(collectionUrl);
+
+            if (!collectionResponse.ok) {
+                throw error(collectionResponse.status, 'error...');
+            }
+        }
+
         if (collectionResponse.status === 200) {
+            console.log('collection fetched, fetching chunks')
             const text = await collectionResponse.text();
             const parser = new XMLParser({ ignoreAttributes: false });
             const parsed = parser.parse(text);
+
+            // Invalid username error
+            if (parsed.errors && parsed.errors.error) {
+                const msg = parsed.errors.error.message;
+                if (msg === 'Invalid username specified') {
+                    throw error(404);
+                }
+            }
 
             const collection = [];
             const allIds = parsed.items.item.map(thing => thing['@_objectid']);
@@ -35,10 +56,7 @@ export const GET = async ({ url }) => {
 
             return new Response(JSON.stringify(collection));
         }
-
-        // TODO: Handle rate limited () & fetching soon (202)
     } else {
-        throw error(404, 'Not found');
+        throw error(collectionResponse.status, 'error...');
     }
-
 }
