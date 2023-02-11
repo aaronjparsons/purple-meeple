@@ -7,7 +7,6 @@
     let qrCode = '';
 
     onMount(() => {
-        console.log('modal mounted');
         generateQR(window.location.href);
     })
 
@@ -21,7 +20,9 @@
 </script>
 
 <div>
-    <h1 class="mb-8">QR</h1>
-    <img src={qrCode} />
+    <h1 class="mb-8">QR for </h1>
+    <div class="flex justify-center">
+        <img src={qrCode} alt="BGG Library QR code" />
+    </div>
     <button class="btn btn-ringed-surface" on:click={() => modalStore.close()}>Close</button>
 </div>

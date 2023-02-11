@@ -12,12 +12,22 @@ export const GET = async ({ url }) => {
         if (collectionResponse.status === 202) {
             // TODO: This should probably loop until successful??
             // BGG preparing request. Fetch again soon
-            console.log('202 - bgg preparing, wait 1500ms and fetch again')
-            await sleep(1500);
-            collectionResponse = await fetch(collectionUrl);
+            // console.log('202 - bgg preparing, wait 1500ms and fetch again')
+            // await sleep(1500);
+            // collectionResponse = await fetch(collectionUrl);
+            // console.log(collectionResponse)
+            // if (!collectionResponse.ok) {
+            //     throw error(collectionResponse.status, 'error...');
+            // }
 
-            if (!collectionResponse.ok) {
-                throw error(collectionResponse.status, 'error...');
+            while (collectionResponse.status === 202) {
+                console.log('202 - bgg preparing, wait 5000ms and fetch again')
+                await sleep(5000);
+                collectionResponse = await fetch(collectionUrl);
+                console.log(collectionResponse)
+                if (!collectionResponse.ok) {
+                    throw error(collectionResponse.status, 'error...');
+                }
             }
         }
 
@@ -37,8 +47,8 @@ export const GET = async ({ url }) => {
 
             const collection = [];
             const allIds = parsed.items.item.map(thing => thing['@_objectid']);
-            const chunkSize = 50;
-            // Request details on items in collection (50 at a time)
+            const chunkSize = 100;
+            // Request details on items in collection (100 at a time)
             for (let i = 0; i < allIds.length; i += chunkSize) {
                 const currentChunk = allIds.slice(i, i + chunkSize);
                 const url = `https://boardgamegeek.com/xmlapi2/thing?id=${currentChunk}&stats=1&type=boardgame,boardgameexpansion`;
@@ -50,8 +60,8 @@ export const GET = async ({ url }) => {
                     collection.push(...parsedChunk.items.item);
                 }
 
-                // Wait 1 seconds between chunks
-                await sleep(1000);
+                // Wait 2 seconds between chunks
+                await sleep(2000);
             }
 
             return new Response(JSON.stringify(collection));

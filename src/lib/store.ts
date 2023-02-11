@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 
+export const isScreenSmall = writable(false);
 export const Library = writable({
     data: [],
     username: '',
@@ -12,5 +13,7 @@ export const libraryOptions = writable({
     filters: {
         playtime: 'any',
         playerCount: 'any',
+        weight: 'any',
+        geekRating: 'any'
     }
 })

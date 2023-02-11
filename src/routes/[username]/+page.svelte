@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { UserGroupIcon } from "@rgossiaux/svelte-heroicons/solid";
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore } from '@skeletonlabs/skeleton';
     import { fade } from 'svelte/transition';
     import { writable, type Writable } from 'svelte/store';
-    import { flip } from 'svelte/animate';
     import { page } from '$app/stores';
+    import GameCard from "$lib/components/GameCard.svelte";
+    import GameRow from "$lib/components/GameRow.svelte";
     import OptionsModal from "$lib/components/OptionsModal.svelte";
     import QRModal from "$lib/components/QRModal.svelte";
-    import { getValue, sleep } from "$lib/utils";
+    import { getValue, sleep, getGameName } from "$lib/utils";
     import { Library, libraryOptions } from "$lib/store";
 
     const displayType: Writable<string> = writable('grid');
@@ -37,7 +37,7 @@
         })
     }
 
-    const handleSort = (col) => {
+    const handleSort = (col: Game[]) => {
         let sorted: Game[] = [];
 
         switch($libraryOptions.selectedSort) {
@@ -55,13 +55,6 @@
                     return ratingA > ratingB ? -1 : 1;
                 });
                 break;
-            case 'avgRating':
-                sorted = col.sort((a: Game, b: Game) => {
-                    const ratingA = getValue(a.statistics.ratings.average);
-                    const ratingB = getValue(b.statistics.ratings.average);
-                    return ratingA > ratingB ? -1 : 1;
-                });
-                break;
             case 'weight':
                 sorted = col.sort((a: Game, b: Game) => {
                     const ratingA = getValue(a.statistics.ratings.averageweight);
@@ -72,8 +65,8 @@
             case 'alphabetical':
             default:
                 sorted = col.sort((a: Game, b: Game) => {
-                    const nameA = getName(a);
-                    const nameB = getName(b);
+                    const nameA = getGameName(a);
+                    const nameB = getGameName(b);
                     return nameA.localeCompare(nameB);
                 });
                 break;
@@ -100,6 +93,20 @@
                 const playtime = parseInt($libraryOptions.filters.playtime);
                 const maxplaytime = parseInt(getValue(game.maxplaytime));
                 if (maxplaytime > playtime) {
+                    return false;
+                }
+            }
+            if ($libraryOptions.filters.geekRating !== 'any') {
+                const rating = parseInt($libraryOptions.filters.geekRating);
+                const geekRating = parseFloat(getValue(game.statistics.ratings.bayesaverage));
+                if (geekRating < rating) {
+                    return false;
+                }
+            }
+            if ($libraryOptions.filters.weight !== 'any') {
+                const weight = parseInt($libraryOptions.filters.weight);
+                const avgweight = parseFloat(getValue(game.statistics.ratings.averageweight));
+                if (avgweight > weight) {
                     return false;
                 }
             }
@@ -190,26 +197,6 @@
 
         window.history.replaceState(null, '', `?${url}`);
     }
-
-    const getName = (game: Game) => {
-        const name = Array.isArray(game.name)
-            ? getValue(game.name[0])
-            : getValue(game.name);
-
-        return name.replace(/&#039;/g,"'");
-    }
-
-    const parsePlayerCount = (game: Game) => {
-        // If min and max are the same, only display one value
-        const min = getValue(game['minplayers']);
-        const max = getValue(game['maxplayers']);
-
-        return min === max ? min : `${min}-${max}`;
-    }
-
-    const convertToFloat = (value: string, dec: number = 2) => {
-        return parseFloat(value).toFixed(dec);
-    }
 </script>
 
 {#await collectionRequest}
@@ -245,41 +232,12 @@
         {#if $displayType === 'grid'}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {#each collection as game (game['@_id'])}
-                    <div
-                        class="relative rounded-md shadow-lg p-4 h-96 w-80 m-auto bg-cover bg-center"
-                        style="background-image: url('{game.image}');"
-                    >
-                        <div class="absolute top-0 left-0 right-0 py-2 px-4 rounded-t-md bg-gradient-to-r via-dark-shade from-dark-shade opacity-90">
-                            <p class="unstyled text-gray-100 font-semibold text-lg">
-                                {getName(game)}
-                            </p>
-                        </div>
-                        <div class="absolute bottom-0 left-0 right-0">
-                            <p>
-                                {parsePlayerCount(game)}
-                                <UserGroupIcon class="h-6 w-6" />
-                            </p>
-                        </div>
-                    </div>
+                    <GameCard {game} />
                 {/each}
             </div>
         {:else}
             {#each collection as game (game['@_id'])}
-                <div
-                    class="card card-glass-surface w-full flex rounded-md shadow-md mb-4"
-                >
-                    <img class="flex-shrink-0 rounded-tl-md rounded-bl-md h-24 w-24 object-cover" src={game.image} alt="game cover" />
-                    <div class="p-2">
-                        <h3>{getName(game)}</h3>
-                        <div class="flex">
-                            <div>
-                                <p>Geek: {convertToFloat(game.statistics.ratings.bayesaverage['@_value'], 1)}</p>
-                                <p>Avg: {convertToFloat(game.statistics.ratings.average['@_value'], 1)}</p>
-                            </div>
-                            <p>Weight: {convertToFloat(game.statistics.ratings.averageweight['@_value'])}</p>
-                        </div>
-                    </div>
-                </div>
+                <GameRow {game} />
             {/each}
         {/if}
     </div>

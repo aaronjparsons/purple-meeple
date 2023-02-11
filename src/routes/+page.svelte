@@ -4,7 +4,7 @@
     let username = '';
 
     const handleSubmit = () => {
-        goto(`/${username}`);
+        goto(`/${username.toLowerCase()}`);
     }
 </script>
 
