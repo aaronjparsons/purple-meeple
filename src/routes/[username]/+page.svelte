@@ -27,7 +27,7 @@
 
     const setLibraryOptions = () => {
         const searchParams = new URLSearchParams(window.location.search);
-        const filters = ['playtime', 'playerCount'];
+        const filters = ['playtime', 'playerCount', 'geekRating', 'weight'];
         searchParams.forEach((value: string, key: string) => {
             if (filters.includes(key)) {
                 $libraryOptions.filters[key] = value;
@@ -39,27 +39,34 @@
 
     const handleSort = (col: Game[]) => {
         let sorted: Game[] = [];
+        const isAsc = $libraryOptions.sort === 'asc';
 
         switch($libraryOptions.selectedSort) {
             case 'release':
                 sorted = col.sort((a: Game, b: Game) => {
                     const releasedA = parseInt(getValue(a.yearpublished));
                     const releasedB = parseInt(getValue(b.yearpublished));
-                    return releasedA > releasedB ? -1 : 1;
+                    return isAsc
+                        ? releasedA > releasedB ? -1 : 1
+                        : releasedA > releasedB ? 1 : -1
                 });
                 break;
             case 'geekRating':
                 sorted = col.sort((a: Game, b: Game) => {
                     const ratingA = getValue(a.statistics.ratings.bayesaverage);
                     const ratingB = getValue(b.statistics.ratings.bayesaverage);
-                    return ratingA > ratingB ? -1 : 1;
+                    return isAsc
+                        ? ratingA > ratingB ? -1 : 1
+                        : ratingA > ratingB ? 1 : -1
                 });
                 break;
             case 'weight':
                 sorted = col.sort((a: Game, b: Game) => {
                     const ratingA = getValue(a.statistics.ratings.averageweight);
                     const ratingB = getValue(b.statistics.ratings.averageweight);
-                    return ratingB > ratingA ? -1 : 1;
+                    return isAsc
+                        ? ratingA > ratingB ? -1 : 1
+                        : ratingA > ratingB ? 1 : -1
                 });
                 break;
             case 'alphabetical':
@@ -67,7 +74,9 @@
                 sorted = col.sort((a: Game, b: Game) => {
                     const nameA = getGameName(a);
                     const nameB = getGameName(b);
-                    return nameA.localeCompare(nameB);
+                    return isAsc
+                        ? nameA.localeCompare(nameB)
+                        : nameB.localeCompare(nameA)
                 });
                 break;
         }
@@ -189,6 +198,7 @@
         const obj = {
             includeExpansions: $libraryOptions.includeExpansions,
             selectedSort: $libraryOptions.selectedSort,
+            sort: $libraryOptions.sort,
             ...$libraryOptions.filters
         }
         const url = Object.entries(obj).map(([key, value]) => {

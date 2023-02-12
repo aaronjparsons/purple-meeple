@@ -1,7 +1,22 @@
 <script lang="ts">
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon } from "@rgossiaux/svelte-heroicons/solid";
-    import { SlideToggle, modalStore } from '@skeletonlabs/skeleton';
-    import { libraryOptions } from "$lib/store";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ArrowSmDownIcon, ArrowSmUpIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { SlideToggle, modalStore, RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+    import { onMount, onDestroy } from 'svelte';
+    import { writable } from 'svelte/store';
+    import { libraryOptions } from '$lib/store';
+
+    const sortDir = writable($libraryOptions.sort);
+    let sortDirUnsubscribe = () => {};
+
+    onMount(() => {
+        sortDirUnsubscribe = sortDir.subscribe(value => {
+            $libraryOptions.sort = value;
+        })
+    })
+
+    onDestroy(() => {
+        sortDirUnsubscribe();
+    })
 
     const apply = () => {
         if ($modalStore[0].response) {
@@ -20,15 +35,25 @@
         <!-- <button class="btn btn-sm btn-ringed-surface" on:click={() => {}}>Reset</button> -->
     </div>
     <hr class="my-4" />
-    <label class="input-label w-1/2">
-        <span>Sorting</span>
-        <select bind:value={$libraryOptions.selectedSort} name="sort" id="sort">
-            <option value="alphabetical">Alphabetical</option>
-            <option value="release">Release Date</option>
-            <option value="geekRating">BGG Rating</option>
-            <option value="weight">Weight</option>
-        </select>
-    </label>
+    <div class="flex items-end space-x-4">
+        <label class="input-label w-1/2">
+            <span>Sorting</span>
+            <select bind:value={$libraryOptions.selectedSort} name="sort" id="sort">
+                <option value="alphabetical">Alphabetical</option>
+                <option value="release">Release Date</option>
+                <option value="geekRating">BGG Rating</option>
+                <option value="weight">Weight</option>
+            </select>
+        </label>
+        <RadioGroup selected={sortDir} class="h-[42px]">
+            <RadioItem value="asc">
+                <ArrowSmUpIcon class="h-4 w-4" />
+            </RadioItem>
+            <RadioItem value="desc">
+                <ArrowSmDownIcon class="h-4 w-4" />
+            </RadioItem>
+        </RadioGroup>
+    </div>
     <hr class="my-4" />
     <div class="flex space-x-4">
         <label class="input-label w-1/2">

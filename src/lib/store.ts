@@ -10,6 +10,7 @@ export const libraryLoaded = writable(false);
 export const libraryOptions = writable({
     includeExpansions: false,
     selectedSort: 'alphabetical',
+    sort: 'asc',
     filters: {
         playtime: 'any',
         playerCount: 'any',
