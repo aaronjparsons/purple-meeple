@@ -20,9 +20,11 @@
 </script>
 
 <div>
-    <h1 class="mb-8">QR for </h1>
-    <div class="flex justify-center">
+    <h1 class="mb-8">QR</h1>
+    <div class="flex justify-center mb-4">
         <img src={qrCode} alt="BGG Library QR code" />
     </div>
-    <button class="btn btn-ringed-surface" on:click={() => modalStore.close()}>Close</button>
+    <div class="flex justify-end">
+        <button class="btn btn-ringed-surface" on:click={() => modalStore.close()}>Close</button>
+    </div>
 </div>

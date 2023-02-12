@@ -7,6 +7,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { page } from "$app/stores";
     import { browser } from '$app/environment';
+    import { goto } from '$app/navigation';
     import { Library, isScreenSmall } from "$lib/store";
 
     $: logoAtTop = $page.url.pathname !== '/' && $Library.loaded;
@@ -26,10 +27,19 @@
     const handleScreenWidthChange = () => {
         $isScreenSmall = window.innerWidth <= 525;
     }
+
+    const handleLogoClick = () => {
+        if (logoAtTop) {
+            goto('/');
+        }
+    }
 </script>
 
 <div class="h-full relative">
-    <h1 class="absolute {logoAtTop ? 'top-0 p-8' : 'top-1/3'} w-full text-center text-4xl sm:text-7xl font-bold transition-all">
+    <h1
+        class="absolute {logoAtTop ? 'top-0 p-8' : 'top-1/3'} w-full text-center text-4xl sm:text-7xl font-bold transition-all"
+        on:click={handleLogoClick}
+    >
         BGG-Library
     </h1>
     <div class="h-full overflow-auto">

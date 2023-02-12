@@ -13,9 +13,12 @@
 
 <div>
     <h1 class="mb-8">Options</h1>
-    <SlideToggle bind:checked={$libraryOptions.includeExpansions} size="sm">
-        Include expansions
-    </SlideToggle>
+    <div class="flex justify-between">
+        <SlideToggle bind:checked={$libraryOptions.includeExpansions} size="sm">
+            Include expansions
+        </SlideToggle>
+        <!-- <button class="btn btn-sm btn-ringed-surface" on:click={() => {}}>Reset</button> -->
+    </div>
     <hr class="my-4" />
     <label class="input-label w-1/2">
         <span>Sorting</span>

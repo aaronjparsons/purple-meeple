@@ -200,7 +200,7 @@
 </script>
 
 {#await collectionRequest}
-    <div class="h-full flex justify-center items-center">
+    <div class="h-full flex flex-col justify-center items-center">
         <lottie-player
             src="https://assets9.lottiefiles.com/packages/lf20_Wy80jjKz4n.json"
             background="transparent"
@@ -209,16 +209,17 @@
             loop
             autoplay
         ></lottie-player>
+        <h3 class="mt-8">This may take some time if you have a large collection, or if this is the first time loading your collection.</h3>
     </div>
 {:then col}
     <div transition:fade class="flex flex-col items-center pt-28 px-4 m-auto sm:max-w-[1020px]">
         Showing {collection.length} games
-        <div class="w-full flex justify-end mb-4">
-            <button class="btn btn-filled-secondary mr-4" on:click={openQR}>QR</button>
-            <button class="btn btn-filled-secondary mr-4" on:click={openOptions}>Options</button>
+        <div class="w-full flex justify-end mb-4 h-[42px]">
+            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openQR}>QR</button>
+            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openOptions}>Options</button>
             <RadioGroup selected={displayType}>
                 <RadioItem value="list">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 22 22" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg>
                 </RadioItem>
@@ -231,12 +232,12 @@
         </div>
         {#if $displayType === 'grid'}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {#each collection as game (game['@_id'])}
+                {#each collection as game}
                     <GameCard {game} />
                 {/each}
             </div>
         {:else}
-            {#each collection as game (game['@_id'])}
+            {#each collection as game}
                 <GameRow {game} />
             {/each}
         {/if}

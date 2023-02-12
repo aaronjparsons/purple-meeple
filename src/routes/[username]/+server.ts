@@ -5,26 +5,16 @@ import { sleep } from '$lib/utils';
 
 export const GET = async ({ url }) => {
     const username = url.searchParams.get('username');
-    const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&want=0&wishlist=0&preordered=0&prevowned=0`;
+    const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&own=1`;
     let collectionResponse = await fetch(collectionUrl);
     console.log('fetching collections')
     if (collectionResponse.ok) {
         if (collectionResponse.status === 202) {
-            // TODO: This should probably loop until successful??
             // BGG preparing request. Fetch again soon
-            // console.log('202 - bgg preparing, wait 1500ms and fetch again')
-            // await sleep(1500);
-            // collectionResponse = await fetch(collectionUrl);
-            // console.log(collectionResponse)
-            // if (!collectionResponse.ok) {
-            //     throw error(collectionResponse.status, 'error...');
-            // }
-
             while (collectionResponse.status === 202) {
-                console.log('202 - bgg preparing, wait 5000ms and fetch again')
-                await sleep(5000);
+                console.log('202 - bgg preparing, wait 10s and fetch again')
+                await sleep(10000);
                 collectionResponse = await fetch(collectionUrl);
-                console.log(collectionResponse)
                 if (!collectionResponse.ok) {
                     throw error(collectionResponse.status, 'error...');
                 }
@@ -32,10 +22,10 @@ export const GET = async ({ url }) => {
         }
 
         if (collectionResponse.status === 200) {
-            console.log('collection fetched, fetching chunks')
             const text = await collectionResponse.text();
             const parser = new XMLParser({ ignoreAttributes: false });
             const parsed = parser.parse(text);
+            console.log(`collection fetched (${parsed.items.item.length} items), fetching chunks`)
 
             // Invalid username error
             if (parsed.errors && parsed.errors.error) {
@@ -47,9 +37,10 @@ export const GET = async ({ url }) => {
 
             const collection = [];
             const allIds = parsed.items.item.map(thing => thing['@_objectid']);
-            const chunkSize = 100;
-            // Request details on items in collection (100 at a time)
-            for (let i = 0; i < allIds.length; i += chunkSize) {
+            const chunkSize = 250;
+            // Request details on items in collection (250 at a time)
+            for (let i = 0; i < allIds.length; i += (chunkSize + 1)) {
+                console.log(`fetching items ${i}-${i + chunkSize}`);
                 const currentChunk = allIds.slice(i, i + chunkSize);
                 const url = `https://boardgamegeek.com/xmlapi2/thing?id=${currentChunk}&stats=1&type=boardgame,boardgameexpansion`;
                 const chunkResponse = await fetch(url);
