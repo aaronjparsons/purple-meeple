@@ -45,14 +45,16 @@
                 <option value="weight">Weight</option>
             </select>
         </label>
-        <RadioGroup selected={sortDir} class="h-[42px]">
-            <RadioItem value="asc">
-                <ArrowSmUpIcon class="h-4 w-4" />
-            </RadioItem>
-            <RadioItem value="desc">
-                <ArrowSmDownIcon class="h-4 w-4" />
-            </RadioItem>
-        </RadioGroup>
+        <div class="w-1/2">
+            <RadioGroup selected={sortDir} class="h-[42px]">
+                <RadioItem value="asc">
+                    <ArrowSmUpIcon class="h-4 w-4" />
+                </RadioItem>
+                <RadioItem value="desc">
+                    <ArrowSmDownIcon class="h-4 w-4" />
+                </RadioItem>
+            </RadioGroup>
+        </div>
     </div>
     <hr class="my-4" />
     <div class="flex space-x-4">
