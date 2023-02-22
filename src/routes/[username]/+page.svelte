@@ -1,13 +1,16 @@
 <script lang="ts">
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore } from '@skeletonlabs/skeleton';
+    import { AdjustmentsIcon, QrcodeIcon, ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
     import { fade } from 'svelte/transition';
     import { writable, type Writable } from 'svelte/store';
     import { page } from '$app/stores';
+    import Dice from '$lib/icons/dice.png';
     import GameCard from "$lib/components/GameCard.svelte";
     import GameRow from "$lib/components/GameRow.svelte";
     import OptionsModal from "$lib/components/OptionsModal.svelte";
     import QRModal from "$lib/components/QRModal.svelte";
+    import RandomGameModal from "$lib/components/RandomGameModal.svelte";
     import { getValue, sleep, getGameName } from "$lib/utils";
     import { Library, libraryOptions } from "$lib/store";
 
@@ -35,6 +38,10 @@
                 $libraryOptions[key] = key === 'includeExpansions' ? value === 'true' : value;
             }
         })
+    }
+
+    const stripLeadingArticle = (string: string) => {
+        return string.replace(/^(a |an |the )/i, '').trim();
     }
 
     const handleSort = (col: Game[]) => {
@@ -72,8 +79,8 @@
             case 'alphabetical':
             default:
                 sorted = col.sort((a: Game, b: Game) => {
-                    const nameA = getGameName(a);
-                    const nameB = getGameName(b);
+                    const nameA = stripLeadingArticle(getGameName(a));
+                    const nameB = stripLeadingArticle(getGameName(b));
                     return isAsc
                         ? nameA.localeCompare(nameB)
                         : nameB.localeCompare(nameA)
@@ -124,6 +131,20 @@
         })
 
         return col;
+    }
+
+    const openRandomGame = () => {
+        const modalComponent: ModalComponent = {
+            // Pass a reference to your custom component
+            ref: RandomGameModal,
+            // Add your props as key/value pairs
+            props: { currentGameList: collection },
+        };
+        const d: ModalSettings = {
+            type: 'component',
+            component: modalComponent
+        };
+        modalStore.trigger(d);
     }
 
     const openQR = () => {
@@ -225,18 +246,26 @@
     <div transition:fade class="flex flex-col items-center pt-28 px-4 m-auto sm:max-w-[1020px]">
         Showing {collection.length} games
         <div class="w-full flex justify-end mb-4 h-[42px]">
-            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openQR}>QR</button>
-            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openOptions}>Options</button>
+            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openRandomGame}>
+                <img src={Dice} alt="dice icon" class="h-6 w-6" />
+            </button>
+            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openQR}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
+                </svg>
+            </button>
+            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openOptions}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />
+                </svg>
+            </button>
             <RadioGroup selected={displayType}>
                 <RadioItem value="list">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 22 22" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                    </svg>
+                    <ViewListIcon class="h-5 w-5" />
                 </RadioItem>
                 <RadioItem value="grid">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
+                    <ViewGridIcon class="h-5 w-5" />
                 </RadioItem>
             </RadioGroup>
         </div>

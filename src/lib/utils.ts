@@ -25,3 +25,7 @@ export const parseGamePlayerCount = (game: Game) => {
 
     return min === max ? min : `${min}-${max}`;
 }
+
+export const getRandomInt = (max: number) => {
+    return Math.floor(Math.random() * max);
+}
