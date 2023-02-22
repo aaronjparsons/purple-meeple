@@ -90,7 +90,7 @@
             <div transition:fade class="absolute inset-0 overflow-hidden">
                 <div class="flex flex-col items-center">
                     <img src={selectedGame.image} alt="game cover" class="h-[250px]" />
-                    <p class="text-center mt-1">asdkn a alskdnalksdn aslkdn alksdn alksnd alsknd a{getGameName(selectedGame)}</p>
+                    <p class="text-center mt-1">{getGameName(selectedGame)}</p>
                 </div>
             </div>
         {/if}
