@@ -9,6 +9,7 @@
     import { page } from "$app/stores";
     import { browser } from '$app/environment';
     import { goto } from '$app/navigation';
+    import Analytics from '$lib/components/Analytics.svelte';
     import { Library, isScreenSmall } from "$lib/store";
 
     let wrapper: HTMLElement;
@@ -74,3 +75,4 @@
     {/if}
 </div>
 <Modal />
+<!-- <Analytics /> -->
