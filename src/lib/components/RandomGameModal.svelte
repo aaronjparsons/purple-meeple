@@ -52,7 +52,7 @@
 
 <div>
     <h1>Random game to play</h1>
-    <p class="opacity-75 mb-6">Based on current options</p>
+    <p class="opacity-60 mb-6">Based on current options</p>
     <div
         bind:this={listContainer}
         class="relative w-full mb-6 transition-all"
@@ -89,7 +89,7 @@
         {#if modalState === 'display'}
             <div transition:fade class="absolute inset-0 overflow-hidden">
                 <div class="flex flex-col items-center">
-                    <img src={selectedGame.image} alt="game cover" class="h-[250px]" />
+                    <img src={selectedGame.image} alt="game cover" class="h-[250px] rounded-md" />
                     <p class="text-center mt-1">{getGameName(selectedGame)}</p>
                 </div>
             </div>
@@ -97,6 +97,6 @@
     </div>
     <hr class="my-4" />
     <div class="flex justify-end">
-        <button class="btn btn-ringed-surface mr-6" on:click={() => modalStore.close()}>Close</button>
+        <button class="btn btn-ringed-surface" on:click={() => modalStore.close()}>Close</button>
     </div>
 </div>
