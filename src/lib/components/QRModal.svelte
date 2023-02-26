@@ -48,13 +48,15 @@
     >
         Apply current options to QR
     </SlideToggle>
-    <div class="grid grid-cols-2 sm:grid-cols-3 capitalize">
-        <p>Sorting: <span class="font-light">{sortingMap[$libraryOptions.selectedSort]}</span></p>
-        <p>Min BGG Rating: <span class="font-light">{$libraryOptions.filters.geekRating}</span></p>
-        <p>Max Playtime: <span class="font-light">{$libraryOptions.filters.playtime}</span></p>
-        <p>Player count: <span class="font-light">{$libraryOptions.filters.playerCount}</span></p>
-        <p>Max Weight: <span class="font-light">{$libraryOptions.filters.weight}</span></p>
+    <div class="grid grid-cols-2  capitalize text-sm">
+        <span>Sorting: <span class="font-light">{sortingMap[$libraryOptions.selectedSort]}</span></span>
+        <span></span>
+        <span>Min BGG Rating: <span class="font-light">{$libraryOptions.filters.geekRating}</span></span>
+        <span>Max Playtime: <span class="font-light">{$libraryOptions.filters.playtime}</span></span>
+        <span>Player count: <span class="font-light">{$libraryOptions.filters.playerCount}</span></span>
+        <span>Max Weight: <span class="font-light">{$libraryOptions.filters.weight}</span></span>
     </div>
+    <hr class="my-4" />
     <div class="flex justify-end">
         <button class="btn btn-ringed-surface" on:click={() => modalStore.close()}>Close</button>
     </div>

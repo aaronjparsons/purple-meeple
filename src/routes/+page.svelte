@@ -13,7 +13,7 @@
         <p class="text-center mb-6">
             Enter your BGG username to view your board game library. Create a QR code with preset options, filters & sorting for quick access in the future.
         </p>
-        <div class="flex flex-col items-center space-y-2">
+        <form class="flex flex-col items-center space-y-2" on:submit|preventDefault={handleSubmit}>
             <input
                 bind:value={username}
                 type="text"
@@ -22,10 +22,10 @@
             >
             <button
                 class="btn btn-filled-primary btn-base"
-                on:click={handleSubmit}
+                type="submit"
             >
                 Submit
             </button>
-        </div>
+        </form>
     </div>
 </div>

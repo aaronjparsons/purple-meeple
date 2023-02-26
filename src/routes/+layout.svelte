@@ -19,14 +19,12 @@
 
     onMount(() => {
         if (browser) {
-            // window.addEventListener('resize', handleScreenWidthChange);
             wrapper.addEventListener('scroll', handleScroll);
         }
     })
 
     onDestroy(() => {
         if (browser) {
-            // window.removeEventListener('resize', handleScreenWidthChange);
             wrapper.removeEventListener('scroll', handleScroll);
         }
     })

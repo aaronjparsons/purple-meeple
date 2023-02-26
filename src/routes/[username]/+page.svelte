@@ -240,11 +240,11 @@
             loop
             autoplay
         ></lottie-player>
-        <h3 class="mt-8">This may take some time if you have a large collection, or if this is the first time loading your collection.</h3>
+        <h3 class="max-w-[750px] mt-8">This may take some time if you have a large collection, or if this is the first time loading your collection.</h3>
     </div>
 {:then col}
     <div transition:fade class="flex flex-col items-center pt-28 px-4 m-auto sm:max-w-[1020px]">
-        Showing {collection.length} games
+        Showing {collection.length} games ({$Library.data.length} games in library, including expansions)
         <div class="w-full flex justify-end mb-4 h-[42px]">
             <button class="btn btn-base btn-filled-secondary mr-4" on:click={openRandomGame}>
                 <img src={Dice} alt="dice icon" class="h-6 w-6" />

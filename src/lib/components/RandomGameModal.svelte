@@ -1,6 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { fade } from 'svelte/transition';
+    import { fade, crossfade } from 'svelte/transition';
+    import { quintOut } from 'svelte/easing';
+    import { flip } from 'svelte/animate';
     import { modalStore } from '@skeletonlabs/skeleton';
     import { sleep, getRandomInt, getGameName } from '$lib/utils';
 
@@ -11,7 +13,7 @@
     let translateVal = 0;
     let spinDuration = 2000;
     let modalState = 'start'; // start|spinner|display
-    let selectedGame: Game|null = null;
+    let selectedGame: Game;
 
     onMount(async () => {
         buildList();
@@ -45,6 +47,24 @@
         // Show selected game info
         modalState = 'display';
     }
+
+    const [send, receive] = crossfade({
+		duration: d => Math.sqrt(d * 200),
+
+		fallback(node, params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: 600,
+				easing: quintOut,
+				css: t => `
+					transform: ${transform} scale(${t});
+					opacity: ${t}
+				`
+			};
+		}
+	});
 </script>
 
 <style>
@@ -78,6 +98,8 @@
                     <div class="flex space-x-2 transition-transform duration-[2000ms] ease-in-out" style="transform: translateX({translateVal}px);">
                         {#each gameList as game}
                             <div
+                                in:receive="{{key: game['@_id']}}"
+                                out:send="{{key: game['@_id']}}"
                                 class="h-[150px] w-[150px] flex-shrink-0 bg-cover bg-center rounded-md"
                                 style="background-image: url('{game.image}');"
                             />
@@ -89,7 +111,13 @@
         {#if modalState === 'display'}
             <div transition:fade class="absolute inset-0 overflow-hidden">
                 <div class="flex flex-col items-center">
-                    <img src={selectedGame.image} alt="game cover" class="h-[250px] rounded-md" />
+                    <img
+                        in:receive="{{key: selectedGame['@_id']}}"
+                        out:send="{{key: selectedGame['@_id']}}"
+                        class="h-[250px] rounded-md"
+                        src={selectedGame.image}
+                        alt="game cover"
+                    />
                     <p class="text-center mt-1">{getGameName(selectedGame)}</p>
                 </div>
             </div>
