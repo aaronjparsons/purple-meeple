@@ -2,9 +2,11 @@
     import { goto } from '$app/navigation';
 
     let username = '';
+    let loading = false;
     let error: null|number = null;
 
     const handleSubmit = async () => {
+        loading = true;
         // First validate the username exists
         const response = await fetch(`/api/user?username=${username}`);
 
@@ -13,6 +15,7 @@
         } else {
             error = response.status;
         }
+        loading = false;
     }
 </script>
 
@@ -30,9 +33,10 @@
             >
             <button
                 class="btn btn-filled-primary btn-base"
+                disabled={loading}
                 type="submit"
             >
-                Submit
+                { loading ? 'Loading...' : 'Submit' }
             </button>
         </form>
     </div>
