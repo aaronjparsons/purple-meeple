@@ -7,7 +7,8 @@ export const GET = async ({ url }) => {
     const username = url.searchParams.get('username');
     const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&own=1`;
     let collectionResponse = await fetch(collectionUrl);
-    console.log('fetching collections')
+    console.log('fetching collection')
+
     if (collectionResponse.ok) {
         if (collectionResponse.status === 202) {
             // BGG preparing request. Fetch again soon
@@ -25,7 +26,6 @@ export const GET = async ({ url }) => {
             const text = await collectionResponse.text();
             const parser = new XMLParser({ ignoreAttributes: false });
             const parsed = parser.parse(text);
-            console.log(`collection fetched (${parsed.items.item.length} items), fetching chunks`)
 
             // Invalid username error
             if (parsed.errors && parsed.errors.error) {
@@ -35,6 +35,7 @@ export const GET = async ({ url }) => {
                 }
             }
 
+            console.log(`collection fetched (${parsed.items.item.length} items), fetching chunks`)
             const collection = [];
             const allIds = parsed.items.item.map(thing => thing['@_objectid']);
             const chunkSize = 250;
@@ -58,6 +59,6 @@ export const GET = async ({ url }) => {
             return new Response(JSON.stringify(collection));
         }
     } else {
-        throw error(collectionResponse.status, 'error...');
+        throw error(collectionResponse.status);
     }
 }

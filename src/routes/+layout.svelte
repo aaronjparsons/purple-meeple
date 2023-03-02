@@ -4,6 +4,7 @@
     import '@skeletonlabs/skeleton/styles/all.css';
     import "../app.css";
     import { Modal } from '@skeletonlabs/skeleton';
+    import { Toast } from '@skeletonlabs/skeleton';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { page } from "$app/stores";
@@ -73,4 +74,5 @@
     {/if}
 </div>
 <Modal />
+<Toast />
 <!-- <Analytics /> -->

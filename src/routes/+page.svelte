@@ -2,9 +2,17 @@
     import { goto } from '$app/navigation';
 
     let username = '';
+    let error: null|number = null;
 
-    const handleSubmit = () => {
-        goto(`/${username.toLowerCase()}`);
+    const handleSubmit = async () => {
+        // First validate the username exists
+        const response = await fetch(`/api/user?username=${username}`);
+
+        if (response.ok) {
+            goto(`/${username.toLowerCase()}`);
+        } else {
+            error = response.status;
+        }
     }
 </script>
 
@@ -28,4 +36,19 @@
             </button>
         </form>
     </div>
+    {#if error}
+        <aside class="alert mt-6">
+            <div class="alert-message">
+                <p>
+                    {#if error === 404}
+                        Unable to find a user with that username
+                    {:else if error === 429}
+                        BGG has received a lot of requests and is busy. Please try again in a couple minutes
+                    {:else}
+                        There was an unknown error. Please try again later
+                    {/if}
+                </p>
+            </div>
+        </aside>
+    {/if}
 </div>

@@ -1,10 +1,11 @@
 <script lang="ts">
-    import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
-    import { RadioGroup, RadioItem, modalStore } from '@skeletonlabs/skeleton';
-    import { AdjustmentsIcon, QrcodeIcon, ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
+    import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
+    import { RadioGroup, RadioItem, modalStore, toastStore } from '@skeletonlabs/skeleton';
+    import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
     import { fade } from 'svelte/transition';
     import { writable, type Writable } from 'svelte/store';
     import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
     import Dice from '$lib/icons/dice.png';
     import GameCard from "$lib/components/GameCard.svelte";
     import GameRow from "$lib/components/GameRow.svelte";
@@ -211,7 +212,29 @@
             await sleep(150);
             console.log($Library.data[0])
             return res;
+        } else {
+            if (response.status === 404) {
+                // User doesn't exist
+                const toast: ToastSettings = {
+                    message: 'Unable to find a user with that username. Please try again',
+                    preset: 'secondary',
+                    autohide: true,
+                    timeout: 5000
+                };
+                toastStore.trigger(toast);
+                goto('/');
+                return;
+            }
+            if (response.status === 429) {
+
+            }
+
+            return Promise.reject(response)
         }
+    }
+
+    const initFetchCollection = () => {
+        collectionRequest = fetchCollection();
     }
     let collectionRequest = fetchCollection();
 
@@ -282,8 +305,22 @@
         {/if}
     </div>
 {:catch error}
-    <div class="h-full flex justify-center items-center">
-        <p>{error.status}</p>
-        <!-- TODO: Handle 404, 429, general -->
+    <div class="h-full flex flex-col justify-center items-center">
+        {#if error.status === 429}
+            <aside class="alert mt-6">
+                <div class="alert-message text-center">
+                    <p>Unable to load library for user <span class="font-semibold">{ username }</span></p>
+                    <p>BGG has received a lot of requests and is busy. Please try again in a couple minutes</p>
+                </div>
+            </aside>
+        {:else}
+            <aside class="alert mt-6">
+                <div class="alert-message text-center">
+                    <p>Unable to load library for user <span class="font-semibold">{ username }</span></p>
+                    <p>An unknown error has occurred.</p>
+                </div>
+            </aside>
+            <button class="btn btn-filled-secondary mt-4" on:click={initFetchCollection}>Retry</button>
+        {/if}
     </div>
 {/await}
