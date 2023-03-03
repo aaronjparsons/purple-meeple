@@ -20,16 +20,19 @@
 </script>
 
 <div class="h-full flex flex-col justify-center items-center p-8">
+    <h1 class="w-full text-center text-4xl sm:text-7xl font-bold mb-8">
+        BGG-Library
+    </h1>
     <div class="w-full md:w-[750px]">
         <p class="text-center mb-6">
-            Enter your BGG username to view your board game library. Create a QR code with preset options, filters & sorting for quick access in the future.
+            Enter your BoardGameGeek username to view your board game library. Create a QR code with preset options, filters & sorting for quick access in the future.
         </p>
         <form class="flex flex-col items-center space-y-2" on:submit|preventDefault={handleSubmit}>
             <input
                 bind:value={username}
                 type="text"
                 name="name"
-                placeholder="BGG Username"
+                placeholder="BoardGameGeek username"
             >
             <button
                 class="btn btn-filled-primary btn-base"

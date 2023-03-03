@@ -2,6 +2,7 @@
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore } from '@skeletonlabs/skeleton';
     import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
+    import { onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { writable, type Writable } from 'svelte/store';
     import { page } from '$app/stores';
@@ -18,6 +19,19 @@
     const displayType: Writable<string> = writable('grid');
     const username = $page.params.username;
     let collection: Game[] = [];
+    let loadTimerTimeout: undefined|number;
+    let loadIsExtended = false;
+
+    onDestroy(() => {
+        if (loadTimerTimeout) {
+            resetTimeout();
+        }
+    })
+
+    const resetTimeout = () => {
+        clearTimeout(loadTimerTimeout);
+        loadIsExtended = false;
+    }
 
     const filterExpansions = (games: Game[]) => {
         const copy = [...games];
@@ -199,6 +213,10 @@
             return collection;
         }
 
+        loadTimerTimeout = window.setTimeout(() => {
+            loadIsExtended = true;
+        }, 200000);
+
         const response = await fetch(`/api?username=${username}`);
 
         if (response.ok) {
@@ -211,6 +229,7 @@
             collection = sortAndFilter(res);
             await sleep(150);
             console.log($Library.data[0])
+            resetTimeout();
             return res;
         } else {
             if (response.status === 404) {
@@ -222,11 +241,9 @@
                     timeout: 5000
                 };
                 toastStore.trigger(toast);
+                resetTimeout();
                 goto('/');
                 return;
-            }
-            if (response.status === 429) {
-
             }
 
             return Promise.reject(response)
@@ -263,10 +280,24 @@
             loop
             autoplay
         ></lottie-player>
-        <h3 class="max-w-[750px] mt-8">This may take some time if you have a large collection, or if this is the first time loading your collection.</h3>
+        <h3 class="text-center max-w-[750px] mt-8">
+            If this is the first time loading your collection, this may take some time as BoardGameGeek has to process your collection first.
+        </h3>
+        {#if loadIsExtended}
+            <aside class="alert mt-6 max-w-[750px]">
+                <div class="alert-message text-center">
+                    <p>
+                        BoardGameGeek is still processing the collection request. If this continues to take some time, you can
+                        safely leave this page and the request will continue to process in the background. The next time you
+                        return, the process should be complete.
+                    </p>
+                </div>
+            </aside>
+        {/if}
     </div>
 {:then col}
-    <div transition:fade class="flex flex-col items-center pt-28 px-4 m-auto sm:max-w-[1020px]">
+    <h1 class="text-center text-4xl sm:text-7xl font-bold my-4">BGG-Library</h1>
+    <div transition:fade class="flex flex-col items-center px-4 m-auto sm:max-w-[1020px]">
         Showing {collection.length} games ({$Library.data.length} games in library, including expansions)
         <div class="w-full flex justify-end mb-4 h-[42px]">
             <button class="btn btn-base btn-filled-secondary mr-4" on:click={openRandomGame}>

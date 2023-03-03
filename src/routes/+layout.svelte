@@ -16,8 +16,6 @@
     let wrapper: HTMLElement;
     let showScrollToTopBtn = false;
 
-    $: logoAtTop = $page.url.pathname !== '/' && $Library.loaded;
-
     onMount(() => {
         if (browser) {
             wrapper.addEventListener('scroll', handleScroll);
@@ -41,22 +39,10 @@
             showScrollToTopBtn = false;
         }
     }
-
-    const handleLogoClick = () => {
-        if (logoAtTop) {
-            goto('/');
-        }
-    }
 </script>
 
 <svelte:window on:resize={handleScreenWidthChange} />
 <div class="h-full relative">
-    <h1
-        class="absolute {logoAtTop ? 'top-0 p-8' : 'top-1/3'} w-full text-center text-4xl sm:text-7xl font-bold transition-all"
-        on:click={handleLogoClick}
-    >
-        BGG-Library
-    </h1>
     <div bind:this={wrapper} class="h-full overflow-auto">
         <slot />
     </div>
