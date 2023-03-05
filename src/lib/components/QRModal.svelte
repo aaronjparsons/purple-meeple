@@ -51,7 +51,7 @@
     <div class="grid grid-cols-2  capitalize text-sm">
         <span>Sorting: <span class="font-light">{sortingMap[$libraryOptions.selectedSort]}</span></span>
         <span></span>
-        <span>Min BGG Rating: <span class="font-light">{$libraryOptions.filters.geekRating}</span></span>
+        <span>Min { $libraryOptions.useGeekRating ? 'Geek' : 'Avg' } Rating: <span class="font-light">{$libraryOptions.filters.rating}</span></span>
         <span>Max Playtime: <span class="font-light">{$libraryOptions.filters.playtime}</span></span>
         <span>Player count: <span class="font-light">{$libraryOptions.filters.playerCount}</span></span>
         <span>Max Weight: <span class="font-light">{$libraryOptions.filters.weight}</span></span>

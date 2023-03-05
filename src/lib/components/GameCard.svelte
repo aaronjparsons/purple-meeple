@@ -1,6 +1,7 @@
 <script lang="ts">
     import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon } from "@rgossiaux/svelte-heroicons/solid";
     import { getGameName, parseGamePlayerCount, getValue, convertToFloat } from "$lib/utils";
+    import { ratingKey } from "$lib/store";
 
     export let game: Game;
 </script>
@@ -13,7 +14,7 @@
         <div class="flex-col space-y-2">
             <div class="margin-auto text-center min-w-[56px]">
                 <FireIcon class="inline-block h-6 w-6" />
-                <p>{convertToFloat(getValue(game.statistics.ratings.bayesaverage), 1)}</p>
+                <p>{convertToFloat(getValue(game.statistics.ratings[$ratingKey]), 1)}</p>
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">

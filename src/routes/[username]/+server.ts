@@ -13,8 +13,8 @@ export const GET = async ({ url }) => {
         if (collectionResponse.status === 202) {
             // BGG preparing request. Fetch again soon
             while (collectionResponse.status === 202) {
-                console.log('202 - bgg preparing, wait 12s and fetch again')
-                await sleep(12000);
+                console.log('202 - bgg preparing, wait 10s and fetch again')
+                await sleep(10000);
                 collectionResponse = await fetch(collectionUrl);
                 if (!collectionResponse.ok) {
                     throw error(collectionResponse.status, 'error...');

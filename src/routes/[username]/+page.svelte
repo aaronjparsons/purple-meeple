@@ -14,7 +14,7 @@
     import QRModal from "$lib/components/QRModal.svelte";
     import RandomGameModal from "$lib/components/RandomGameModal.svelte";
     import { getValue, sleep, getGameName } from "$lib/utils";
-    import { Library, libraryOptions } from "$lib/store";
+    import { Library, libraryOptions, ratingKey } from "$lib/store";
 
     const displayType: Writable<string> = writable('grid');
     const username = $page.params.username;
@@ -45,12 +45,13 @@
 
     const setLibraryOptions = () => {
         const searchParams = new URLSearchParams(window.location.search);
-        const filters = ['playtime', 'playerCount', 'geekRating', 'weight'];
+        const filters = ['playtime', 'playerCount', 'rating', 'weight'];
         searchParams.forEach((value: string, key: string) => {
             if (filters.includes(key)) {
                 $libraryOptions.filters[key] = value;
             } else {
-                $libraryOptions[key] = key === 'includeExpansions' ? value === 'true' : value;
+                $libraryOptions[key] = key === 'includeExpansions' || key === 'useGeekRating'
+                    ? value === 'true' : value;
             }
         })
     }
@@ -73,10 +74,10 @@
                         : releasedA > releasedB ? 1 : -1
                 });
                 break;
-            case 'geekRating':
+            case 'rating':
                 sorted = col.sort((a: Game, b: Game) => {
-                    const ratingA = getValue(a.statistics.ratings.bayesaverage);
-                    const ratingB = getValue(b.statistics.ratings.bayesaverage);
+                    const ratingA = getValue(a.statistics.ratings[$ratingKey]);
+                    const ratingB = getValue(b.statistics.ratings[$ratingKey]);
                     return isAsc
                         ? ratingA > ratingB ? -1 : 1
                         : ratingA > ratingB ? 1 : -1
@@ -127,10 +128,11 @@
                     return false;
                 }
             }
-            if ($libraryOptions.filters.geekRating !== 'any') {
-                const rating = parseInt($libraryOptions.filters.geekRating);
-                const geekRating = parseFloat(getValue(game.statistics.ratings.bayesaverage));
-                if (geekRating < rating) {
+            if ($libraryOptions.filters.rating !== 'any') {
+                const rating = parseInt($libraryOptions.filters.rating);
+                const gameRating = parseFloat(getValue(game.statistics.ratings[$ratingKey]))
+
+                if (gameRating < rating) {
                     return false;
                 }
             }
@@ -258,6 +260,7 @@
     const setSearchParams = () => {
         const obj = {
             includeExpansions: $libraryOptions.includeExpansions,
+            useGeekRating: $libraryOptions.useGeekRating,
             selectedSort: $libraryOptions.selectedSort,
             sort: $libraryOptions.sort,
             ...$libraryOptions.filters
@@ -281,7 +284,8 @@
             autoplay
         ></lottie-player>
         <h3 class="text-center max-w-[750px] mt-8">
-            If this is the first time loading your collection, this may take some time as BoardGameGeek has to process your collection first.
+            If this is the first time loading your collection of if your collection has changed,
+            this may take some time as BoardGameGeek has to process your collection first.
         </h3>
         {#if loadIsExtended}
             <aside class="alert mt-6 max-w-[750px]">

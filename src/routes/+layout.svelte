@@ -62,3 +62,9 @@
 <Modal />
 <Toast />
 <!-- <Analytics /> -->
+
+<style>
+    :global(.modal) {
+        overflow: visible;
+    }
+</style>

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon } from "@rgossiaux/svelte-heroicons/solid";
     import { getGameName, convertToFloat, getValue, parseGamePlayerCount } from "$lib/utils";
-    import { isScreenSmall } from "$lib/store";
+    import { isScreenSmall, ratingKey } from "$lib/store";
 
     export let game: Game;
 
@@ -22,7 +22,7 @@
                 <FireIcon class="w-6 h-6 mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Geek Rating:'}
-                    {convertToFloat(getValue(game.statistics.ratings.bayesaverage), 1)}
+                    {convertToFloat(getValue(game.statistics.ratings[$ratingKey]), 1)}
                 </p>
             </div>
             <div class="flex">
