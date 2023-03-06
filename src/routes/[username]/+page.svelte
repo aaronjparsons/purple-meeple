@@ -19,19 +19,7 @@
     const displayType: Writable<string> = writable('grid');
     const username = $page.params.username;
     let collection: Game[] = [];
-    let loadTimerTimeout: undefined|number;
-    let loadIsExtended = false;
-
-    onDestroy(() => {
-        if (loadTimerTimeout) {
-            resetTimeout();
-        }
-    })
-
-    const resetTimeout = () => {
-        clearTimeout(loadTimerTimeout);
-        loadIsExtended = false;
-    }
+    let collectionLoadAttempts = 0;
 
     const filterExpansions = (games: Game[]) => {
         const copy = [...games];
@@ -215,11 +203,50 @@
             return collection;
         }
 
-        loadTimerTimeout = window.setTimeout(() => {
-            loadIsExtended = true;
-        }, 200000);
+        collectionLoadAttempts = 0;
+        let requestingCollection = true;
+        let attempts = 0;
+        let gameIds = [];
+        while (requestingCollection) {
+            const response = await fetch(`/api/collection?username=${username}`);
 
-        const response = await fetch(`/api?username=${username}`);
+            if (response.ok) {
+                if (response.status === 202) {
+                    // BGG preparing
+                    await sleep(10000);
+                    collectionLoadAttempts++;
+                } else {
+                    const res = await response.json();
+                    gameIds = res.gameIds;
+                    requestingCollection = false;
+                }
+            } else {
+                if (response.status === 404) {
+                    // User doesn't exist
+                    const toast: ToastSettings = {
+                        message: 'Unable to find a user with that username. Please try again',
+                        preset: 'secondary',
+                        autohide: true,
+                        timeout: 5000
+                    };
+                    toastStore.trigger(toast);
+                    goto('/');
+                    return;
+                }
+
+                return Promise.reject(response)
+            }
+        }
+
+        console.warn('can now get games')
+
+        const response = await fetch('/api/games', {
+            method: 'POST',
+            body: JSON.stringify({ gameIds }),
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
 
         if (response.ok) {
             const res = await response.json();
@@ -231,23 +258,8 @@
             collection = sortAndFilter(res);
             await sleep(150);
             console.log($Library.data[0])
-            resetTimeout();
             return res;
         } else {
-            if (response.status === 404) {
-                // User doesn't exist
-                const toast: ToastSettings = {
-                    message: 'Unable to find a user with that username. Please try again',
-                    preset: 'secondary',
-                    autohide: true,
-                    timeout: 5000
-                };
-                toastStore.trigger(toast);
-                resetTimeout();
-                goto('/');
-                return;
-            }
-
             return Promise.reject(response)
         }
     }
@@ -287,7 +299,7 @@
             If this is the first time loading your collection of if your collection has changed,
             this may take some time as BoardGameGeek has to process your collection first.
         </h3>
-        {#if loadIsExtended}
+        {#if collectionLoadAttempts >= 2}
             <aside class="alert mt-6 max-w-[750px]">
                 <div class="alert-message text-center">
                     <p>
