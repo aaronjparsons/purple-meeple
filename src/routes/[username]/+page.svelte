@@ -20,6 +20,8 @@
     const username = $page.params.username;
     let collection: Game[] = [];
     let collectionLoadAttempts = 0;
+    let collectionLength = 0;
+    let loadingState: string|null = null;
 
     const filterExpansions = (games: Game[]) => {
         const copy = [...games];
@@ -197,13 +199,13 @@
         // Set options based on search params
         setLibraryOptions();
 
-        // TODO: run this through the applyOptions
         if ($Library.loaded && $Library.username === username) {
             collection = sortAndFilter($Library.data);
             return collection;
         }
 
         collectionLoadAttempts = 0;
+        loadingState = 'collection';
         let requestingCollection = true;
         let attempts = 0;
         let gameIds = [];
@@ -238,8 +240,8 @@
             }
         }
 
-        console.warn('can now get games')
-
+        collectionLength = gameIds.length;
+        loadingState = 'games';
         const response = await fetch('/api/games', {
             method: 'POST',
             body: JSON.stringify({ gameIds }),
@@ -248,6 +250,7 @@
             }
         });
 
+        loadingState = null;
         if (response.ok) {
             const res = await response.json();
             $Library = {
@@ -295,10 +298,19 @@
             loop
             autoplay
         ></lottie-player>
-        <h3 class="text-center max-w-[750px] mt-8">
-            If this is the first time loading your collection of if your collection has changed,
-            this may take some time as BoardGameGeek has to process your collection first.
-        </h3>
+        <div class="text-center max-w-[750px] mt-8">
+            <h3 class="mb-4">
+                {#if loadingState === 'collection'}
+                    Loading collection...
+                {:else if loadingState === 'games'}
+                    Collection loaded. Loading data for { collectionLength } games...
+                {/if}
+            </h3>
+            <p>
+                If this is the first time loading your collection or if your collection has changed,
+                this may take some time as BoardGameGeek has to process your collection first.
+            </p>
+        </div>
         {#if collectionLoadAttempts >= 2}
             <aside class="alert mt-6 max-w-[750px]">
                 <div class="alert-message text-center">
