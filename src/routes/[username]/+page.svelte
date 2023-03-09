@@ -199,11 +199,6 @@
         // Set options based on search params
         setLibraryOptions();
 
-        if ($Library.loaded && $Library.username === username) {
-            collection = sortAndFilter($Library.data);
-            return collection;
-        }
-
         collectionLoadAttempts = 0;
         loadingState = 'collection';
         let requestingCollection = true;
@@ -259,6 +254,7 @@
                 loaded: true
             };
             collection = sortAndFilter(res);
+            setSearchParams();
             await sleep(150);
             console.log($Library.data[0])
             return res;
@@ -326,7 +322,9 @@
 {:then col}
     <h1 class="text-center text-4xl sm:text-7xl font-bold my-4">BGG-Library</h1>
     <div transition:fade class="flex flex-col items-center px-4 m-auto sm:max-w-[1020px]">
-        Showing {collection.length} games ({$Library.data.length} games in library, including expansions)
+        <p class="unstyled text-center text-sm sm:text-base mb-2">
+            Showing {collection.length} of {$Library.data.length} games
+        </p>
         <div class="w-full flex justify-end mb-4 h-[42px]">
             <button class="btn btn-base btn-filled-secondary mr-4" on:click={openRandomGame}>
                 <img src={Dice} alt="dice icon" class="h-6 w-6" />

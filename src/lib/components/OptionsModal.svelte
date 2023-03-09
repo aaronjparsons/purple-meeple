@@ -35,8 +35,8 @@
 
 <div>
     <h1 class="mb-8">Options</h1>
-    <div class="flex flex-wrap {$isScreenSmall ? 'space-y-2' : 'space-x-6'}">
-        <SlideToggle bind:checked={localOptions.includeExpansions} size="sm">
+    <div class="flex flex-wrap">
+        <SlideToggle bind:checked={localOptions.includeExpansions} size="sm" class="mb-2 mr-6">
             Include expansions
         </SlideToggle>
         <span class="flex">
