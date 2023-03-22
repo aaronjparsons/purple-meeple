@@ -27,8 +27,8 @@
         weight: 'Weight'
     }
     const qrOptions = {
-        width: 300,
-        height: 300,
+        width: 275,
+        height: 275,
         type: 'svg' as DrawType,
         data: '',
         image: logo,
@@ -95,10 +95,7 @@
     <div class="flex justify-center mb-4">
         <div id="qr-code" bind:this={qrEl}> </div>
     </div>
-    <div class="flex flex-col items-center">
-        <p class="text-center">Download this QR code for quick access to browse your board game library</p>
-        <button class="btn btn-filled-secondary my-2" on:click={downloadQr}>Download</button>
-    </div>
+    <p class="text-center mb-2">Download this QR code for quick access to browse your board game library</p>
     <hr class="mb-4" />
     <div class="flex flex-col items-center">
         <p>Current Options:</p>
@@ -120,6 +117,7 @@
     </div>
     <hr class="my-4" />
     <div class="flex justify-end">
-        <button class="btn btn-ringed-surface" on:click={() => modalStore.close()}>Close</button>
+        <button class="btn btn-ringed-surface mr-6" on:click={() => modalStore.close()}>Close</button>
+        <button class="btn btn-filled-secondary" on:click={downloadQr}>Download</button>
     </div>
 </div>

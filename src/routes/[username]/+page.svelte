@@ -254,7 +254,7 @@
             setSearchParams();
             setDisplayName();
             await sleep(150);
-            console.log($Library.data[0])
+            // console.log($Library.data[0])
             return res;
         } else {
             return Promise.reject(response)
@@ -283,7 +283,7 @@
 </script>
 
 {#await collectionRequest}
-    <div class="h-full flex flex-col justify-center items-center">
+    <div class="h-full flex flex-col justify-center items-center p-8">
         <lottie-player
             src="https://assets9.lottiefiles.com/packages/lf20_Wy80jjKz4n.json"
             background="transparent"
