@@ -61,7 +61,7 @@
 </div>
 <Modal />
 <Toast />
-<!-- <Analytics /> -->
+<Analytics />
 
 <style>
     :global(.modal) {

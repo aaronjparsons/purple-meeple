@@ -76,6 +76,12 @@
     }
 
     const downloadQr = () => {
+        if (gtag) {
+            gtag('event', 'qr_download', {
+                'username': $Library.username
+            });
+        }
+
         qrCode.download({
             name: `${$Library.username}-collection-qr`,
             extension: 'png'
