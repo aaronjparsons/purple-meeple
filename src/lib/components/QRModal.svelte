@@ -1,10 +1,21 @@
 <script lang="ts">
-    import QRCode from 'qrcode';
+    import QRCodeStyling, {
+        type DrawType,
+        type TypeNumber,
+        type Mode,
+        type ErrorCorrectionLevel,
+        type DotType,
+        type CornerSquareType,
+        type CornerDotType,
+    } from 'qr-code-styling';
     import { onMount } from 'svelte';
     import { SlideToggle, modalStore } from '@skeletonlabs/skeleton';
-    import { libraryOptions } from "$lib/store";
+    import logo from '$lib/assets/purple_meeple_150.png';
+    import { Library, libraryOptions } from "$lib/store";
 
-    let qrCode = '';
+    let qrEl: HTMLElement;
+
+    let qrCode: QRCodeStyling;
     let baseUrl = `${window.location.origin}${window.location.pathname}`;
     let optionsUrl = window.location.href;
     let selectedUrl = baseUrl;
@@ -15,31 +26,79 @@
         geekRating: 'BGG Rating',
         weight: 'Weight'
     }
+    const qrOptions = {
+        width: 300,
+        height: 300,
+        type: 'svg' as DrawType,
+        data: '',
+        image: logo,
+        margin: 10,
+        qrOptions: {
+            typeNumber: 0 as TypeNumber,
+            mode: 'Byte' as Mode,
+            errorCorrectionLevel: 'Q' as ErrorCorrectionLevel
+        },
+        imageOptions: {
+            hideBackgroundDots: true,
+            imageSize: 0.2,
+            margin: 5,
+            crossOrigin: 'anonymous',
+        },
+        dotsOptions: {
+            type: 'rounded' as DotType
+        },
+        backgroundOptions: {
+            color: '#ffffff',
+        },
+        cornersSquareOptions: {
+            color: '#663399',
+            type: 'extra-rounded' as CornerSquareType,
+        },
+        cornersDotOptions: {
+            color: '#663399',
+            type: 'dot' as CornerDotType,
+        }
+    }
 
     onMount(() => {
-        generateQR(selectedUrl);
+        genQr(selectedUrl);
     })
 
-    const generateQR = async (text: string) => {
-        try {
-            qrCode = await QRCode.toDataURL(text);
-        } catch (err) {
-            console.error(err)
-        }
+    const genQr = (text: string) => {
+        const options = {
+            ...qrOptions,
+            data: text
+        };
+        qrCode = new QRCodeStyling(options);
+        qrCode.append(qrEl);
     }
 
     const toggleUrl = () => {
         selectedUrl = includeOptions ? optionsUrl : baseUrl;
-        generateQR(selectedUrl);
+        const options = {
+            ...qrOptions,
+            data: selectedUrl
+        };
+        qrCode.update(options);
+    }
+
+    const downloadQr = () => {
+        qrCode.download({
+            name: `${$Library.username}-collection-qr`,
+            extension: 'png'
+        });
     }
 </script>
 
 <div>
     <h1 class="mb-6">QR Code</h1>
     <div class="flex justify-center mb-4">
-        <img src={qrCode} alt="BGG Library QR code" />
+        <div id="qr-code" bind:this={qrEl}> </div>
     </div>
-    <p class="mb-2 text-center">Save this QR code for quick access to browse your board game library</p>
+    <div class="flex flex-col items-center">
+        <p class="text-center">Download this QR code for quick access to browse your board game library</p>
+        <button class="btn btn-filled-secondary my-2" on:click={downloadQr}>Download</button>
+    </div>
     <hr class="mb-4" />
     <div class="flex flex-col items-center">
         <p>Current Options:</p>
