@@ -9,7 +9,6 @@
     let qrCode;
     let baseUrl = `${window.location.origin}${window.location.pathname}`;
     let optionsUrl = window.location.href;
-    let selectedUrl = baseUrl;
     let includeOptions = false;
     const sortingMap = {
         alphabetical: 'Alphabetical',
@@ -54,23 +53,30 @@
     onMount(async () => {
         const qrModule = await import('qr-code-styling');
         QRCodeStyling = qrModule.default;
-        genQr(selectedUrl);
+        genQr();
     })
 
-    const genQr = (text: string) => {
+    const createUrl = () => {
+        return includeOptions
+            ? `${optionsUrl}&qrRef`
+            : `${baseUrl}?qrRef`
+    }
+
+    const genQr = () => {
+        const url = createUrl();
         const options = {
             ...qrOptions,
-            data: text
+            data: url
         };
         qrCode = new QRCodeStyling(options);
         qrCode.append(qrEl);
     }
 
     const toggleUrl = () => {
-        selectedUrl = includeOptions ? optionsUrl : baseUrl;
+        const url = createUrl();
         const options = {
             ...qrOptions,
-            data: selectedUrl
+            data: url
         };
         qrCode.update(options);
     }

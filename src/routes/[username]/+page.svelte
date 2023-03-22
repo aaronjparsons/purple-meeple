@@ -32,13 +32,25 @@
 
     const setLibraryOptions = () => {
         const searchParams = new URLSearchParams(window.location.search);
+
+        // Send analytics event if qrRef is included in query params
+        if (searchParams.has('qrRef')) {
+            if (gtag) {
+                gtag('event', 'qr_ref', {
+                    'username': username
+                });
+            }
+            searchParams.delete('qrRef');
+        }
+
         const filters = ['playtime', 'playerCount', 'rating', 'weight'];
         searchParams.forEach((value: string, key: string) => {
             if (filters.includes(key)) {
                 $libraryOptions.filters[key] = value;
             } else {
                 $libraryOptions[key] = key === 'includeExpansions' || key === 'useGeekRating'
-                    ? value === 'true' : value;
+                    ? true
+                    : value;
             }
         })
     }
@@ -193,6 +205,8 @@
     }
 
     const fetchCollection = async () => {
+        setDisplayName();
+
         // Set options based on search params
         setLibraryOptions();
 
@@ -252,7 +266,6 @@
             };
             collection = sortAndFilter(res);
             setSearchParams();
-            setDisplayName();
             await sleep(150);
             // console.log($Library.data[0])
             return res;
@@ -274,14 +287,27 @@
             sort: $libraryOptions.sort,
             ...$libraryOptions.filters
         }
-        const url = Object.entries(obj).map(([key, value]) => {
-            return `${key}=${value}`;
+        const url = Object.entries(obj)
+            .filter(([key, value]) => {
+                return !(typeof value === 'boolean' && !value);
+            })
+            .map(([key, value]) => {
+                if (typeof value === 'boolean') {
+                    return value
+                        ? key
+                        : ''
+                } else {
+                    return `${key}=${value}`;
+                }
         }).join('&');
 
         window.history.replaceState(null, '', `?${url}`);
     }
 </script>
 
+<svelte:head>
+    <title>{ displayName } Collection - Purple Meeple</title>
+</svelte:head>
 {#await collectionRequest}
     <div class="h-full flex flex-col justify-center items-center p-8">
         <lottie-player

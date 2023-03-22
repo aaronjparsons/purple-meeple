@@ -12,7 +12,7 @@
         const response = await fetch(`/api/user?username=${username}`);
 
         if (response.ok) {
-            goto(`/${username.toLowerCase()}`);
+            goto(`/${username}`);
         } else {
             error = response.status;
         }
