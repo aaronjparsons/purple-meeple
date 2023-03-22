@@ -1,21 +1,12 @@
 <script lang="ts">
-    import QRCodeStyling, {
-        type DrawType,
-        type TypeNumber,
-        type Mode,
-        type ErrorCorrectionLevel,
-        type DotType,
-        type CornerSquareType,
-        type CornerDotType,
-    } from 'qr-code-styling';
     import { onMount } from 'svelte';
     import { SlideToggle, modalStore } from '@skeletonlabs/skeleton';
     import logo from '$lib/assets/purple_meeple_150.png';
     import { Library, libraryOptions } from "$lib/store";
 
+    let QRCodeStyling;
     let qrEl: HTMLElement;
-
-    let qrCode: QRCodeStyling;
+    let qrCode;
     let baseUrl = `${window.location.origin}${window.location.pathname}`;
     let optionsUrl = window.location.href;
     let selectedUrl = baseUrl;
@@ -29,14 +20,14 @@
     const qrOptions = {
         width: 275,
         height: 275,
-        type: 'svg' as DrawType,
+        type: 'svg',
         data: '',
         image: logo,
         margin: 10,
         qrOptions: {
-            typeNumber: 0 as TypeNumber,
-            mode: 'Byte' as Mode,
-            errorCorrectionLevel: 'Q' as ErrorCorrectionLevel
+            typeNumber: 0,
+            mode: 'Byte',
+            errorCorrectionLevel: 'Q'
         },
         imageOptions: {
             hideBackgroundDots: true,
@@ -45,22 +36,24 @@
             crossOrigin: 'anonymous',
         },
         dotsOptions: {
-            type: 'rounded' as DotType
+            type: 'rounded'
         },
         backgroundOptions: {
             color: '#ffffff',
         },
         cornersSquareOptions: {
             color: '#663399',
-            type: 'extra-rounded' as CornerSquareType,
+            type: 'extra-rounded',
         },
         cornersDotOptions: {
             color: '#663399',
-            type: 'dot' as CornerDotType,
+            type: 'dot',
         }
     }
 
-    onMount(() => {
+    onMount(async () => {
+        const qrModule = await import('qr-code-styling');
+        QRCodeStyling = qrModule.default;
         genQr(selectedUrl);
     })
 

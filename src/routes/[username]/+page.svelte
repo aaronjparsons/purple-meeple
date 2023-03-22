@@ -17,8 +17,6 @@
     import { getValue, sleep, getGameName } from "$lib/utils";
     import { Library, libraryOptions, ratingKey } from "$lib/store";
 
-    export const ssr = false;
-
     const displayType: Writable<string> = writable('grid');
     const username = $page.params.username;
     let displayName = '';
