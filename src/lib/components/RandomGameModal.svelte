@@ -35,6 +35,12 @@
         modalState = 'spinner';
         await sleep(300);
         startSpinAnimation();
+
+        if (gtag) {
+            gtag('event', 'random_game', {
+                'game': getGameName(selectedGame)
+            });
+        }
     }
 
     const startSpinAnimation = async () => {
