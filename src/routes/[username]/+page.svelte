@@ -7,6 +7,7 @@
     import { writable, type Writable } from 'svelte/store';
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
+    import logo from '$lib/assets/purple_meeple_150.png';
     import Dice from '$lib/icons/dice.png';
     import GameCard from "$lib/components/GameCard.svelte";
     import GameRow from "$lib/components/GameRow.svelte";
@@ -18,19 +19,15 @@
 
     const displayType: Writable<string> = writable('grid');
     const username = $page.params.username;
+    let displayName = '';
     let collection: Game[] = [];
     let collectionLoadAttempts = 0;
     let collectionLength = 0;
     let loadingState: string|null = null;
 
-    const filterExpansions = (games: Game[]) => {
-        const copy = [...games];
-        return copy.filter(game => {
-            if (!$libraryOptions.includeExpansions) {
-                return game['@_type'] === 'boardgame';
-            }
-            return true;
-        })
+    const setDisplayName = () => {
+        const lastLetter = username.charAt(username.length - 1);
+        displayName = lastLetter.toLowerCase() === 's' ? `${username}'` : `${username}'s`;
     }
 
     const setLibraryOptions = () => {
@@ -255,6 +252,7 @@
             };
             collection = sortAndFilter(res);
             setSearchParams();
+            setDisplayName();
             await sleep(150);
             console.log($Library.data[0])
             return res;
@@ -320,9 +318,15 @@
         {/if}
     </div>
 {:then col}
-    <h1 class="text-center text-4xl sm:text-7xl font-bold my-4">BGG-Library</h1>
+    <div class="w-full flex justify-center">
+        <img class="h-8 w-8 mt-5 sm:h-14 sm:w-14 sm:mt-4 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />
+        <h1 class="font-title text-center text-4xl sm:text-6xl font-bold my-4">Purple Meeple</h1>
+    </div>
     <div transition:fade class="flex flex-col items-center px-4 m-auto sm:max-w-[1020px]">
-        <p class="unstyled text-center text-sm sm:text-base mb-2">
+        <p class="unstyled text-center text-base sm:text-lg capitalize">
+            {displayName} Collection
+        </p>
+        <p class="unstyled text-center text-xs sm:text-sm mb-2">
             Showing {collection.length} of {$Library.data.length} games
         </p>
         <div class="w-full flex justify-end mb-4 h-[42px]">
@@ -350,7 +354,7 @@
             </RadioGroup>
         </div>
         {#if $displayType === 'grid'}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
                 {#each collection as game}
                     <GameCard {game} />
                 {/each}

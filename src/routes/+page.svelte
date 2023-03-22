@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import logo from '$lib/assets/purple_meeple_150.png';
 
     let username = '';
     let loading = false;
@@ -20,9 +21,12 @@
 </script>
 
 <div class="h-full flex flex-col justify-center items-center p-8">
-    <h1 class="w-full text-center text-4xl sm:text-7xl font-bold mb-8">
-        BGG-Library
-    </h1>
+    <div class="flex">
+        <img class="h-10 w-10 sm:h-20 sm:w-20 mt-2 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />
+        <h1 class="w-full font-title text-center text-5xl sm:text-8xl font-bold mb-8">
+            Purple Meeple
+        </h1>
+    </div>
     <div class="w-full md:w-[750px]">
         <p class="text-center mb-6">
             Enter your BoardGameGeek username to view your board game library. Create a QR code with preset options, filters & sorting for quick access in the future.

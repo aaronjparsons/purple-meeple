@@ -41,20 +41,23 @@
     </div>
     <p class="mb-2 text-center">Save this QR code for quick access to browse your board game library</p>
     <hr class="mb-4" />
-    <SlideToggle
-        name="slider-example"
-        bind:checked={includeOptions}
-        on:change={toggleUrl}
-    >
-        Apply current options to QR
-    </SlideToggle>
-    <div class="grid grid-cols-2  capitalize text-sm">
-        <span>Sorting: <span class="font-light">{sortingMap[$libraryOptions.selectedSort]}</span></span>
-        <span></span>
-        <span>Min { $libraryOptions.useGeekRating ? 'Geek' : 'Avg' } Rating: <span class="font-light">{$libraryOptions.filters.rating}</span></span>
-        <span>Max Playtime: <span class="font-light">{$libraryOptions.filters.playtime}</span></span>
-        <span>Player count: <span class="font-light">{$libraryOptions.filters.playerCount}</span></span>
-        <span>Max Weight: <span class="font-light">{$libraryOptions.filters.weight}</span></span>
+    <div class="flex flex-col items-center">
+        <p>Current Options:</p>
+        <div class="grid grid-cols-2 gap-x-12 capitalize text-sm mt-2 mb-6">
+            <span>Sorting: <span class="font-light">{sortingMap[$libraryOptions.selectedSort]}</span></span>
+            <span>Rating Type: <span class="font-light">{ $libraryOptions.useGeekRating ? 'Geek' : 'Avg' }</span></span>
+            <span>Min { $libraryOptions.useGeekRating ? 'Geek' : 'Avg' } Rating: <span class="font-light">{$libraryOptions.filters.rating}</span></span>
+            <span>Max Playtime: <span class="font-light">{$libraryOptions.filters.playtime}</span></span>
+            <span>Player count: <span class="font-light">{$libraryOptions.filters.playerCount}</span></span>
+            <span>Max Weight: <span class="font-light">{$libraryOptions.filters.weight}</span></span>
+        </div>
+        <SlideToggle
+            name="slider-example"
+            bind:checked={includeOptions}
+            on:change={toggleUrl}
+        >
+            Apply current options to QR
+        </SlideToggle>
     </div>
     <hr class="my-4" />
     <div class="flex justify-end">

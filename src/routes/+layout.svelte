@@ -42,7 +42,7 @@
 </script>
 
 <svelte:window on:resize={handleScreenWidthChange} />
-<div class="h-full relative">
+<div class="h-full relative font-sans">
     <div bind:this={wrapper} class="h-full overflow-auto">
         <slot />
     </div>
