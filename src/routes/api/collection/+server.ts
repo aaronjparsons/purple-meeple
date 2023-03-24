@@ -6,7 +6,7 @@ export const GET = async ({ url }) => {
     const username = url.searchParams.get('username');
     const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&own=1`;
     const collectionResponse = await fetch(collectionUrl);
-    console.log('fetching collection')
+    console.log(`fetching collection - username: ${username}`);
 
     if (collectionResponse.ok) {
         if (collectionResponse.status === 202) {

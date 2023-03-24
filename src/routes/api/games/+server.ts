@@ -5,7 +5,7 @@ import { sleep } from '$lib/utils';
 
 export const POST = async ({ request }) => {
     const req = await request.json();
-    console.log(`collection fetched (${req.gameIds.length} items), fetching chunks`)
+    console.log(`collection fetched - username: ${req.username} (${req.gameIds.length} items), fetching chunks`)
     const collection = [];
     const chunkSize = 250;
     const parser = new XMLParser({ ignoreAttributes: false });

@@ -250,7 +250,7 @@
         loadingState = 'games';
         const response = await fetch('/api/games', {
             method: 'POST',
-            body: JSON.stringify({ gameIds }),
+            body: JSON.stringify({ gameIds, username }),
             headers: {
                 'content-type': 'application/json'
             }
