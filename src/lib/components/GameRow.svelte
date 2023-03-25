@@ -10,13 +10,16 @@
 <div
     class="card card-glass-surface w-full max-w-[500px] flex rounded-md shadow-md mb-4"
 >
-    <div
-        class="bg-cover bg-center flex-shrink-0 rounded-tl-md rounded-bl-md w-24"
-        style="background-image: url('{game.image}');"
-    ></div>
-    <!-- <img class="flex-shrink-0 rounded-tl-md rounded-bl-md w-24 object-cover" src={game.image} alt="game cover" /> -->
-    <div class="pt-1 pb-2 px-2">
-        <h3 class="mb-1">{getGameName(game)}</h3>
+    <div class="bg-cover bg-center flex-shrink-0 rounded-tl-md rounded-bl-md h-24 w-24">
+        <img
+            class="w-full h-full rounded-tl-md rounded-bl-md object-cover"
+            src={game.image}
+            alt="{getGameName(game)} cover"
+            loading="lazy"
+        />
+    </div>
+    <div class="pt-1 pb-2 px-2 truncate">
+        <h3 class="mb-1 truncate">{getGameName(game)}</h3>
         <div class="grid grid-cols-2 grid-rows-2 gap-x-4 gap-y-1 font-light">
             <div class="flex">
                 <FireIcon class="w-6 h-6 mr-2" />

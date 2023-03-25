@@ -34,8 +34,14 @@
             <hr class="mx-2 opacity-50" />
         </div>
         <div
-            class="flex-grow bg-cover bg-center rounded-tl-md rounded-br-md shadow-inner"
-            style="background-image: url('{game.image}');"
-        ></div>
+            class="flex-grow rounded-tl-md rounded-br-md shadow-inner"
+        >
+            <img
+                class="w-full h-full object-cover rounded-tl-md rounded-br-md"
+                src={game.image}
+                alt="{getGameName(game)} cover"
+                loading="lazy"
+            />
+        </div>
     </div>
 </div>
