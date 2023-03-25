@@ -7,9 +7,9 @@ export const POST = async ({ request }) => {
     const req = await request.json();
     console.log(`collection fetched - username: ${req.username} (${req.gameIds.length} items), fetching chunks`)
     const collection = [];
-    const chunkSize = 250;
+    const chunkSize = 300;
     const parser = new XMLParser({ ignoreAttributes: false });
-    // Request details on items in collection (250 at a time)
+    // Request details on items in collection (300 at a time)
     for (let i = 0; i < req.gameIds.length; i += (chunkSize + 1)) {
         console.log(`fetching items ${i}-${i + chunkSize}`);
         const currentChunk = req.gameIds.slice(i, i + chunkSize);
@@ -19,7 +19,11 @@ export const POST = async ({ request }) => {
         if (chunkResponse.ok) {
             const text = await chunkResponse.text();
             const parsedChunk = parser.parse(text);
-            collection.push(...parsedChunk.items.item);
+            if (Array.isArray(parsedChunk.items.item)) {
+                collection.push(...parsedChunk.items.item);
+            } else {
+                collection.push(parsedChunk.items.item)
+            }
         } else {
             throw error(chunkResponse.status);
         }
