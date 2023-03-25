@@ -279,13 +279,13 @@
         collectionLength = gameIds.length;
         loadingState = 'games';
 
-        // Request details on items in collection (300 at a time)
+        // Request details on items in collection (350 at a time)
         const chunkSize = 350;
         for (let i = 0; i < collectionLength; i += (chunkSize + 1)) {
-            const currentChunk = gameIds.slice(i, i + chunkSize);
+            const currentChunk = gameIds.slice(i, i + chunkSize + 1);
 
             const tail = i + chunkSize > collectionLength ? collectionLength : i + chunkSize;
-            currentChunkRange = `${i} - ${tail}`;
+            currentChunkRange = `${i || 1} - ${tail}`;
 
             const response = await fetch('/api/games', {
                 method: 'POST',
