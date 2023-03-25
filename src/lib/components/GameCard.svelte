@@ -6,11 +6,11 @@
     export let game: Game;
 </script>
 
-<div class="card card-glass-surface flex flex-col rounded-md shadow-lg h-96 w-80">
-    <div class="p-4 rounded-t-md truncate">
+<div class="card card-glass-surface flex flex-col rounded-md shadow-lg w-80">
+    <div class="p-4 rounded-t-md truncate h-[56px]">
         {getGameName(game)}
     </div>
-    <div class="h-full flex">
+    <div class="h-[330px] flex">
         <div class="flex-col space-y-2">
             <div class="margin-auto text-center min-w-[56px]">
                 <FireIcon class="inline-block h-6 w-6" />
@@ -33,11 +33,9 @@
             </div>
             <hr class="mx-2 opacity-50" />
         </div>
-        <div
-            class="flex-grow rounded-tl-md rounded-br-md shadow-inner"
-        >
+        <div class="w-full rounded-tl-md rounded-br-md shadow-inner">
             <img
-                class="w-full h-full object-cover rounded-tl-md rounded-br-md"
+                class="w-full h-[330px] object-cover rounded-tl-md rounded-br-md"
                 src={game.image}
                 alt="{getGameName(game)} cover"
                 loading="lazy"
