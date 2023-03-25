@@ -23,6 +23,7 @@
     let collection: Game[] = [];
     let collectionLoadAttempts = 0;
     let collectionLength = 0;
+    let currentChunkRange = '';
     let loadingState: string|null = null;
 
     const setDisplayName = () => {
@@ -246,32 +247,72 @@
             }
         }
 
+        // -- Previous version
+        // collectionLength = gameIds.length;
+        // loadingState = 'games';
+        // const response = await fetch('/api/games', {
+        //     method: 'POST',
+        //     body: JSON.stringify({ gameIds, username }),
+        //     headers: {
+        //         'content-type': 'application/json'
+        //     }
+        // });
+
+        // loadingState = null;
+        // if (response.ok) {
+        //     const res = await response.json();
+        //     $Library = {
+        //         data: res,
+        //         username,
+        //         loaded: true
+        //     };
+        //     collection = sortAndFilter(res);
+        //     setSearchParams();
+        //     await sleep(150);
+        //     // console.log($Library.data[0])
+        //     return res;
+        // } else {
+        //     return Promise.reject(response)
+        // }
+
+        let collectionChunks = [];
         collectionLength = gameIds.length;
         loadingState = 'games';
-        const response = await fetch('/api/games', {
-            method: 'POST',
-            body: JSON.stringify({ gameIds, username }),
-            headers: {
-                'content-type': 'application/json'
+
+        // Request details on items in collection (300 at a time)
+        const chunkSize = 350;
+        for (let i = 0; i < collectionLength; i += (chunkSize + 1)) {
+            const currentChunk = gameIds.slice(i, i + chunkSize);
+
+            const tail = i + chunkSize > collectionLength ? collectionLength : i + chunkSize;
+            currentChunkRange = `${i} - ${tail}`;
+
+            const response = await fetch('/api/games', {
+                method: 'POST',
+                body: JSON.stringify({ gameIds: currentChunk, username }),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const res = await response.json();
+                collectionChunks.push(...res.games);
+                await sleep(1500);
+            } else {
+                return Promise.reject(response)
             }
-        });
+        }
 
         loadingState = null;
-        if (response.ok) {
-            const res = await response.json();
-            $Library = {
-                data: res,
-                username,
-                loaded: true
-            };
-            collection = sortAndFilter(res);
-            setSearchParams();
-            await sleep(150);
-            // console.log($Library.data[0])
-            return res;
-        } else {
-            return Promise.reject(response)
-        }
+        $Library = {
+            data: collectionChunks,
+            username,
+            loaded: true
+        };
+        collection = sortAndFilter(collectionChunks);
+        setSearchParams();
+        await sleep(150);
     }
 
     const initFetchCollection = () => {
@@ -323,7 +364,8 @@
                 {#if loadingState === 'collection'}
                     Loading collection...
                 {:else if loadingState === 'games'}
-                    Collection loaded. Loading data for { collectionLength } games...
+                    <!-- Collection loaded. Loading data for { collectionLength } games... -->
+                    Collection loaded ({ collectionLength } games).<br/>Loading games {currentChunkRange}...
                 {/if}
             </h3>
             <p>
