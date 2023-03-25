@@ -25,6 +25,7 @@ export const POST = async ({ request }) => {
                 collection.push(parsedChunk.items.item)
             }
         } else {
+            console.log('Chunk error - ', chunkResponse.status)
             throw error(chunkResponse.status);
         }
 
