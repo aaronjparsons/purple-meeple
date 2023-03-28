@@ -21,7 +21,7 @@ interface Game {
 	minplaytime: ValueObject,
 	name: ValueObject[],
 	playingtime: ValueObject,
-	poll: object[],
+	poll: Poll[],
 	statistics: Statistics,
 	yearpublished: ValueObject
 }
@@ -35,6 +35,13 @@ interface ValueObject {
 interface Statistics {
 	'@_page': string,
 	ratings: Ratings
+}
+
+interface Poll {
+	'@_name': string,
+	'@_title': string,
+	'@_totalVotes': string
+	results: Array
 }
 
 interface Ratings {

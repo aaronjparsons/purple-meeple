@@ -1,9 +1,26 @@
 <script lang="ts">
+    import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
+    import ExtraDataModal from '$lib/components/ExtraDataModal.svelte';
+    import { modalStore } from '@skeletonlabs/skeleton';
     import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon } from "@rgossiaux/svelte-heroicons/solid";
     import { getGameName, parseGamePlayerCount, getValue, convertToFloat } from "$lib/utils";
     import { ratingKey } from "$lib/store";
 
     export let game: Game;
+
+    const handleGameSelect = (game: Game) => {
+        const modalComponent: ModalComponent = {
+            // Pass a reference to your custom component
+            ref: ExtraDataModal,
+            // Add your props as key/value pairs
+            props: { game },
+        };
+        const d: ModalSettings = {
+            type: 'component',
+            component: modalComponent
+        };
+        modalStore.trigger(d);
+    }
 </script>
 
 <div class="card card-glass-surface flex flex-col rounded-md shadow-lg h-96 w-80">
@@ -36,6 +53,19 @@
         <div
             class="flex-grow bg-cover bg-center rounded-tl-md rounded-br-md shadow-inner"
             style="background-image: url('{game.image}');"
-        ></div>
+        >
+            <button class="absolute bottom-1 right-2" on:click={() => handleGameSelect(game)}>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-7 h-7"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                </svg>
+            </button>
+        </div>
     </div>
 </div>
