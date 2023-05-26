@@ -40,7 +40,7 @@ interface Statistics {
 interface Poll {
 	'@_name': string,
 	'@_title': string,
-	'@_totalVotes': string
+	'@_totalvotes': string
 	results: Array
 }
 

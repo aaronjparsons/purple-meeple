@@ -2,8 +2,8 @@
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import ExtraDataModal from '$lib/components/ExtraDataModal.svelte';
     import { modalStore } from '@skeletonlabs/skeleton';
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon } from "@rgossiaux/svelte-heroicons/solid";
-    import { getGameName, parseGamePlayerCount, getValue, convertToFloat } from "$lib/utils";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { getGameName, parseGamePlayerCount, getValue, convertToFloat, parseBestPlayerCount } from "$lib/utils";
     import { ratingKey } from "$lib/store";
 
     export let game: Game;
@@ -40,6 +40,14 @@
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
+                <div class="relative">
+                    <UserGroupIcon class="inline-block h-6 w-6" />
+                    <StarIcon class="absolute top-0 right-2.5 h-3 w-3" />
+                </div>
+                <p>{parseBestPlayerCount(game)}</p>
+            </div>
+            <hr class="mx-2 opacity-50" />
+            <div class="margin-auto text-center min-w-[56px]">
                 <ClockIcon class="inline-block h-6 w-6" />
                 <p>{getValue(game.playingtime)}</p>
             </div>
@@ -48,7 +56,7 @@
                 <ScaleIcon class="inline-block h-6 w-6" />
                 <p>{convertToFloat(getValue(game.statistics.ratings.averageweight), 1)}</p>
             </div>
-            <hr class="mx-2 opacity-50" />
+            <!-- <hr class="mx-2 opacity-50" /> -->
         </div>
         <div
             class="flex-grow bg-cover bg-center rounded-tl-md rounded-br-md shadow-inner"
