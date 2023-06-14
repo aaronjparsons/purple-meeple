@@ -3,6 +3,7 @@
     import ExtraDataModal from '$lib/components/ExtraDataModal.svelte';
     import { modalStore } from '@skeletonlabs/skeleton';
     import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
     import { getGameName, parseGamePlayerCount, getValue, convertToFloat, parseBestPlayerCount } from "$lib/utils";
     import { ratingKey } from "$lib/store";
 
@@ -40,10 +41,7 @@
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
-                <div class="relative">
-                    <UserGroupIcon class="inline-block h-6 w-6" />
-                    <StarIcon class="absolute top-0 right-2.5 h-3 w-3" />
-                </div>
+                <BestPlayerCountIcon class="inline-block" />
                 <p>{parseBestPlayerCount(game)}</p>
             </div>
             <hr class="mx-2 opacity-50" />
@@ -62,7 +60,8 @@
             class="flex-grow bg-cover bg-center rounded-tl-md rounded-br-md shadow-inner"
             style="background-image: url('{game.image}');"
         >
-            <button class="absolute bottom-1 right-2" on:click={() => handleGameSelect(game)}>
+            <!-- Extra info modal - Hidden until fully implemented -->
+            <!-- <button class="absolute bottom-1 right-2" on:click={() => handleGameSelect(game)}>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -73,7 +72,7 @@
                 >
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                 </svg>
-            </button>
+            </button> -->
         </div>
     </div>
 </div>

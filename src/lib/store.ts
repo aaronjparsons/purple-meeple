@@ -15,6 +15,7 @@ export const libraryOptions = writable({
     filters: {
         playtime: 'any',
         playerCount: 'any',
+        bestPlayerCount: 'any',
         weight: 'any',
         rating: 'any'
     }

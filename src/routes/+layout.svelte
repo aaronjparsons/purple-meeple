@@ -29,7 +29,7 @@
     })
 
     const handleScreenWidthChange = () => {
-        $isScreenSmall = window.innerWidth <= 525;
+        $isScreenSmall = window.innerWidth <= 570;
     }
 
     const handleScroll = () => {

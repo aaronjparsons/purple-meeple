@@ -1,5 +1,6 @@
 <script lang="ts">
     import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ArrowSmDownIcon, ArrowSmUpIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
     import { SlideToggle, modalStore, RadioGroup, RadioItem, tooltip } from '@skeletonlabs/skeleton';
     import { onMount, onDestroy } from 'svelte';
     import { writable } from 'svelte/store';
@@ -103,11 +104,26 @@
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
-                <option value="6+">6+</option>
+                <option value="6">6+</option>
             </select>
         </label>
     </div>
     <div class="flex space-x-4">
+        <label class="input-label w-1/2 mb-4">
+            <span>
+                <BestPlayerCountIcon class="inline-block mr-2" />
+                Best Player Count
+            </span>
+            <select bind:value={localOptions.filters.bestPlayerCount} name="bestplayercount" id="bestplayercount">
+                <option value="any">Any</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6+</option>
+            </select>
+        </label>
         <label class="input-label w-1/2">
             <span class="align-middle">
                 <ClockIcon class="inline-block h-6 w-6 mr-2" />Max Play Time
@@ -120,9 +136,11 @@
                 <option value="90">90 mins</option>
                 <option value="120">120 mins</option>
                 <option value="180">180 mins</option>
-                <option value="240+">240+ mins</option>
+                <option value="240">240+ mins</option>
             </select>
         </label>
+    </div>
+    <div class="flex space-x-4">
         <label class="input-label w-1/2 mb-4">
             <span>
                 <ScaleIcon class="inline-block h-6 w-6 mr-2" />

@@ -14,7 +14,7 @@
     import OptionsModal from "$lib/components/OptionsModal.svelte";
     import QRModal from "$lib/components/QRModal.svelte";
     import RandomGameModal from "$lib/components/RandomGameModal.svelte";
-    import { getValue, sleep, getGameName } from "$lib/utils";
+    import { getValue, sleep, getGameName, parseBestPlayerCount } from "$lib/utils";
     import { Library, libraryOptions, ratingKey } from "$lib/store";
 
     const displayType: Writable<string> = writable('grid');
@@ -44,7 +44,7 @@
             searchParams.delete('qrRef');
         }
 
-        const filters = ['playtime', 'playerCount', 'rating', 'weight'];
+        const filters = ['playtime', 'playerCount', 'bestPlayerCount', 'rating', 'weight'];
         searchParams.forEach((value: string, key: string) => {
             if (filters.includes(key)) {
                 $libraryOptions.filters[key] = value;
@@ -119,6 +119,25 @@
                 const minplayerCount = parseInt(getValue(game.minplayers));
                 if (!(playerCount >= minplayerCount && playerCount <= maxplayerCount)) {
                     return false;
+                }
+            }
+            if ($libraryOptions.filters.bestPlayerCount !== 'any') {
+                const selectedBestPlayerCount = parseInt($libraryOptions.filters.bestPlayerCount);
+                const bestPlayerCounts = parseBestPlayerCount(game);
+
+                if (bestPlayerCounts === '-') {
+                    return false;
+                }
+
+                if (selectedBestPlayerCount === 6) {
+                    // This is actually 6+. Consider all values 6 & above
+                    if (Math.max(...bestPlayerCounts.split(',').map(c => parseInt(c))) < 6) {
+                        return false;
+                    }
+                } else {
+                    if (!bestPlayerCounts.includes(selectedBestPlayerCount)) {
+                        return false;
+                    }
                 }
             }
             if ($libraryOptions.filters.playtime !== 'any') {

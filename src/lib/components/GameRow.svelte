@@ -1,6 +1,7 @@
 <script lang="ts">
     import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon } from "@rgossiaux/svelte-heroicons/solid";
-    import { getGameName, convertToFloat, getValue, parseGamePlayerCount } from "$lib/utils";
+    import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
+    import { getGameName, convertToFloat, getValue, parseGamePlayerCount, parseBestPlayerCount } from "$lib/utils";
     import { isScreenSmall, ratingKey } from "$lib/store";
 
     export let game: Game;
@@ -8,7 +9,7 @@
 </script>
 
 <div
-    class="card card-glass-surface w-full max-w-[500px] flex rounded-md shadow-md mb-4"
+    class="card card-glass-surface w-full max-w-[540px] flex rounded-md shadow-md mb-4"
 >
     <div
         class="bg-cover bg-center flex-shrink-0 rounded-tl-md rounded-bl-md w-24"
@@ -30,6 +31,13 @@
                 <p>
                     {$isScreenSmall ? '' : 'Player Count:'}
                     {parseGamePlayerCount(game)}
+                </p>
+            </div>
+            <div class="flex">
+                <BestPlayerCountIcon class="mr-2" />
+                <p>
+                    {$isScreenSmall ? '' : 'Best Player Count:'}
+                    {parseBestPlayerCount(game)}
                 </p>
             </div>
             <div class="flex">
