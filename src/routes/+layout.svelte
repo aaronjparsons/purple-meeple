@@ -1,10 +1,9 @@
 <script lang="ts">
-    // import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
     import '../purp-theme.postcss';
-    import '@skeletonlabs/skeleton/styles/all.css';
+    import '@skeletonlabs/skeleton/styles/skeleton.css';
     import "../app.css";
-    import { Modal } from '@skeletonlabs/skeleton';
-    import { Toast } from '@skeletonlabs/skeleton';
+    import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+    import { AppShell, Modal, Toast, storePopup } from '@skeletonlabs/skeleton';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { page } from "$app/stores";
@@ -15,9 +14,11 @@
 
     let wrapper: HTMLElement;
     let showScrollToTopBtn = false;
+    storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
     onMount(() => {
         if (browser) {
+            wrapper = document.querySelector('#page');
             wrapper.addEventListener('scroll', handleScroll);
         }
     })
@@ -42,14 +43,12 @@
 </script>
 
 <svelte:window on:resize={handleScreenWidthChange} />
-<div class="h-full relative font-sans">
-    <div bind:this={wrapper} class="h-full overflow-auto">
-        <slot />
-    </div>
+<AppShell class="font-sans">
+    <slot />
     {#if showScrollToTopBtn}
         <button
             transition:fade
-            class="fixed bottom-6 right-6 btn-icon btn-icon-lg btn-filled-secondary shadow-md"
+            class="fixed bottom-6 right-6 btn-icon btn-icon-lg variant-filled-secondary shadow-md"
             style="padding: 10px;"
             on:click={() => wrapper.scrollTo(0, 0)}
         >
@@ -58,7 +57,8 @@
             </svg>
         </button>
     {/if}
-</div>
+    <!-- <svelte:fragment slot="pageFooter">Page Footer</svelte:fragment> -->
+</AppShell>
 <Modal />
 <Toast />
 <Analytics />

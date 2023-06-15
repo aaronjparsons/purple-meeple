@@ -17,8 +17,8 @@
     import { getValue, sleep, getGameName } from "$lib/utils";
     import { Library, libraryOptions, ratingKey } from "$lib/store";
 
-    const displayType: Writable<string> = writable('grid');
     const username = $page.params.username;
+    let displayType = 'grid';
     let displayName = '';
     let collection: Game[] = [];
     let collectionLoadAttempts = 0;
@@ -398,30 +398,30 @@
             Showing {collection.length} of {$Library.data.length} games
         </p>
         <div class="w-full flex justify-end mb-4 h-[42px]">
-            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openRandomGame}>
+            <button class="btn variant-filled-secondary mr-4" on:click={openRandomGame}>
                 <img src={Dice} alt="dice icon" class="h-6 w-6" />
             </button>
-            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openQR}>
+            <button class="btn variant-filled-secondary mr-4" on:click={openQR}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
                 </svg>
             </button>
-            <button class="btn btn-base btn-filled-secondary mr-4" on:click={openOptions}>
+            <button class="btn variant-filled-secondary mr-4" on:click={openOptions}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />
                 </svg>
             </button>
-            <RadioGroup selected={displayType}>
-                <RadioItem value="list">
-                    <ViewListIcon class="h-5 w-5" />
+            <RadioGroup active="variant-filled-secondary" hover="hover:variant-soft-secondary">
+                <RadioItem bind:group={displayType} name="display-type" value="list">
+                    <ViewListIcon class="h-6 w-5" />
                 </RadioItem>
-                <RadioItem value="grid">
-                    <ViewGridIcon class="h-5 w-5" />
+                <RadioItem bind:group={displayType} name="display-type" value="grid">
+                    <ViewGridIcon class="h-6 w-5" />
                 </RadioItem>
             </RadioGroup>
         </div>
-        {#if $displayType === 'grid'}
+        {#if displayType === 'grid'}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
                 {#each collection as game}
                     <GameCard {game} />
@@ -449,7 +449,7 @@
                     <p>An unknown error has occurred.</p>
                 </div>
             </aside>
-            <button class="btn btn-filled-secondary mt-4" on:click={initFetchCollection}>Retry</button>
+            <button class="btn variant-filled-secondary mt-4" on:click={initFetchCollection}>Retry</button>
         {/if}
     </div>
 {/await}
