@@ -234,7 +234,7 @@
                     // User doesn't exist
                     const toast: ToastSettings = {
                         message: 'Unable to find a user with that username. Please try again',
-                        preset: 'secondary',
+                        background: 'variant-filled-primary',
                         autohide: true,
                         timeout: 5000
                     };
@@ -374,7 +374,7 @@
             </p>
         </div>
         {#if collectionLoadAttempts >= 2}
-            <aside class="alert mt-6 max-w-[750px]">
+            <aside class="alert variant-ghost-primary mt-6 max-w-[750px]">
                 <div class="alert-message text-center">
                     <p>
                         BoardGameGeek is still processing the collection request. If this continues to take some time, you can
@@ -436,14 +436,14 @@
 {:catch error}
     <div class="h-full flex flex-col justify-center items-center">
         {#if error.status === 429}
-            <aside class="alert mt-6">
+            <aside class="alert variant-ghost-primary mt-6">
                 <div class="alert-message text-center">
                     <p>Unable to load library for user <span class="font-semibold">{ username }</span></p>
                     <p>BGG has received a lot of requests and is busy. Please try again in a couple minutes</p>
                 </div>
             </aside>
         {:else}
-            <aside class="alert mt-6">
+            <aside class="alert variant-ghost-primary mt-6">
                 <div class="alert-message text-center">
                     <p>Unable to load library for user <span class="font-semibold">{ username }</span></p>
                     <p>An unknown error has occurred.</p>

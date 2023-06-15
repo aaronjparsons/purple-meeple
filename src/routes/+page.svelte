@@ -49,7 +49,7 @@
         </form>
     </div>
     {#if error}
-        <aside class="alert mt-6">
+        <aside class="alert variant-ghost-primary mt-6">
             <div class="alert-message">
                 <p>
                     {#if error === 404}

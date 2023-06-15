@@ -3,13 +3,15 @@
     import '@skeletonlabs/skeleton/styles/skeleton.css';
     import "../app.css";
     import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-    import { AppShell, Modal, Toast, storePopup } from '@skeletonlabs/skeleton';
+    import { AppShell, Modal, Toast, storePopup, modalStore } from '@skeletonlabs/skeleton';
+    import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { page } from "$app/stores";
     import { browser } from '$app/environment';
     import { goto } from '$app/navigation';
     import Analytics from '$lib/components/Analytics.svelte';
+    import FeedbackModal from '$lib/components/FeedbackModal.svelte';
     import { Library, isScreenSmall } from "$lib/store";
 
     let wrapper: HTMLElement;
@@ -40,6 +42,21 @@
             showScrollToTopBtn = false;
         }
     }
+
+    const openFeedback = () => {
+        const modalComponent: ModalComponent = {
+            // Pass a reference to your custom component
+            ref: FeedbackModal,
+            // Add your props as key/value pairs
+            props: {  },
+        };
+        const d: ModalSettings = {
+            type: 'component',
+            component: modalComponent,
+            // response: applyOptions
+        };
+        modalStore.trigger(d);
+    }
 </script>
 
 <svelte:window on:resize={handleScreenWidthChange} />
@@ -57,10 +74,15 @@
             </svg>
         </button>
     {/if}
-    <!-- <svelte:fragment slot="pageFooter">Page Footer</svelte:fragment> -->
+    <svelte:fragment slot="pageFooter">
+        <div class="text-center">
+            <!--<span class="mr-6">Made by X</span> | -->
+            <button type="button" class="btn btn-sm !bg-transparent" on:click={openFeedback}>Submit feedback</button>
+        </div>
+    </svelte:fragment>
 </AppShell>
 <Modal />
-<Toast />
+<Toast zIndex="z-[1000]" />
 <Analytics />
 
 <style>
