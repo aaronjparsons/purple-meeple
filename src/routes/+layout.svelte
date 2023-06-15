@@ -1,10 +1,9 @@
 <script lang="ts">
-    // import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
     import '../purp-theme.postcss';
     import '@skeletonlabs/skeleton/styles/skeleton.css';
     import "../app.css";
     import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-    import { Modal, Toast, storePopup } from '@skeletonlabs/skeleton';
+    import { AppShell, Modal, Toast, storePopup } from '@skeletonlabs/skeleton';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { page } from "$app/stores";
@@ -19,6 +18,7 @@
 
     onMount(() => {
         if (browser) {
+            wrapper = document.querySelector('#page');
             wrapper.addEventListener('scroll', handleScroll);
         }
     })
@@ -43,10 +43,8 @@
 </script>
 
 <svelte:window on:resize={handleScreenWidthChange} />
-<div class="h-full relative font-sans">
-    <div bind:this={wrapper} class="h-full overflow-auto">
-        <slot />
-    </div>
+<AppShell class="font-sans">
+    <slot />
     {#if showScrollToTopBtn}
         <button
             transition:fade
@@ -59,7 +57,8 @@
             </svg>
         </button>
     {/if}
-</div>
+    <!-- <svelte:fragment slot="pageFooter">Page Footer</svelte:fragment> -->
+</AppShell>
 <Modal />
 <Toast />
 <Analytics />
