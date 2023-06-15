@@ -8,7 +8,7 @@
 </script>
 
 <div
-    class="card card-glass-surface w-full max-w-[500px] flex rounded-md shadow-md mb-4"
+    class="card w-full max-w-[500px] flex rounded-md shadow-md mb-4"
 >
     <div
         class="bg-cover bg-center flex-shrink-0 rounded-tl-md rounded-bl-md w-24"
@@ -50,3 +50,8 @@
     </div>
 </div>
 
+<style>
+    .card {
+        background-color: rgb(var(--color-surface-500) / 0.2);
+    }
+</style>

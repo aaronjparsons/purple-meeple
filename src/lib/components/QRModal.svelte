@@ -95,8 +95,8 @@
     }
 </script>
 
-<div>
-    <h1 class="mb-6">QR Code</h1>
+<div class="card w-modal p-4 shadow-lg">
+    <h1 class="h1 mb-6">QR Code</h1>
     <div class="flex justify-center mb-4">
         <div id="qr-code" bind:this={qrEl}> </div>
     </div>
@@ -115,6 +115,7 @@
         <SlideToggle
             name="slider-example"
             bind:checked={includeOptions}
+            active="bg-secondary-500"
             on:change={toggleUrl}
         >
             Apply current options to QR
@@ -122,7 +123,7 @@
     </div>
     <hr class="my-4" />
     <div class="flex justify-end">
-        <button class="btn btn-ringed-surface mr-6" on:click={() => modalStore.close()}>Close</button>
-        <button class="btn btn-filled-secondary" on:click={downloadQr}>Download</button>
+        <button class="btn variant-ringed-surface mr-6" on:click={() => modalStore.close()}>Close</button>
+        <button class="btn variant-filled-secondary" on:click={downloadQr}>Download</button>
     </div>
 </div>

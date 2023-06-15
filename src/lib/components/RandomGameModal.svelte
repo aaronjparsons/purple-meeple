@@ -76,8 +76,8 @@
 <style>
 </style>
 
-<div>
-    <h1>Random game to play</h1>
+<div class="card w-modal p-4 shadow-lg">
+    <h1 class="h1">Random game to play</h1>
     <p class="opacity-60 mb-6">Based on current options</p>
     <div
         bind:this={listContainer}
@@ -131,6 +131,6 @@
     </div>
     <hr class="my-4" />
     <div class="flex justify-end">
-        <button class="btn btn-ringed-surface" on:click={() => modalStore.close()}>Close</button>
+        <button class="btn variant-ringed-surface" on:click={() => modalStore.close()}>Close</button>
     </div>
 </div>
