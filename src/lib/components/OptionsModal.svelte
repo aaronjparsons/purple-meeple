@@ -114,12 +114,12 @@
         </label>
     </div>
     <div class="flex space-x-4">
-        <label class="input-label w-1/2 mb-4">
+        <label class="label w-1/2 mb-4">
             <span>
                 <BestPlayerCountIcon class="inline-block mr-2" />
                 Best Player Count
             </span>
-            <select bind:value={localOptions.filters.bestPlayerCount} name="bestplayercount" id="bestplayercount">
+            <select bind:value={localOptions.filters.bestPlayerCount} class="select" name="bestplayercount" id="bestplayercount">
                 <option value="any">Any</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
