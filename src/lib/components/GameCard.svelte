@@ -24,7 +24,7 @@
     }
 </script>
 
-<div class="card card-glass-surface flex flex-col rounded-md shadow-lg h-96 w-80">
+<div class="card flex flex-col rounded-md shadow-lg h-96 w-80">
     <div class="p-4 rounded-t-md truncate">
         {getGameName(game)}
     </div>
@@ -76,3 +76,9 @@
         </div>
     </div>
 </div>
+
+<style>
+    .card {
+        background-color: rgb(var(--color-surface-500) / 0.2);
+    }
+</style>

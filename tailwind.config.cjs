@@ -19,11 +19,11 @@ module.exports = {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
         title: ['Delicious Handrawn', ...defaultTheme.fontFamily.sans]
-      },
+      }
     }
   },
   plugins: [
     require('@tailwindcss/forms'),
-    require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')
+    ...require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')()
   ]
 };

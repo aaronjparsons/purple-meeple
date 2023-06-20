@@ -1,23 +1,26 @@
 <script lang="ts">
-    // import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
     import '../purp-theme.postcss';
-    import '@skeletonlabs/skeleton/styles/all.css';
+    import '@skeletonlabs/skeleton/styles/skeleton.css';
     import "../app.css";
-    import { Modal } from '@skeletonlabs/skeleton';
-    import { Toast } from '@skeletonlabs/skeleton';
+    import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+    import { AppShell, Modal, Toast, storePopup, modalStore } from '@skeletonlabs/skeleton';
+    import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { page } from "$app/stores";
     import { browser } from '$app/environment';
     import { goto } from '$app/navigation';
     import Analytics from '$lib/components/Analytics.svelte';
+    import FeedbackModal from '$lib/components/FeedbackModal.svelte';
     import { Library, isScreenSmall } from "$lib/store";
 
     let wrapper: HTMLElement;
     let showScrollToTopBtn = false;
+    storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
     onMount(() => {
         if (browser) {
+            wrapper = document.querySelector('#page');
             wrapper.addEventListener('scroll', handleScroll);
         }
     })
@@ -39,17 +42,30 @@
             showScrollToTopBtn = false;
         }
     }
+
+    const openFeedback = () => {
+        const modalComponent: ModalComponent = {
+            // Pass a reference to your custom component
+            ref: FeedbackModal,
+            // Add your props as key/value pairs
+            props: {  },
+        };
+        const d: ModalSettings = {
+            type: 'component',
+            component: modalComponent,
+            // response: applyOptions
+        };
+        modalStore.trigger(d);
+    }
 </script>
 
 <svelte:window on:resize={handleScreenWidthChange} />
-<div class="h-full relative font-sans">
-    <div bind:this={wrapper} class="h-full overflow-auto">
-        <slot />
-    </div>
+<AppShell class="font-sans">
+    <slot />
     {#if showScrollToTopBtn}
         <button
             transition:fade
-            class="fixed bottom-6 right-6 btn-icon btn-icon-lg btn-filled-secondary shadow-md"
+            class="fixed bottom-6 right-6 btn-icon btn-icon-lg variant-filled-secondary shadow-md"
             style="padding: 10px;"
             on:click={() => wrapper.scrollTo(0, 0)}
         >
@@ -58,9 +74,15 @@
             </svg>
         </button>
     {/if}
-</div>
+    <svelte:fragment slot="pageFooter">
+        <div class="text-center">
+            <!--<span class="mr-6">Made by X</span> | -->
+            <button type="button" class="btn btn-sm !bg-transparent" on:click={openFeedback}>Submit feedback</button>
+        </div>
+    </svelte:fragment>
+</AppShell>
 <Modal />
-<Toast />
+<Toast zIndex="z-[1000]" />
 <Analytics />
 
 <style>
