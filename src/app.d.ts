@@ -20,6 +20,7 @@ interface Game {
 	minplayers: ValueObject,
 	minplaytime: ValueObject,
 	name: ValueObject[],
+	numplays: number,
 	playingtime: ValueObject,
 	poll: Poll[],
 	statistics: Statistics,

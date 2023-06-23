@@ -109,8 +109,10 @@
             <span>Rating Type: <span class="font-light">{ $libraryOptions.useGeekRating ? 'Geek' : 'Avg' }</span></span>
             <span>Min { $libraryOptions.useGeekRating ? 'Geek' : 'Avg' } Rating: <span class="font-light">{$libraryOptions.filters.rating}</span></span>
             <span>Max Playtime: <span class="font-light">{$libraryOptions.filters.playtime}</span></span>
-            <span>Player count: <span class="font-light">{$libraryOptions.filters.playerCount}</span></span>
+            <span>Player Count: <span class="font-light">{$libraryOptions.filters.playerCount}</span></span>
+            <span>Best Player Count: <span class="font-light">{$libraryOptions.filters.bestPlayerCount}</span></span>
             <span>Max Weight: <span class="font-light">{$libraryOptions.filters.weight}</span></span>
+            <span>Played: <span class="font-light">{$libraryOptions.filters.played}</span></span>
         </div>
         <SlideToggle
             name="slider-example"

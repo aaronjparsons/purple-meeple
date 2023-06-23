@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ArrowSmDownIcon, ArrowSmUpIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ArrowSmDownIcon, ArrowSmUpIcon, PlayIcon } from "@rgossiaux/svelte-heroicons/solid";
     import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
     import { SlideToggle, modalStore, RadioGroup, RadioItem, popup } from '@skeletonlabs/skeleton';
     import type { PopupSettings } from "@skeletonlabs/skeleton";
@@ -158,6 +158,17 @@
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
+            </select>
+        </label>
+        <label class="input-label w-1/2 mb-4">
+            <span>
+                <PlayIcon class="inline-block h-6 w-6 mr-2" />
+                Played
+            </span>
+            <select bind:value={localOptions.filters.played} class="select" name="played" id="played">
+                <option value="all">All</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
             </select>
         </label>
     </div>

@@ -17,7 +17,8 @@ export const libraryOptions = writable({
         playerCount: 'any',
         bestPlayerCount: 'any',
         weight: 'any',
-        rating: 'any'
+        rating: 'any',
+        played: 'all'
     }
 })
 export const ratingKey = derived(

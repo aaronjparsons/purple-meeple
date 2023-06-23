@@ -44,7 +44,7 @@
             searchParams.delete('qrRef');
         }
 
-        const filters = ['playtime', 'playerCount', 'bestPlayerCount', 'rating', 'weight'];
+        const filters = ['playtime', 'playerCount', 'bestPlayerCount', 'rating', 'weight', 'played'];
         searchParams.forEach((value: string, key: string) => {
             if (filters.includes(key)) {
                 $libraryOptions.filters[key] = value;
@@ -162,6 +162,15 @@
                     return false;
                 }
             }
+            if ($libraryOptions.filters.played !== 'all') {
+                const played = $libraryOptions.filters.played === 'true';
+
+                if (played) {
+                    return game.numplays > 0;
+                } else {
+                    return game.numplays === 0;
+                }
+            }
 
             return true;
         })
@@ -235,6 +244,7 @@
         let requestingCollection = true;
         let attempts = 0;
         let gameIds = [];
+        let plays = {};
         while (requestingCollection) {
             const response = await fetch(`/api/collection?username=${username}`);
 
@@ -246,6 +256,7 @@
                 } else {
                     const res = await response.json();
                     gameIds = res.gameIds;
+                    plays = res.plays;
                     requestingCollection = false;
                 }
             } else {
@@ -321,6 +332,11 @@
             } else {
                 return Promise.reject(response)
             }
+        }
+
+        // Merge games & plays
+        for (const game of collectionChunks) {
+            game.numplays = plays[game['@_id']];
         }
 
         loadingState = null;

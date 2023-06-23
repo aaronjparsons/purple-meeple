@@ -28,8 +28,12 @@ export const GET = async ({ url }) => {
             }
 
             const allIds = parsed.items.item.map(thing => thing['@_objectid']);
+            const plays = parsed.items.item.reduce((o, thing) => {
+                return { ...o, [thing['@_objectid']]: thing.numplays }
+            }, {});
             const res = {
-                gameIds: allIds
+                gameIds: allIds,
+                plays
             }
             return new Response(JSON.stringify(res));
         }
