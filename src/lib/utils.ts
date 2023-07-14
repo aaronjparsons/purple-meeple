@@ -31,7 +31,14 @@ export const getBestPlayerCounts = (game: Game) => {
     // [voteCount, playerCount, votePercentage]
 
     const poll = game.poll[0];
-    const results = poll.results;
+    let results = poll.results;
+
+    // Games may very rarely only have a single entry, which is structured as
+    // an object, instead of an array, so we stick it in an array first
+    if (!Array.isArray(results)) {
+        results = [results];
+    }
+
     const totalVotes = results.reduce((acc ,cur) => {
         return parseInt(cur.result[0]['@_numvotes']) + acc;
     }, 0)
@@ -39,7 +46,7 @@ export const getBestPlayerCounts = (game: Game) => {
     return results.map(result => {
         const votes = parseInt(result.result[0]['@_numvotes']);
         const players = result['@_numplayers'];
-        const percentage = votes / totalVotes * 100;
+        const percentage = totalVotes > 0 ? votes / totalVotes * 100 : 0;
         return [votes, players, percentage];
     })
 }
@@ -58,7 +65,7 @@ export const parseBestPlayerCount = (game: Game) => {
     const bestPlayerCounts = getBestPlayerCounts(game);
     bestPlayerCounts.sort((a, b) => b[0] - a[0]).slice(0, 2);
 
-    return bestPlayerCounts[0][2] - bestPlayerCounts[1][2] <= 20
+    return bestPlayerCounts.length > 1 && bestPlayerCounts[0][2] - bestPlayerCounts[1][2] <= 20
         ? [bestPlayerCounts[0][1], bestPlayerCounts[1][1]].sort((a, b) => a - b).join(',')
         : bestPlayerCounts[0][1];
 }
