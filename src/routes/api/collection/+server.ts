@@ -1,9 +1,26 @@
 import { error } from '@sveltejs/kit';
 import { XMLParser } from 'fast-xml-parser';
+import { supabase } from '$lib/supabaseClient';
 
 
 export const GET = async ({ url }) => {
     const username = url.searchParams.get('username');
+
+    // Check db for collection
+    // const { data } = await supabase.from("collections").select().eq('username', username);
+    // if (data && data.length) {
+    //     const row = data[0];
+    //     const res = {
+    //         gameIds: JSON.parse(row.games),
+    //         plays: JSON.parse(row.plays)
+    //     }
+    //     return new Response(JSON.stringify(res));
+    // }
+    // console.log(data)
+
+    // TODO: How to determine difference between stored collection vs BGG retrieved (if not process needed)
+
+
     const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&own=1`;
     const collectionResponse = await fetch(collectionUrl);
     console.log(`fetching collection - username: ${username}`);
