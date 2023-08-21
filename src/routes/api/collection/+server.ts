@@ -44,8 +44,11 @@ export const GET = async ({ url }) => {
                 }
             }
 
-            const allIds = parsed.items.item.map(thing => thing['@_objectid']);
-            const plays = parsed.items.item.reduce((o, thing) => {
+            const items = Array.isArray(parsed.items.item)
+                ? parsed.items.item
+                : [parsed.items.item]
+            const allIds = items.map(thing => thing['@_objectid']);
+            const plays = items.reduce((o, thing) => {
                 return { ...o, [thing['@_objectid']]: thing.numplays }
             }, {});
             const res = {
