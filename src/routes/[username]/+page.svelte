@@ -245,9 +245,10 @@
         let attempts = 0;
         let gameIds = [];
         let plays = {};
+        let updateRequired = false;
         while (requestingCollection) {
             const response = await fetch(`/api/collection?username=${username}`);
-
+            // TODO: set updateRequired indicator & initiate a request retry
             if (response.ok) {
                 if (response.status === 202) {
                     // BGG preparing
@@ -257,7 +258,11 @@
                     const res = await response.json();
                     gameIds = res.gameIds;
                     plays = res.plays;
+                    updateRequired = res.updateRequired;
                     requestingCollection = false;
+                    if (updateRequired) {
+                        backgroundUpdateRefresh();
+                    }
                 }
             } else {
                 if (response.status === 404) {
@@ -276,34 +281,6 @@
                 return Promise.reject(response)
             }
         }
-
-        // -- Previous version
-        // collectionLength = gameIds.length;
-        // loadingState = 'games';
-        // const response = await fetch('/api/games', {
-        //     method: 'POST',
-        //     body: JSON.stringify({ gameIds, username }),
-        //     headers: {
-        //         'content-type': 'application/json'
-        //     }
-        // });
-
-        // loadingState = null;
-        // if (response.ok) {
-        //     const res = await response.json();
-        //     $Library = {
-        //         data: res,
-        //         username,
-        //         loaded: true
-        //     };
-        //     collection = sortAndFilter(res);
-        //     setSearchParams();
-        //     await sleep(150);
-        //     // console.log($Library.data[0])
-        //     return res;
-        // } else {
-        //     return Promise.reject(response)
-        // }
 
         let collectionChunks = [];
         collectionLength = gameIds.length;
@@ -343,11 +320,93 @@
         $Library = {
             data: collectionChunks,
             username,
+            updateRequired,
             loaded: true
         };
         collection = sortAndFilter(collectionChunks);
         setSearchParams();
         await sleep(150);
+    }
+
+    const backgroundUpdateRefresh = async () => {
+        // Wait for first re-attempt
+        await sleep(15000);
+
+        // Lazy copy paste of main fetch
+        let updatingBackground = true;
+        let gameIds = [];
+        let plays = {};
+        while (updatingBackground) {
+            const response = await fetch(`/api/collection?username=${username}`);
+            if (response.ok) {
+                if (response.status === 202) {
+                    // BGG still preparing
+                    await sleep(20000);
+                } else {
+                    const res = await response.json();
+                    const updateRequired = res.updateRequired;
+                    if (updateRequired) {
+                        // BGG still preparing
+                        await sleep(20000);
+                    } else {
+                        gameIds = res.gameIds;
+                        plays = res.plays;
+                        updatingBackground = false;
+                    }
+                }
+            } else {
+                return Promise.reject(response)
+            }
+        }
+
+        let collectionChunks = [];
+        collectionLength = gameIds.length;
+
+        // Request details on items in collection (350 at a time)
+        const chunkSize = 350;
+        for (let i = 0; i < collectionLength; i += (chunkSize + 1)) {
+            const currentChunk = gameIds.slice(i, i + chunkSize + 1);
+
+            const tail = i + chunkSize > collectionLength ? collectionLength : i + chunkSize;
+            currentChunkRange = `${i || 1} - ${tail}`;
+
+            const response = await fetch('/api/games', {
+                method: 'POST',
+                body: JSON.stringify({ gameIds: currentChunk, username }),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const res = await response.json();
+                collectionChunks.push(...res.games);
+                await sleep(1500);
+            } else {
+                return Promise.reject(response)
+            }
+        }
+
+        // Merge games & plays
+        for (const game of collectionChunks) {
+            game.numplays = plays[game['@_id']];
+        }
+
+        $Library = {
+            data: collectionChunks,
+            username,
+            updateRequired: false,
+            loaded: true
+        };
+        collection = sortAndFilter(collectionChunks);
+
+        const toast: ToastSettings = {
+            message: 'Collection updated',
+            background: 'variant-filled-secondary',
+            autohide: true,
+            timeout: 3500
+        };
+        toastStore.trigger(toast);
     }
 
     const initFetchCollection = () => {
@@ -429,10 +488,15 @@
         <p class="unstyled text-center text-base sm:text-lg capitalize">
             {displayName} Collection
         </p>
-        <p class="unstyled text-center text-xs sm:text-sm mb-2">
+        <p class="unstyled text-center text-xs sm:text-sm">
             Showing {collection.length} of {$Library.data.length} games
         </p>
-        <div class="w-full flex justify-end mb-4 h-[42px]">
+        {#if $Library.updateRequired}
+            <p class="unstyled update-required text-center text-xs sm:text-sm">
+                Changes detected, attempting to update...
+            </p>
+        {/if}
+        <div class="w-full flex justify-end mb-4 mt-2 h-[42px]">
             <button class="btn variant-filled-secondary mr-4" on:click={openRandomGame}>
                 <img src={Dice} alt="dice icon" class="h-6 w-6" />
             </button>
@@ -488,3 +552,27 @@
         {/if}
     </div>
 {/await}
+
+<style>
+@-webkit-keyframes pulse {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    85% { opacity: 0.2; }
+    100% { opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    85% { opacity: 0.2; }
+    100% { opacity: 1; }
+}
+
+.update-required {
+    -webkit-animation: pulse 8s infinite ease-in-out;
+    -o-animation: pulse 8s infinite ease-in-out;
+    -ms-animation: pulse 8s infinite ease-in-out;
+    -moz-animation: pulse 8s infinite ease-in-out;
+    animation: pulse 8s infinite ease-in-out;
+}
+</style>

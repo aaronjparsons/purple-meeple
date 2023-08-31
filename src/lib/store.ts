@@ -4,6 +4,7 @@ export const isScreenSmall = writable(false);
 export const Library = writable({
     data: [],
     username: '',
+    updateRequired: false,
     loaded: false
 });
 export const libraryLoaded = writable(false);

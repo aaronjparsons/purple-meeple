@@ -73,3 +73,9 @@ export const parseBestPlayerCount = (game: Game) => {
 export const getRandomInt = (max: number) => {
     return Math.floor(Math.random() * max);
 }
+
+export const sortAndCompare = (a1: string[], a2: string[]) => {
+    const sortedA1 = a1.sort();
+    const sortedA2 = a2.sort();
+    return sortedA1.length == sortedA2.length && sortedA1.every((element, index) => element === sortedA2[index]);
+}

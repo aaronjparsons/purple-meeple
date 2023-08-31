@@ -1,25 +1,27 @@
 import { error } from '@sveltejs/kit';
 import { XMLParser } from 'fast-xml-parser';
 import { supabase } from '$lib/supabaseClient';
+import { sortAndCompare } from '$lib/utils';
 
+const mapPlays = (plays: object) => {
+    return Object.entries(plays).map(([key, value]) => {
+        return `${key}.${value}`;
+    })
+}
 
 export const GET = async ({ url }) => {
-    const username = url.searchParams.get('username');
+    const username = url.searchParams.get('username').toLowerCase();
 
     // Check db for collection
-    // const { data } = await supabase.from("collections").select().eq('username', username);
-    // if (data && data.length) {
-    //     const row = data[0];
-    //     const res = {
-    //         gameIds: JSON.parse(row.games),
-    //         plays: JSON.parse(row.plays)
-    //     }
-    //     return new Response(JSON.stringify(res));
-    // }
-    // console.log(data)
-
-    // TODO: How to determine difference between stored collection vs BGG retrieved (if not process needed)
-
+    let userCollection = null;
+    const { data } = await supabase.from('collections').select().eq('username', username);
+    if (data && data.length) {
+        const row = data[0];
+        userCollection = {
+            gameIds: row.games,
+            plays: row.plays
+        }
+    }
 
     const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&own=1`;
     const collectionResponse = await fetch(collectionUrl);
@@ -28,7 +30,17 @@ export const GET = async ({ url }) => {
     if (collectionResponse.ok) {
         if (collectionResponse.status === 202) {
             // BGG preparing request. Fetch again soon
-            return new Response(null, { status: 202 });
+            if (userCollection !== null) {
+                // Return db collection with a "updated needed" flag
+                return new Response(JSON.stringify({
+                    ...userCollection,
+                    updateRequired: true
+                }));
+            } else {
+                // First time user, no entry and need to wait for BGG
+                // Return 202 so FE will re-attempt
+                return new Response(null, { status: 202 });
+            }
         }
 
         if (collectionResponse.status === 200) {
@@ -47,12 +59,40 @@ export const GET = async ({ url }) => {
             const items = Array.isArray(parsed.items.item)
                 ? parsed.items.item
                 : [parsed.items.item]
-            const allIds = items.map(thing => thing['@_objectid']);
+            const gameIds = items.map(thing => thing['@_objectid']);
             const plays = items.reduce((o, thing) => {
                 return { ...o, [thing['@_objectid']]: thing.numplays }
             }, {});
+
+            if (userCollection !== null) {
+                // Compare entry with BGG response to see if out of date
+                const gamesAreSame = sortAndCompare(userCollection.gameIds, gameIds);
+                const mappedEntryPlays = mapPlays(userCollection.plays);
+                const mappedBggPlays = mapPlays(plays);
+                const playsAreSame = sortAndCompare(mappedEntryPlays, mappedBggPlays);
+
+                if (!gamesAreSame || !playsAreSame) {
+                    // Entry out of date, update it
+                    const { error } = await supabase.from('collections').update({
+                        games: gameIds,
+                        plays
+                    }).eq('username', username);
+                }
+            } else {
+                // First time user, create collection entry in DB
+                const { data, error } = await supabase.from('collections').insert([{
+                    username,
+                    games: gameIds,
+                    plays
+                }])
+
+                if (error) {
+                    // TODO ?? Just silent fail??
+                }
+            }
+
             const res = {
-                gameIds: allIds,
+                gameIds,
                 plays
             }
             return new Response(JSON.stringify(res));
