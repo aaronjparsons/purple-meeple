@@ -12,6 +12,7 @@
     import { goto } from '$app/navigation';
     import Analytics from '$lib/components/Analytics.svelte';
     import FeedbackModal from '$lib/components/FeedbackModal.svelte';
+    import UpdatesModal from '$lib/components/UpdatesModal.svelte';
     import { Library, isScreenSmall } from "$lib/store";
 
     let wrapper: HTMLElement;
@@ -57,6 +58,21 @@
         };
         modalStore.trigger(d);
     }
+
+    const openUpdates = () => {
+        const modalComponent: ModalComponent = {
+            // Pass a reference to your custom component
+            ref: UpdatesModal,
+            // Add your props as key/value pairs
+            props: {  },
+        };
+        const d: ModalSettings = {
+            type: 'component',
+            component: modalComponent,
+            // response: applyOptions
+        };
+        modalStore.trigger(d);
+    }
 </script>
 
 <svelte:window on:resize={handleScreenWidthChange} />
@@ -78,6 +94,8 @@
         <div class="text-center">
             <!--<span class="mr-6">Made by X</span> | -->
             <button type="button" class="btn btn-sm !bg-transparent" on:click={openFeedback}>Submit feedback</button>
+            <span>|</span>
+            <button type="button" class="btn btn-sm !bg-transparent" on:click={openUpdates}>View updates</button>
         </div>
     </svelte:fragment>
 </AppShell>
