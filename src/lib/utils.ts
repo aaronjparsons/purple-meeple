@@ -79,3 +79,6 @@ export const sortAndCompare = (a1: string[], a2: string[]) => {
     const sortedA2 = a2.sort();
     return sortedA1.length == sortedA2.length && sortedA1.every((element, index) => element === sortedA2[index]);
 }
+
+export const months = [ "January", "February", "March", "April", "May", "June",
+"July", "August", "September", "October", "November", "December" ];

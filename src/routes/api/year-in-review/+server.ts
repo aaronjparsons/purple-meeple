@@ -1,56 +1,44 @@
 import { error } from '@sveltejs/kit';
 import { XMLParser } from 'fast-xml-parser';
+import { months } from '$lib/utils';
 
 // Notes:
 // - Execution time can be long, need to optimize/split up
 //      - Possible to split up base play parsing & "parseGameData" (seems to be where most time is)
-// - Remove categories??
 // - Add "best friend"?
-// - Add favorite designer?
+//      -- How to know who user is?
 // - Store in DB?
 //      - could use this to split the execution into two sections (create base & then supplement & add aggregate)
 //      - (could reference back for future years)
+//      - Compare against others?? (for certain data points eg: total played, unique played, time played)
 
 const parseGameData = (games: Game[], groupedByGame) => {
+    const images = {};
     let categories = {};
     let mechanics = {};
-    const grouped = {};
     for (const game of games) {
         const id = game['@_id'];
-        const gameObject = {
-            name: game.name,
-            image: game.image,
-            playCount: groupedByGame[id].playCount
-        }
 
-        grouped[id] = gameObject;
+        images[id] = game.image;
 
         for (const link of game.link) {
             if (link['@_type'] === 'boardgamecategory') {
                 if (categories[link['@_id']]) {
                     categories[link['@_id']].playCount += 1;
-                    if (gameObject.playCount > categories[link['@_id']].game.playCount) {
-                        categories[link['@_id']].game = gameObject;
-                    }
                 } else {
                     categories[link['@_id']] = {
                         name: link['@_value'],
                         playCount: 1,
-                        game: gameObject
                     }
                 }
             }
             if (link['@_type'] === 'boardgamemechanic') {
                 if (mechanics[link['@_id']]) {
                     mechanics[link['@_id']].playCount += 1;
-                    if (gameObject.playCount > mechanics[link['@_id']].game.playCount) {
-                        mechanics[link['@_id']].game = gameObject;
-                    }
                 } else {
                     mechanics[link['@_id']] = {
                         name: link['@_value'],
                         playCount: 1,
-                        game: gameObject
                     }
                 }
             }
@@ -64,7 +52,7 @@ const parseGameData = (games: Game[], groupedByGame) => {
         return b.playCount - a.playCount
     }).slice(0, 3);
 
-    return [ grouped, categories, mechanics ];
+    return [ images, categories, mechanics ];
 }
 
 export const GET = async ({ url }) => {
@@ -83,6 +71,7 @@ export const GET = async ({ url }) => {
     const parser = new XMLParser({ ignoreAttributes: false });
     const parsed = parser.parse(res);
 
+
     if (parsed.div && parsed.div['@_class'] === 'messagebox error') {
         // Bad username
         throw error(404);
@@ -91,6 +80,11 @@ export const GET = async ({ url }) => {
     // Check total to see if we need to fetch more
     const pageSize = 100;
     const total = parsed.plays['@_total'];
+
+    if (total === '0') {
+        // User has no plays logged
+        throw error(404); // TODO: need correct error
+    }
 
     if (total > pageSize) {
         // We have more than 100, grab each page 100 at a time
@@ -104,6 +98,9 @@ export const GET = async ({ url }) => {
             if (nextPageResponse.ok) {
                 currentRes = await nextPageResponse.text();
                 const currentParsed = parser.parse(currentRes);
+                if (!Array.isArray(currentParsed.plays.play)) {
+                    currentParsed.plays.play = [currentParsed.plays.play];
+                }
                 // Add new page to existing data
                 parsed.plays.play = [
                     ...parsed.plays.play,
@@ -117,34 +114,42 @@ export const GET = async ({ url }) => {
         }
     }
 
-    let groupedByGame = {};
-    const groupedByDate = {};
-
     const response = {
         totalPlayed: parseInt(parsed.plays['@_total']),
         uniquePlayed: 0,
         totalTimePlayed: 0,
         longestPlaySession: {
+            id: '',
             name: '',
             length: 0,
             date: ''
         },
         daysMostPlayed: [],
+        monthMostPlayed: '',
         daysPlayed: 0,
         mostPlayedByCount: [],
+        mostPlayedByTime: [],
     }
+
+    const groupedByGame = {};
+    const groupedByDate = {};
+    const groupedByMonth = {};
+    let top5ByCount = {};
+    let top5ByTime = {};
 
     for (const play of parsed.plays.play) {
         const gameId = play.item['@_objectid'];
         const gameName = play.item['@_name'];
         const playTime = parseInt(play['@_length']);
         const date = play['@_date'];
+        const month = date.split('-')[1];
 
         // Add time to aggregates
         if (playTime) {
             response.totalTimePlayed += playTime;
             if (playTime > response.longestPlaySession.length) {
                 response.longestPlaySession = {
+                    id: gameId,
                     name: gameName,
                     length: playTime,
                     date: date
@@ -155,9 +160,11 @@ export const GET = async ({ url }) => {
         // Group by game
         if (groupedByGame[gameId]) {
             groupedByGame[gameId].playCount += 1;
+            groupedByGame[gameId].length += playTime;
         } else {
             groupedByGame[gameId] = {
                 playCount: 1,
+                length: playTime,
                 name: gameName
             }
         }
@@ -174,30 +181,24 @@ export const GET = async ({ url }) => {
                 length: playTime,
             }]
         }
+
+        // Group by month
+        if (groupedByMonth[month]) {
+            groupedByMonth[month] += 1;
+        } else {
+            groupedByMonth[month] = 1;
+        }
     }
-
-    const gameIds = Object.keys(groupedByGame);
-    response.daysPlayed = Object.keys(groupedByDate).length;
-    response.uniquePlayed = gameIds.length;
-
-    const gamesUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${gameIds}`;
-    const gamesResponse = await fetch(gamesUrl);
-    let categories = {};
-    let mechanics = {};
-
-    if (gamesResponse.ok) {
-        const text = await gamesResponse.text();
-        const gamesParsed = parser.parse(text);
-        [ groupedByGame, categories, mechanics ] = parseGameData(gamesParsed.items.item, groupedByGame);
-    } else {
-        // TODO:
-    }
-
 
     // Get top 5 most played (by count)
-    response.mostPlayedByCount = Object.entries(groupedByGame).sort((a, b) => {
+    top5ByCount = Object.entries(groupedByGame).sort((a, b) => {
         return b[1].playCount - a[1].playCount;
-    }).slice(0, 5).map(g => g[1]);
+    }).slice(0, 5).map(g => ({ id: g[0], ...g[1] }));
+
+    // Get top 5 most played (by length)
+    top5ByTime = Object.entries(groupedByGame).sort((a, b) => {
+        return b[1].length - a[1].length;
+    }).slice(0, 5).map(g => ({ id: g[0], ...g[1] }));
 
     // Get days most played
     const daysMostPlayedSorted = Object.entries(groupedByDate).sort((a, b) => {
@@ -213,9 +214,51 @@ export const GET = async ({ url }) => {
         }
     });
 
+    // Get ids of most played & longest played
+    const gameIds = [...new Set([
+        ...top5ByCount.map(g => g.id),
+        ...top5ByTime.map(g => g.id),
+        response.longestPlaySession.id
+    ])];
+    response.daysPlayed = Object.keys(groupedByDate).length;
+    response.uniquePlayed = Object.keys(groupedByGame).length;
+
+    const gamesUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${gameIds}`;
+    const gamesResponse = await fetch(gamesUrl);
+    let images = {};
+    let categories = {};
+    let mechanics = {};
+    let games;
+
+    if (gamesResponse.ok) {
+        const text = await gamesResponse.text();
+        const gamesParsed = parser.parse(text);
+        games = gamesParsed;
+        [ images, categories, mechanics ] = parseGameData(gamesParsed.items.item, groupedByGame);
+    } else {
+        // TODO:
+    }
+
+
+    // Get top 5 most played (by count)
+    response.mostPlayedByCount = top5ByCount;
+    // Get top 5 most played (by length)
+    response.mostPlayedByTime = top5ByTime;
+
+    const monthMostPlayed = Object.entries(groupedByMonth).sort((a, b) => {
+        return b[1] - a[1];
+    })[0];
+    response.monthMostPlayed = {
+        month: months[parseInt(monthMostPlayed[0])],
+        playCount: monthMostPlayed[1]
+    }
+
     return new Response(JSON.stringify({
+        raw: parsed,
+        games,
         ...response,
         categories,
-        mechanics
+        mechanics,
+        images
     }));
 };
