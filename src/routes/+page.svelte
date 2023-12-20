@@ -37,6 +37,7 @@
                 class="input"
                 type="text"
                 name="name"
+                required
                 placeholder="BoardGameGeek username"
             >
             <button

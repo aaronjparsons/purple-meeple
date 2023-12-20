@@ -3,10 +3,6 @@ import { XMLParser } from 'fast-xml-parser';
 import { months } from '$lib/utils';
 
 // Notes:
-// - Execution time can be long, need to optimize/split up
-//      - Possible to split up base play parsing & "parseGameData" (seems to be where most time is)
-// - Add "best friend"?
-//      -- How to know who user is?
 // - Store in DB?
 //      - could use this to split the execution into two sections (create base & then supplement & add aggregate)
 //      - (could reference back for future years)
@@ -57,8 +53,9 @@ const parseGameData = (games: Game[], groupedByGame) => {
 
 export const GET = async ({ url }) => {
     const username = url.searchParams.get('username').toLowerCase();
+    const year = url.searchParams.get('year')
 
-    const playsUrl = `https://boardgamegeek.com/xmlapi2/plays?username=${username}&mindate=2023-01-01&maxdate=2023-12-31`;
+    const playsUrl = `https://boardgamegeek.com/xmlapi2/plays?username=${username}&mindate=${year}-01-01&maxdate=${year}-12-31`;
     const playsResponse = await fetch(playsUrl);
     let res = '';
 
@@ -83,7 +80,7 @@ export const GET = async ({ url }) => {
 
     if (total === '0') {
         // User has no plays logged
-        throw error(404); // TODO: need correct error
+        throw error(404); // TODO: need diff error??
     }
 
     if (total > pageSize) {
@@ -236,7 +233,7 @@ export const GET = async ({ url }) => {
         games = gamesParsed;
         [ images, categories, mechanics ] = parseGameData(gamesParsed.items.item, groupedByGame);
     } else {
-        // TODO:
+        throw error(gamesResponse.status);
     }
 
 
@@ -254,8 +251,8 @@ export const GET = async ({ url }) => {
     }
 
     return new Response(JSON.stringify({
-        raw: parsed,
-        games,
+        // raw: parsed,
+        // games,
         ...response,
         categories,
         mechanics,
