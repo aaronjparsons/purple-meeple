@@ -1,4 +1,5 @@
 <script lang="ts">
+    import dayjs from 'dayjs';
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore } from '@skeletonlabs/skeleton';
     import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
@@ -25,6 +26,9 @@
     let collectionLength = 0;
     let currentChunkRange = '';
     let loadingState: string|null = null;
+
+    const month = dayjs().month();
+    const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
 
     const setDisplayName = () => {
         const lastLetter = username.charAt(username.length - 1);
@@ -480,6 +484,14 @@
         {/if}
     </div>
 {:then col}
+    {#if month === 11 || month === 0}
+        <a
+            class="w-full inline-block bg-gradient-to-r variant-gradient-primary-secondary text-center py-1 text-sm sm:text-base cursor-pointer"
+            href={`/year-in-review/${username}`}
+        >
+            Tracking your plays on BGG? View your yearly stats!
+        </a>
+    {/if}
     <div class="w-full flex justify-center">
         <img class="h-8 w-8 mt-5 sm:h-14 sm:w-14 sm:mt-4 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />
         <h1 class="font-title text-center text-4xl sm:text-6xl font-bold my-4">Purple Meeple</h1>

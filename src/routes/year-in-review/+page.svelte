@@ -4,9 +4,8 @@
     import logo from '$lib/assets/purple_meeple_150.png';
 
     let username = '';
-    let loading = false;
     let error: null|number = null;
-
+    let loading = false;
     const month = dayjs().month();
     const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
 
@@ -16,7 +15,7 @@
         const response = await fetch(`/api/user?username=${username}`);
 
         if (response.ok) {
-            goto(`/${username}`);
+            goto(`/year-in-review/${username}`);
         } else {
             error = response.status;
         }
@@ -25,15 +24,17 @@
 </script>
 
 <div class="h-full flex flex-col justify-center items-center p-8">
-    <div class="flex">
-        <img class="h-10 w-10 sm:h-20 sm:w-20 mt-2 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />
-        <h1 class="w-full font-title text-center text-5xl sm:text-8xl font-bold mb-8">
-            Purple Meeple
-        </h1>
+    <div class="flex justify-center">
+        <img class="h-8 w-8 mt-5 sm:h-14 sm:w-14 sm:mt-4 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />
+        <h1 class="font-title text-center text-4xl sm:text-6xl font-bold my-4">Purple Meeple</h1>
+    </div>
+    <div class="font-title font-semibold text-5xl sm:text-7xl my-4 text-center">
+        <p class="bg-gradient-to-br from-blue-500 to-cyan-300 bg-clip-text text-transparent box-decoration-clone">Year in Review</p>
+        <p class="-mt-4 bg-gradient-to-br from-red-500 to-yellow-500 bg-clip-text text-transparent box-decoration-clone">{year}</p>
     </div>
     <div class="w-full md:w-[750px]">
         <p class="text-center mb-6">
-            Enter your BoardGameGeek username to view your board game library. Create a QR code with preset options, filters & sorting for quick access in the future.
+            Enter your BoardGameGeek username to view stats of your logged plays over the past year!
         </p>
         <form class="flex flex-col items-center space-y-2" on:submit|preventDefault={handleSubmit}>
             <input
@@ -52,15 +53,6 @@
                 { loading ? 'Loading...' : 'Submit' }
             </button>
         </form>
-        {#if month === 11 || month === 0}
-            <div class="mt-24 text-center">
-                <p class=" text-sm sm:text-base">Tracking your plays on BGG? View your yearly stats!</p>
-                <a class="font-title font-semibold text-4xl sm:text-5xl cursor-pointer" href="/year-in-review">
-                    <p class="bg-gradient-to-br from-blue-500 to-cyan-300 bg-clip-text text-transparent box-decoration-clone">Year in Review</p>
-                    <p class="-mt-4 bg-gradient-to-br from-red-500 to-yellow-500 bg-clip-text text-transparent box-decoration-clone">{year}</p>
-                </a>
-            </div>
-        {/if}
     </div>
     {#if error}
         <aside class="alert variant-ghost-primary mt-6">

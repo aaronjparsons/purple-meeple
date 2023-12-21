@@ -6,7 +6,7 @@
     import YearInReviewCard from '$lib/components/YearInReviewCard.svelte';
 
     const username = $page.params.username;
-    let year: number | null = 2023;
+    const year = dayjs().month() === 0 ? dayjs().year() - 1 : dayjs().year();
     let hasTimeBasedStats = true;
 
     const fetchPlays = async () => {

@@ -225,12 +225,10 @@ export const GET = async ({ url }) => {
     let images = {};
     let categories = {};
     let mechanics = {};
-    let games;
 
     if (gamesResponse.ok) {
         const text = await gamesResponse.text();
         const gamesParsed = parser.parse(text);
-        games = gamesParsed;
         [ images, categories, mechanics ] = parseGameData(gamesParsed.items.item, groupedByGame);
     } else {
         throw error(gamesResponse.status);
@@ -251,8 +249,6 @@ export const GET = async ({ url }) => {
     }
 
     return new Response(JSON.stringify({
-        // raw: parsed,
-        // games,
         ...response,
         categories,
         mechanics,
