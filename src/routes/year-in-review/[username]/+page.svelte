@@ -6,8 +6,14 @@
     import YearInReviewCard from '$lib/components/YearInReviewCard.svelte';
 
     const username = $page.params.username;
+    let displayName = '';
     const year = dayjs().month() === 0 ? dayjs().year() - 1 : dayjs().year();
     let hasTimeBasedStats = true;
+
+    const setDisplayName = () => {
+        const lastLetter = username.charAt(username.length - 1);
+        displayName = lastLetter.toLowerCase() === 's' ? `${username}'` : `${username}'s`;
+    }
 
     const fetchPlays = async () => {
         const response = await fetch(`/api/year-in-review?username=${username}&year=${year}`);
@@ -22,8 +28,12 @@
     }
 
     let playsRequest = fetchPlays();
+    setDisplayName();
 </script>
 
+<svelte:head>
+    <title>{ displayName } Year in Review ({year}) - Purple Meeple</title>
+</svelte:head>
 <div class="w-full flex justify-center my-4">
     <a href="/">
         <div class="flex justify-center">

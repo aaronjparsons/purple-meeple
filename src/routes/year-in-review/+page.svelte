@@ -23,6 +23,9 @@
     }
 </script>
 
+<svelte:head>
+    <title>Year in Review ({year}) - Purple Meeple</title>
+</svelte:head>
 <div class="h-full flex flex-col justify-center items-center p-8">
     <div class="flex justify-center">
         <img class="h-8 w-8 mt-5 sm:h-14 sm:w-14 sm:mt-4 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />

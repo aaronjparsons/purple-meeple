@@ -24,6 +24,9 @@
     }
 </script>
 
+<svelte:head>
+    <title>Purple Meeple</title>
+</svelte:head>
 <div class="h-full flex flex-col justify-center items-center p-8">
     <div class="flex">
         <img class="h-10 w-10 sm:h-20 sm:w-20 mt-2 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />
