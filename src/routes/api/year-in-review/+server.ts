@@ -112,7 +112,7 @@ export const GET = async ({ url }) => {
     }
 
     const response = {
-        totalPlayed: parseInt(parsed.plays['@_total']),
+        totalPlayed: 0,
         uniquePlayed: 0,
         totalTimePlayed: 0,
         longestPlaySession: {
@@ -138,8 +138,11 @@ export const GET = async ({ url }) => {
         const gameId = play.item['@_objectid'];
         const gameName = play.item['@_name'];
         const playTime = parseInt(play['@_length']);
+        const playQuantity = parseInt(play['@_quantity']);
         const date = play['@_date'];
         const month = date.split('-')[1];
+
+        response.totalPlayed += playQuantity;
 
         // Add time to aggregates
         if (playTime) {
@@ -156,11 +159,11 @@ export const GET = async ({ url }) => {
 
         // Group by game
         if (groupedByGame[gameId]) {
-            groupedByGame[gameId].playCount += 1;
+            groupedByGame[gameId].playCount += playQuantity;
             groupedByGame[gameId].length += playTime;
         } else {
             groupedByGame[gameId] = {
-                playCount: 1,
+                playCount: playQuantity,
                 length: playTime,
                 name: gameName
             }
@@ -168,22 +171,16 @@ export const GET = async ({ url }) => {
 
         // Group by date
         if (groupedByDate[date]) {
-            groupedByDate[date].push({
-                id: gameId,
-                length: playTime,
-            });
+            groupedByDate[date] += playQuantity;
         } else {
-            groupedByDate[date] = [{
-                id: gameId,
-                length: playTime,
-            }]
+            groupedByDate[date] = playQuantity
         }
 
         // Group by month
         if (groupedByMonth[month]) {
-            groupedByMonth[month] += 1;
+            groupedByMonth[month] += playQuantity;
         } else {
-            groupedByMonth[month] = 1;
+            groupedByMonth[month] = playQuantity;
         }
     }
 
@@ -199,11 +196,11 @@ export const GET = async ({ url }) => {
 
     // Get days most played
     const daysMostPlayedSorted = Object.entries(groupedByDate).sort((a, b) => {
-        return b[1].length - a[1].length;
+        return b[1] - a[1];
     });
-    const dayMostPlayedCount = daysMostPlayedSorted[0][1].length;
+    const dayMostPlayedCount = daysMostPlayedSorted[0][1];
     response.daysMostPlayed = daysMostPlayedSorted.filter(d => {
-        return d[1].length === dayMostPlayedCount;
+        return d[1] === dayMostPlayedCount;
     }).map(d => {
         return {
             date: d[0],

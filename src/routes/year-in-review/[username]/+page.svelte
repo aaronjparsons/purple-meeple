@@ -161,7 +161,12 @@
                 <YearInReviewCard bgClass="bg-gradient-to-br variant-gradient-primary-secondary">
                     <p class="sm:text-xl">Busiest Day</p>
                     <p class="text-2xl sm:text-5xl">{ dayjs(stats.daysMostPlayed[0].date).format('MMMM D') }</p>
-                    <p>{ stats.daysMostPlayed[0].plays.length } games played</p>
+                    <div class="flex justify-between">
+                        <p>{ stats.daysMostPlayed[0].plays } games played</p>
+                        {#if stats.daysMostPlayed.length > 1}
+                            <p>(+{stats.daysMostPlayed.length - 1} other day{stats.daysMostPlayed.length - 1 === 1 ? '' : 's'})</p>
+                        {/if}
+                    </div>
                 </YearInReviewCard>
                 <YearInReviewCard bgClass="bg-gradient-to-br variant-gradient-primary-secondary">
                     <p class="sm:text-xl">Busiest Month</p>
