@@ -2,9 +2,9 @@
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import ExtraDataModal from '$lib/components/ExtraDataModal.svelte';
     import { modalStore } from '@skeletonlabs/skeleton';
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon, ExternalLinkIcon } from "@rgossiaux/svelte-heroicons/solid";
     import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
-    import { getGameName, parseGamePlayerCount, getValue, convertToFloat, parseBestPlayerCount } from "$lib/utils";
+    import { getGameName, parseGamePlayerCount, getValue, convertToFloat, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { ratingKey } from "$lib/store";
 
     export let game: Game;
@@ -57,7 +57,7 @@
             <!-- <hr class="mx-2 opacity-50" /> -->
         </div>
         <div
-            class="flex-grow bg-cover bg-center rounded-tl-md rounded-br-md shadow-inner"
+            class="relative flex-grow bg-cover bg-center rounded-tl-md rounded-br-md shadow-inner"
             style="background-image: url('{game.image}');"
         >
             <!-- Extra info modal - Hidden until fully implemented -->
@@ -73,6 +73,13 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                 </svg>
             </button> -->
+            <a
+                href={getGameLink(game)}
+                target="_blank"
+                class="absolute bottom-2 right-2 bg-gray-800 bg-opacity-70 p-1 rounded-full"
+            >
+                <ExternalLinkIcon class="h-5 w-5" />
+            </a>
         </div>
     </div>
 </div>

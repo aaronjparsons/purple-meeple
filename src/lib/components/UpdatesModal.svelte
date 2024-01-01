@@ -8,6 +8,12 @@
 <div class="card w-modal p-4 shadow-lg">
     <h1 class="h1 mb-6">Updates</h1>
     <div>
+        <h4 class="h4">Dec 31, 2023</h4>
+        <p>
+            Added link to BGG page for games & expansions
+        </p>
+    </div>
+    <div>
         <h4 class="h4">Dec 21, 2023</h4>
         <p>
             Added the Year in Review feature. If you track your plays with BGG, you can view your stats for

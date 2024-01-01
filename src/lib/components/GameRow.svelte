@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ExternalLinkIcon } from "@rgossiaux/svelte-heroicons/solid";
     import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
-    import { getGameName, convertToFloat, getValue, parseGamePlayerCount, parseBestPlayerCount } from "$lib/utils";
+    import { getGameName, convertToFloat, getValue, parseGamePlayerCount, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { isScreenSmall, ratingKey } from "$lib/store";
 
     export let game: Game;
@@ -12,9 +12,17 @@
     class="card w-full max-w-[540px] flex rounded-md shadow-md mb-4"
 >
     <div
-        class="bg-cover bg-center flex-shrink-0 rounded-tl-md rounded-bl-md w-24"
+        class="relative bg-cover bg-center flex-shrink-0 rounded-tl-md rounded-bl-md w-24"
         style="background-image: url('{game.image}');"
-    ></div>
+    >
+        <a
+            href={getGameLink(game)}
+            target="_blank"
+            class="absolute bottom-2 right-2 bg-gray-800 bg-opacity-70 p-1 rounded-full"
+        >
+            <ExternalLinkIcon class="h-5 w-5" />
+        </a>
+    </div>
     <!-- <img class="flex-shrink-0 rounded-tl-md rounded-bl-md w-24 object-cover" src={game.image} alt="game cover" /> -->
     <div class="pt-1 pb-2 px-2">
         <h3 class="mb-1">{getGameName(game)}</h3>
