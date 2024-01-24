@@ -14,6 +14,7 @@
     import FeedbackModal from '$lib/components/FeedbackModal.svelte';
     import UpdatesModal from '$lib/components/UpdatesModal.svelte';
     import { Library, isScreenSmall } from "$lib/store";
+    import kofi from '$lib/assets/kofi_s_logo_nolabel.webp';
 
     let wrapper: HTMLElement;
     let showScrollToTopBtn = false;
@@ -91,11 +92,16 @@
         </button>
     {/if}
     <svelte:fragment slot="pageFooter">
-        <div class="text-center">
+        <div class="flex justify-center items-center">
             <!--<span class="mr-6">Made by X</span> | -->
             <button type="button" class="btn btn-sm !bg-transparent" on:click={openFeedback}>Submit feedback</button>
             <span>|</span>
             <button type="button" class="btn btn-sm !bg-transparent" on:click={openUpdates}>View updates</button>
+            <span>|</span>
+            <a href='https://ko-fi.com/G2G4TNFSY' target='_blank' class="btn btn-sm !bg-transparent">
+                <img src={kofi} class="w-8 h-8" alt="Buy me a coffee at ko-fi.com" />
+                Buy me a coffee
+            </a>
         </div>
     </svelte:fragment>
 </AppShell>

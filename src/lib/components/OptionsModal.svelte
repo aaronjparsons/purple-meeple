@@ -109,7 +109,10 @@
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
-                <option value="6">6+</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9+</option>
             </select>
         </label>
     </div>
@@ -126,7 +129,10 @@
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
-                <option value="6">6+</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9+</option>
             </select>
         </label>
         <label class="input-label w-1/2">
@@ -180,6 +186,6 @@
 </div>
 
 <div class="card p-2 variant-filled-primary max-w-[200px] shadow-lg" data-popup="geekRatingTooltip">
-	<p class="text-center">BGG uses a Bayesian average to determine a games geek rating</p>
+	<p class="text-center">Toggle between Geek rating or Average rating. (BGG uses a Bayesian average to determine a games geek rating)</p>
 	<div class="arrow variant-filled-primary" />
 </div>

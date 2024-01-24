@@ -133,9 +133,9 @@
                     return false;
                 }
 
-                if (selectedBestPlayerCount === 6) {
-                    // This is actually 6+. Consider all values 6 & above
-                    if (Math.max(...bestPlayerCounts.split(',').map(c => parseInt(c))) < 6) {
+                if (selectedBestPlayerCount === 9) {
+                    // This is actually 9+. Consider all values 9 & above
+                    if (Math.max(...bestPlayerCounts.split(',').map(c => parseInt(c))) < 9) {
                         return false;
                     }
                 } else {
@@ -536,11 +536,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
                 {#each collection as game}
                     <GameCard {game} />
+                {:else}
+                    <p class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-xl py-12">No results based on current filters</p>
                 {/each}
             </div>
         {:else}
             {#each collection as game}
                 <GameRow {game} />
+            {:else}
+                <p class="text-center text-xl py-12">No results based on current filters</p>
             {/each}
         {/if}
     </div>
