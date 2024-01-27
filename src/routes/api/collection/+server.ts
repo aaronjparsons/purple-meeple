@@ -52,8 +52,13 @@ export const GET = async ({ url }) => {
             if (parsed.errors && parsed.errors.error) {
                 const msg = parsed.errors.error.message;
                 if (msg === 'Invalid username specified') {
-                    throw error(404);
+                    throw error(404, 'Invalid BGG username. User not found.');
                 }
+            }
+
+            // No items in collection
+            if (parsed.items['@_totalitems'] === '0') {
+                throw error(400, 'No games in BGG collection.');
             }
 
             const items = Array.isArray(parsed.items.item)

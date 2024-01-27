@@ -269,6 +269,7 @@
                     }
                 }
             } else {
+                const { message } = await response.json();
                 if (response.status === 404) {
                     // User doesn't exist
                     const toast: ToastSettings = {
@@ -282,7 +283,7 @@
                     return;
                 }
 
-                return Promise.reject(response)
+                return Promise.reject({ status: response.status, message })
             }
         }
 
@@ -311,7 +312,8 @@
                 collectionChunks.push(...res.games);
                 await sleep(1500);
             } else {
-                return Promise.reject(response)
+                const { message } = await response.json();
+                return Promise.reject({ status: response.status, message });
             }
         }
 
@@ -359,7 +361,8 @@
                     }
                 }
             } else {
-                return Promise.reject(response)
+                const { message } = await response.json();
+                return Promise.reject({ status: response.status, message })
             }
         }
 
@@ -387,7 +390,8 @@
                 collectionChunks.push(...res.games);
                 await sleep(1500);
             } else {
-                return Promise.reject(response)
+                const { message } = await response.json();
+                return Promise.reject({ status: response.status, message })
             }
         }
 
@@ -561,7 +565,7 @@
             <aside class="alert variant-ghost-primary mt-6">
                 <div class="alert-message text-center">
                     <p>Unable to load library for user <span class="font-semibold">{ username }</span></p>
-                    <p>An unknown error has occurred.</p>
+                    <p>{error.message || 'An unknown error has occurred.'}</p>
                 </div>
             </aside>
             <button class="btn variant-filled-secondary mt-4" on:click={initFetchCollection}>Retry</button>
