@@ -8,17 +8,20 @@
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { page } from "$app/stores";
-    import { browser } from '$app/environment';
+    import { browser, dev  } from '$app/environment';
     import { goto } from '$app/navigation';
     import Analytics from '$lib/components/Analytics.svelte';
     import FeedbackModal from '$lib/components/FeedbackModal.svelte';
     import UpdatesModal from '$lib/components/UpdatesModal.svelte';
     import { Library, isScreenSmall } from "$lib/store";
     import kofi from '$lib/assets/kofi_s_logo_nolabel.webp';
+    import { inject } from '@vercel/analytics';
 
     let wrapper: HTMLElement;
     let showScrollToTopBtn = false;
+
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+    inject({ mode: dev ? 'development' : 'production' });
 
     onMount(() => {
         if (browser) {
