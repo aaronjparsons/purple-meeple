@@ -28,6 +28,7 @@
                 'phc_gQBmUSzlk8BpoEssnv5RnlpQqitinyRZKTGBu89tJZH',
                 { api_host: "https://us.i.posthog.com" }
             );
+            posthog.reset();
 
             wrapper = document.querySelector('#page');
             wrapper.addEventListener('scroll', handleScroll);

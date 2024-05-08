@@ -31,10 +31,6 @@
     const month = dayjs().month();
     const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
 
-    onDestroy(() => {
-        posthog.reset();
-    })
-
     const setDisplayName = () => {
         const lastLetter = username.charAt(username.length - 1);
         displayName = lastLetter.toLowerCase() === 's' ? `${username}'` : `${username}'s`;
