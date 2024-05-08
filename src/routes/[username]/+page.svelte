@@ -1,5 +1,6 @@
 <script lang="ts">
     import dayjs from 'dayjs';
+    import posthog from 'posthog-js'
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore } from '@skeletonlabs/skeleton';
     import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
@@ -40,11 +41,9 @@
 
         // Send analytics event if qrRef is included in query params
         if (searchParams.has('qrRef')) {
-            if (gtag) {
-                gtag('event', 'qr_ref', {
-                    'username': username
-                });
-            }
+            posthog.capture('qr_ref', {
+                username: username
+            });
             searchParams.delete('qrRef');
         }
 
@@ -471,7 +470,7 @@
                 {/if}
             </h3>
             <p>
-                If this is the first time loading your collection or if your collection has changed,
+                If this is the first time loading your collection,
                 this may take some time as BoardGameGeek has to process your collection first.
             </p>
         </div>

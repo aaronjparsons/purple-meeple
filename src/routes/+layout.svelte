@@ -2,6 +2,7 @@
     import '../purp-theme.postcss';
     import '@skeletonlabs/skeleton/styles/skeleton.css';
     import "../app.css";
+    import posthog from 'posthog-js'
     import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
     import { AppShell, Modal, Toast, storePopup, modalStore } from '@skeletonlabs/skeleton';
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
@@ -15,16 +16,19 @@
     import UpdatesModal from '$lib/components/UpdatesModal.svelte';
     import { Library, isScreenSmall } from "$lib/store";
     import kofi from '$lib/assets/kofi_s_logo_nolabel.webp';
-    import { inject } from '@vercel/analytics';
 
     let wrapper: HTMLElement;
     let showScrollToTopBtn = false;
 
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
-    inject({ mode: dev ? 'development' : 'production' });
 
     onMount(() => {
         if (browser) {
+            posthog.init(
+                'phc_gQBmUSzlk8BpoEssnv5RnlpQqitinyRZKTGBu89tJZH',
+                { api_host: "https://us.i.posthog.com" }
+            );
+
             wrapper = document.querySelector('#page');
             wrapper.addEventListener('scroll', handleScroll);
         }
@@ -110,7 +114,7 @@
 </AppShell>
 <Modal />
 <Toast zIndex="z-[1000]" />
-<Analytics />
+<!-- <Analytics /> -->
 
 <style>
     :global(.modal) {

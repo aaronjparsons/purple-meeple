@@ -2,9 +2,10 @@
     import { onMount } from 'svelte';
     import { fade, crossfade } from 'svelte/transition';
     import { quintOut } from 'svelte/easing';
-    import { flip } from 'svelte/animate';
+    import posthog from 'posthog-js'
     import { modalStore } from '@skeletonlabs/skeleton';
     import { sleep, getRandomInt, getGameName } from '$lib/utils';
+    import { Library } from "$lib/store";
 
     export let currentGameList: Game[] = [];
 
@@ -18,6 +19,12 @@
     onMount(async () => {
         buildList();
     })
+
+    const respin = () => {
+        translateVal = 0;
+        buildList();
+        spin();
+    }
 
     const buildList = () => {
         const newList = [];
@@ -36,11 +43,10 @@
         await sleep(300);
         startSpinAnimation();
 
-        if (gtag) {
-            gtag('event', 'random_game', {
-                'game': getGameName(selectedGame)
-            });
-        }
+        posthog.capture('random_game', {
+            username: $Library.username,
+            game: getGameName(selectedGame)
+        });
     }
 
     const startSpinAnimation = async () => {
@@ -131,6 +137,9 @@
     </div>
     <hr class="my-4" />
     <div class="flex justify-end">
+        {#if modalState === 'display'}
+            <button class="btn variant-ringed-surface mr-6" on:click={respin}>Spin again</button>
+        {/if}
         <button class="btn variant-ringed-surface" on:click={() => modalStore.close()}>Close</button>
     </div>
 </div>

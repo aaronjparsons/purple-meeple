@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import posthog from 'posthog-js'
     import { SlideToggle, modalStore } from '@skeletonlabs/skeleton';
     import logo from '$lib/assets/purple_meeple_150.png';
     import { Library, libraryOptions } from "$lib/store";
@@ -82,11 +83,9 @@
     }
 
     const downloadQr = () => {
-        if (gtag) {
-            gtag('event', 'qr_download', {
-                'username': $Library.username
-            });
-        }
+        posthog.capture('qr_download', {
+            username: $Library.username
+        });
 
         qrCode.download({
             name: `${$Library.username}-collection-qr`,
