@@ -31,6 +31,10 @@
     const month = dayjs().month();
     const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
 
+    onDestroy(() => {
+        posthog.reset();
+    })
+
     const setDisplayName = () => {
         const lastLetter = username.charAt(username.length - 1);
         displayName = lastLetter.toLowerCase() === 's' ? `${username}'` : `${username}'s`;
@@ -289,6 +293,8 @@
         let collectionChunks = [];
         collectionLength = gameIds.length;
         loadingState = 'games';
+
+        posthog.identify(username, { username });
 
         // Request details on items in collection (350 at a time)
         const chunkSize = 350;
