@@ -45,6 +45,8 @@
                 type="text"
                 name="name"
                 required
+                pattern="^\S*$"
+                title="This field is required & may not contain any spaces"
                 placeholder="BoardGameGeek username"
             >
             <button

@@ -13,8 +13,13 @@ export const GET = async ({ url }) => {
             const parser = new XMLParser({ ignoreAttributes: false });
             const parsed = parser.parse(text);
 
-            // Invalid username error
-            if (parsed.user['@_id'].length === 0) {
+            if (parsed?.html?.head?.title.includes('404')) {
+                // Handle 404 html response
+                throw error(404);
+            }
+
+            if (parsed?.user['@_id'].length === 0) {
+                // Handle no username (may be a deprecated response)
                 throw error(404);
             }
 
