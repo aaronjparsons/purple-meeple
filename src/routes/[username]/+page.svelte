@@ -2,7 +2,7 @@
     import dayjs from 'dayjs';
     import posthog from 'posthog-js'
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
-    import { RadioGroup, RadioItem, modalStore, toastStore } from '@skeletonlabs/skeleton';
+    import { RadioGroup, RadioItem, modalStore, toastStore, ProgressBar } from '@skeletonlabs/skeleton';
     import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
     import { onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
@@ -26,10 +26,14 @@
     let collectionLoadAttempts = 0;
     let collectionLength = 0;
     let currentChunkRange = '';
+    let chunkSize = 250;
+    let currentChunkLoop = 0;
     let loadingState: string|null = null;
 
     const month = dayjs().month();
     const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
+
+    $: gameLoadingProgress = ((chunkSize * currentChunkLoop) / collectionLength) * 100;
 
     const setDisplayName = () => {
         const lastLetter = username.charAt(username.length - 1);
@@ -292,8 +296,7 @@
 
         posthog.identify(username, { username });
 
-        // Request details on items in collection (350 at a time)
-        const chunkSize = 350;
+        // Request details on items in collection
         for (let i = 0; i < collectionLength; i += (chunkSize + 1)) {
             const currentChunk = gameIds.slice(i, i + chunkSize + 1);
 
@@ -311,7 +314,10 @@
             if (response.ok) {
                 const res = await response.json();
                 collectionChunks.push(...res.games);
-                await sleep(1500);
+                // Rate limit & let progress bar animate before next chunk
+                await sleep(1350);
+                currentChunkLoop++;
+                await sleep(150);
             } else {
                 const { message } = await response.json();
                 return Promise.reject({ status: response.status, message });
@@ -370,8 +376,7 @@
         let collectionChunks = [];
         collectionLength = gameIds.length;
 
-        // Request details on items in collection (350 at a time)
-        const chunkSize = 350;
+        // Request details on items in collection
         for (let i = 0; i < collectionLength; i += (chunkSize + 1)) {
             const currentChunk = gameIds.slice(i, i + chunkSize + 1);
 
@@ -462,19 +467,19 @@
             loop
             autoplay
         ></lottie-player>
-        <div class="text-center max-w-[750px] mt-8">
-            <h3 class="mb-4">
-                {#if loadingState === 'collection'}
-                    Loading collection...
-                {:else if loadingState === 'games'}
-                    <!-- Collection loaded. Loading data for { collectionLength } games... -->
+        <div class="text-center max-w-[750px] mt-8" transition:fade>
+            {#if loadingState === 'collection'}
+                <h3 class="mb-4">Loading collection...</h3>
+                <p>
+                    If this is the first time loading your collection,
+                    this may take some time as BoardGameGeek has to process your collection first.
+                </p>
+            {:else if loadingState === 'games'}
+                <h3 class="mb-4">
                     Collection loaded ({ collectionLength } games).<br/>Loading games {currentChunkRange}...
-                {/if}
-            </h3>
-            <p>
-                If this is the first time loading your collection,
-                this may take some time as BoardGameGeek has to process your collection first.
-            </p>
+                </h3>
+                <ProgressBar value={gameLoadingProgress} max={100} meter="bg-surface-900-50-token transition-[width]" />
+            {/if}
         </div>
         {#if collectionLoadAttempts >= 2}
             <aside class="alert variant-ghost-primary mt-6 max-w-[750px]">
