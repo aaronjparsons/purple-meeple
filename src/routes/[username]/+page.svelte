@@ -197,6 +197,8 @@
             component: modalComponent
         };
         modalStore.trigger(d);
+
+        posthog.capture('random_game_modal_opened');
     }
 
     const openQR = () => {
@@ -211,6 +213,8 @@
             component: modalComponent
         };
         modalStore.trigger(d);
+
+        posthog.capture('qr_modal_opened');
     }
 
     const openOptions = () => {
@@ -226,6 +230,8 @@
             response: applyOptions
         };
         modalStore.trigger(d);
+
+        posthog.capture('options_modal_opened');
     }
 
     const sortAndFilter = (arr: Game[]) => {
