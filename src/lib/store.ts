@@ -5,7 +5,9 @@ export const Library = writable({
     data: [],
     username: '',
     updateRequired: false,
-    loaded: false
+    loaded: false,
+    gameCount: 0,
+    expansionCount: 0,
 });
 export const libraryLoaded = writable(false);
 export const libraryOptions = writable({

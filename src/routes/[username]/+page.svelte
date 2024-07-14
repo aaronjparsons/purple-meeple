@@ -335,12 +335,18 @@
             game.numplays = plays[game['@_id']];
         }
 
+        // Get counts
+        const expansionCount = collectionChunks.filter(g => g['@_type'] === 'boardgameexpansion').length;
+        const gameCount = collectionChunks.length - expansionCount;
+
         loadingState = null;
         $Library = {
             data: collectionChunks,
             username,
             updateRequired,
-            loaded: true
+            loaded: true,
+            gameCount,
+            expansionCount
         };
         collection = sortAndFilter(collectionChunks);
         setSearchParams();
@@ -513,11 +519,14 @@
         <h1 class="font-title text-center text-4xl sm:text-6xl font-bold my-4">Purple Meeple</h1>
     </div>
     <div transition:fade class="flex flex-col items-center px-4 m-auto sm:max-w-[1020px]">
-        <p class="unstyled text-center text-base sm:text-lg capitalize">
+        <p class="unstyled text-center text-base sm:text-lg">
             {displayName} Collection
         </p>
+        <p class="unstyled text-center text-sm sm:text-base">
+            {$Library.gameCount} games, {$Library.expansionCount} expansions
+        </p>
         <p class="unstyled text-center text-xs sm:text-sm">
-            Showing {collection.length} of {$Library.data.length} games
+            Showing {collection.length} of {$Library.data.length} items
         </p>
         {#if $Library.updateRequired}
             <p class="unstyled update-required text-center text-xs sm:text-sm">
