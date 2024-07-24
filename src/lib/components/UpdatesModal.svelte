@@ -9,6 +9,14 @@
     <h1 class="h1 mb-6">Updates</h1>
     <div class="flex flex-col gap-y-4">
         <div>
+            <h4 class="h4">Jul 23, 2024</h4>
+            <p>
+                Sorry for the issues lately. There has been an ongoing problem with the BoardGameGeek API that other developers have also been reporting, where retrieving
+                game data is sometimes corrupt/incomplete. BoardGameGeek have also stated that they are limiting the API to 20 items, so loading game data will take a bit
+                longer now (we used to load 250 at a time). Hoping that only loading 20 games at a time will help with the issue.
+            </p>
+        </div>
+        <div>
             <h4 class="h4">Jan 23, 2024</h4>
             <p>
                 Player Count & Best Player Count filter options bumped up from 6 to 9 (thanks for the suggestion!)

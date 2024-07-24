@@ -26,7 +26,7 @@
     let collectionLoadAttempts = 0;
     let collectionLength = 0;
     let currentChunkRange = '';
-    let chunkSize = 250;
+    let chunkSize = 20;
     let currentChunkLoop = 0;
     let loadingState: string|null = null;
 
@@ -321,7 +321,7 @@
                 const res = await response.json();
                 collectionChunks.push(...res.games);
                 // Rate limit & let progress bar animate before next chunk
-                await sleep(1350);
+                await sleep(1750);
                 currentChunkLoop++;
                 await sleep(150);
             } else {
