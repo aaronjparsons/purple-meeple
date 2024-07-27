@@ -303,8 +303,8 @@
         posthog.identify(username, { username });
 
         // Request details on items in collection
-        for (let i = 0; i < collectionLength; i += (chunkSize + 1)) {
-            const currentChunk = gameIds.slice(i, i + chunkSize + 1);
+        for (let i = 0; i < collectionLength; i += chunkSize) {
+            const currentChunk = gameIds.slice(i, i + chunkSize);
 
             const tail = i + chunkSize > collectionLength ? collectionLength : i + chunkSize;
             currentChunkRange = `${i || 1} - ${tail}`;
