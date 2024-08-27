@@ -307,7 +307,7 @@
             const currentChunk = gameIds.slice(i, i + chunkSize);
 
             const tail = i + chunkSize > collectionLength ? collectionLength : i + chunkSize;
-            currentChunkRange = `${i || 1} - ${tail}`;
+            currentChunkRange = `${i + 1} - ${tail}`;
 
             const response = await fetch('/api/games', {
                 method: 'POST',
