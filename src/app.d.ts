@@ -19,7 +19,7 @@ interface Game {
 	minage: ValueObject,
 	minplayers: ValueObject,
 	minplaytime: ValueObject,
-	name: ValueObject[],
+	name: string,
 	numplays: number,
 	playingtime: ValueObject,
 	poll: Poll[],

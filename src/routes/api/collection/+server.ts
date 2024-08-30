@@ -18,8 +18,7 @@ export const GET = async ({ url }) => {
     if (data && data.length) {
         const row = data[0];
         userCollection = {
-            gameIds: row.games,
-            plays: row.plays
+            collection: row.collection
         }
     }
 
@@ -30,7 +29,7 @@ export const GET = async ({ url }) => {
     if (collectionResponse.ok) {
         if (collectionResponse.status === 202) {
             // BGG preparing request. Fetch again soon
-            if (userCollection !== null) {
+            if (userCollection !== null && userCollection.collection) {
                 // Return db collection with a "updated needed" flag
                 return new Response(JSON.stringify({
                     ...userCollection,
@@ -65,30 +64,46 @@ export const GET = async ({ url }) => {
                 ? parsed.items.item
                 : [parsed.items.item]
             const gameIds = items.map(thing => thing['@_objectid']);
+            const collection = items.reduce((o, game) => {
+                return {
+                    ...o,
+                    [game['@_objectid']]: { name: game.name['#text'], image: game.image, numplays: game.numplays }
+                }
+            }, {});
             const plays = items.reduce((o, thing) => {
                 return { ...o, [thing['@_objectid']]: thing.numplays }
             }, {});
 
+
             if (userCollection !== null) {
                 // Compare entry with BGG response to see if out of date
-                const gamesAreSame = sortAndCompare(userCollection.gameIds, gameIds);
-                const mappedEntryPlays = mapPlays(userCollection.plays);
-                const mappedBggPlays = mapPlays(plays);
-                const playsAreSame = sortAndCompare(mappedEntryPlays, mappedBggPlays);
+                console.log(userCollection)
+                let gamesAreSame = true;
+                let playsAreSame = true;
 
-                if (!gamesAreSame || !playsAreSame) {
+                if (userCollection.collection) {
+                    const collectionGameIds = Object.keys(userCollection.collection);
+                    const collectionPlays = Object.entries(userCollection.collection).reduce((o, [key, value]) => {
+                        return { ...o, [key]: value.numplays }
+                    }, {});
+
+                    gamesAreSame = sortAndCompare(collectionGameIds, gameIds);
+                    const mappedEntryPlays = mapPlays(collectionPlays);
+                    const mappedBggPlays = mapPlays(plays);
+                    playsAreSame = sortAndCompare(mappedEntryPlays, mappedBggPlays);
+                }
+
+                if (!gamesAreSame || !playsAreSame || !userCollection.collection) {
                     // Entry out of date, update it
                     const { error } = await supabase.from('collections').update({
-                        games: gameIds,
-                        plays
+                        collection
                     }).eq('username', username);
                 }
             } else {
                 // First time user, create collection entry in DB
                 const { data, error } = await supabase.from('collections').insert([{
                     username,
-                    games: gameIds,
-                    plays
+                    collection
                 }])
 
                 if (error) {
@@ -97,8 +112,7 @@ export const GET = async ({ url }) => {
             }
 
             const res = {
-                gameIds,
-                plays
+                collection
             }
             return new Response(JSON.stringify(res));
         }

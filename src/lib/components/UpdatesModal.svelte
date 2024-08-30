@@ -9,6 +9,13 @@
     <h1 class="h1 mb-6">Updates</h1>
     <div class="flex flex-col gap-y-4">
         <div>
+            <h4 class="h4">Aug 30, 2024</h4>
+            <p>
+                Will now display the name & image of the specific version of a game you own. Apologies for the slow loading
+                of games, the BGG API has been very slow lately.
+            </p>
+        </div>
+        <div>
             <h4 class="h4">Jul 23, 2024</h4>
             <p>
                 Sorry for the issues lately. There has been an ongoing problem with the BoardGameGeek API that other developers have also been reporting, where retrieving

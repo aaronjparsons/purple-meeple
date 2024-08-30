@@ -257,7 +257,7 @@
         let requestingCollection = true;
         let attempts = 0;
         let gameIds = [];
-        let plays = {};
+        let coll = [];
         let updateRequired = false;
         while (requestingCollection) {
             const response = await fetch(`/api/collection?username=${username}`);
@@ -269,8 +269,8 @@
                     collectionLoadAttempts++;
                 } else {
                     const res = await response.json();
-                    gameIds = res.gameIds;
-                    plays = res.plays;
+                    gameIds = Object.keys(res.collection);
+                    coll = res.collection;
                     updateRequired = res.updateRequired;
                     requestingCollection = false;
                     if (updateRequired) {
@@ -319,7 +319,11 @@
 
             if (response.ok) {
                 const res = await response.json();
-                collectionChunks.push(...res.games);
+                for (const g of res.games) {
+                    const id = g['@_id'];
+                    const game = { ...g, ...coll[id] };
+                    collectionChunks.push(game);
+                }
                 // Rate limit & let progress bar animate before next chunk
                 await sleep(1750);
                 currentChunkLoop++;
@@ -328,11 +332,6 @@
                 const { message } = await response.json();
                 return Promise.reject({ status: response.status, message });
             }
-        }
-
-        // Merge games & plays
-        for (const game of collectionChunks) {
-            game.numplays = plays[game['@_id']];
         }
 
         // Get counts
@@ -360,7 +359,7 @@
         // Lazy copy paste of main fetch
         let updatingBackground = true;
         let gameIds = [];
-        let plays = {};
+        let coll = [];
         while (updatingBackground) {
             const response = await fetch(`/api/collection?username=${username}`);
             if (response.ok) {
@@ -374,8 +373,8 @@
                         // BGG still preparing
                         await sleep(20000);
                     } else {
-                        gameIds = res.gameIds;
-                        plays = res.plays;
+                        gameIds = Object.keys(res.collection);
+                        coll = res.collection;
                         updatingBackground = false;
                     }
                 }
@@ -405,17 +404,16 @@
 
             if (response.ok) {
                 const res = await response.json();
-                collectionChunks.push(...res.games);
+                for (const g of res.games) {
+                    const id = g['@_id'];
+                    const game = { ...g, ...coll[id] };
+                    collectionChunks.push(game);
+                }
                 await sleep(1500);
             } else {
                 const { message } = await response.json();
                 return Promise.reject({ status: response.status, message })
             }
-        }
-
-        // Merge games & plays
-        for (const game of collectionChunks) {
-            game.numplays = plays[game['@_id']];
         }
 
         $Library = {
