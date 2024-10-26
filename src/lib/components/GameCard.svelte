@@ -32,7 +32,7 @@
         <div class="flex-col space-y-2">
             <div class="margin-auto text-center min-w-[56px]">
                 <FireIcon class="inline-block h-6 w-6" />
-                <p>{convertToFloat(getValue(game.statistics.ratings[$ratingKey]), 1)}</p>
+                <p>{convertToFloat(game.statistics[$ratingKey], 1)}</p>
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
@@ -47,12 +47,12 @@
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
                 <ClockIcon class="inline-block h-6 w-6" />
-                <p>{getValue(game.playingtime)}</p>
+                <p>{game.playingtime}</p>
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
                 <ScaleIcon class="inline-block h-6 w-6" />
-                <p>{convertToFloat(getValue(game.statistics.ratings.averageweight), 1)}</p>
+                <p>{convertToFloat(game.statistics.averageweight, 1)}</p>
             </div>
             <!-- <hr class="mx-2 opacity-50" /> -->
         </div>

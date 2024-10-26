@@ -2,6 +2,7 @@
     import dayjs from 'dayjs';
     import { goto } from '$app/navigation';
     import logo from '$lib/assets/purple_meeple_150.png';
+    import { Library } from "$lib/store";
 
     let username = '';
     let loading = false;
@@ -16,6 +17,10 @@
         const response = await fetch(`/api/user?username=${username}`);
 
         if (response.ok) {
+            $Library = {
+                ...$Library,
+                username,
+            }
             goto(`/${username}`);
         } else {
             error = response.status;
@@ -57,7 +62,8 @@
                 { loading ? 'Loading...' : 'Submit' }
             </button>
         </form>
-        {#if month === 11 || month === 0}
+        <!-- TODO: Year in review needs to be refactor tp accomodate BGG api changes -->
+        <!-- {#if month === 11 || month === 0}
             <div class="mt-24 text-center">
                 <p class=" text-sm sm:text-base">Tracking your plays on BGG? View your yearly stats!</p>
                 <a class="font-title font-semibold text-4xl sm:text-5xl cursor-pointer" href="/year-in-review">
@@ -65,7 +71,7 @@
                     <p class="-mt-4 bg-gradient-to-br from-red-500 to-yellow-500 bg-clip-text text-transparent box-decoration-clone">{year}</p>
                 </a>
             </div>
-        {/if}
+        {/if} -->
     </div>
     {#if error}
         <aside class="alert variant-ghost-primary mt-6">

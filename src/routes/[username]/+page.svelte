@@ -1,6 +1,7 @@
 <script lang="ts">
     import dayjs from 'dayjs';
     import posthog from 'posthog-js'
+    import * as Sentry from '@sentry/sveltekit';
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore, ProgressBar } from '@skeletonlabs/skeleton';
     import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
@@ -16,7 +17,7 @@
     import OptionsModal from "$lib/components/OptionsModal.svelte";
     import QRModal from "$lib/components/QRModal.svelte";
     import RandomGameModal from "$lib/components/RandomGameModal.svelte";
-    import { getValue, sleep, getGameName, parseBestPlayerCount } from "$lib/utils";
+    import { sleep, getGameName, parseBestPlayerCount } from "$lib/utils";
     import { Library, libraryOptions, ratingKey } from "$lib/store";
 
     const username = $page.params.username;
@@ -25,15 +26,12 @@
     let collection: Game[] = [];
     let collectionLoadAttempts = 0;
     let collectionLength = 0;
-    let currentChunkRange = '';
     let chunkSize = 20;
-    let currentChunkLoop = 0;
     let loadingState: string|null = null;
+    let gameLoadingProgress = 0;
 
     const month = dayjs().month();
     const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
-
-    $: gameLoadingProgress = ((chunkSize * currentChunkLoop) / collectionLength) * 100;
 
     const setDisplayName = () => {
         const lastLetter = username.charAt(username.length - 1);
@@ -74,8 +72,8 @@
         switch($libraryOptions.selectedSort) {
             case 'release':
                 sorted = col.sort((a: Game, b: Game) => {
-                    const releasedA = parseInt(getValue(a.yearpublished));
-                    const releasedB = parseInt(getValue(b.yearpublished));
+                    const releasedA = a.yearpublished;
+                    const releasedB = b.yearpublished;
                     return isAsc
                         ? releasedA > releasedB ? -1 : 1
                         : releasedA > releasedB ? 1 : -1
@@ -83,8 +81,8 @@
                 break;
             case 'rating':
                 sorted = col.sort((a: Game, b: Game) => {
-                    const ratingA = getValue(a.statistics.ratings[$ratingKey]);
-                    const ratingB = getValue(b.statistics.ratings[$ratingKey]);
+                    const ratingA = a.statistics[$ratingKey];
+                    const ratingB = b.statistics[$ratingKey];
                     return isAsc
                         ? ratingA > ratingB ? -1 : 1
                         : ratingA > ratingB ? 1 : -1
@@ -92,8 +90,8 @@
                 break;
             case 'weight':
                 sorted = col.sort((a: Game, b: Game) => {
-                    const ratingA = getValue(a.statistics.ratings.averageweight);
-                    const ratingB = getValue(b.statistics.ratings.averageweight);
+                    const ratingA = a.statistics.averageweight;
+                    const ratingB = b.statistics.averageweight;
                     return isAsc
                         ? ratingA > ratingB ? -1 : 1
                         : ratingA > ratingB ? 1 : -1
@@ -116,14 +114,14 @@
 
     const applyFilters = (col: Game[]) => {
         col = col.filter((game: Game) => {
-            if (!$libraryOptions.includeExpansions && game['@_type'] !== 'boardgame') {
+            if (!$libraryOptions.includeExpansions && game.type !== 'boardgame') {
                 return false;
             }
 
             if ($libraryOptions.filters.playerCount !== 'any') {
                 const playerCount = parseInt($libraryOptions.filters.playerCount);
-                const maxplayerCount = parseInt(getValue(game.maxplayers));
-                const minplayerCount = parseInt(getValue(game.minplayers));
+                const maxplayerCount = game.maxplayers;
+                const minplayerCount = game.minplayers;
                 if (!(playerCount >= minplayerCount && playerCount <= maxplayerCount)) {
                     return false;
                 }
@@ -149,14 +147,14 @@
             }
             if ($libraryOptions.filters.playtime !== 'any') {
                 const playtime = parseInt($libraryOptions.filters.playtime);
-                const maxplaytime = parseInt(getValue(game.maxplaytime));
+                const maxplaytime = game.maxplaytime;
                 if (maxplaytime > playtime) {
                     return false;
                 }
             }
             if ($libraryOptions.filters.rating !== 'any') {
                 const rating = parseInt($libraryOptions.filters.rating);
-                const gameRating = parseFloat(getValue(game.statistics.ratings[$ratingKey]))
+                const gameRating = game.statistics[$ratingKey]
 
                 if (gameRating < rating) {
                     return false;
@@ -164,7 +162,7 @@
             }
             if ($libraryOptions.filters.weight !== 'any') {
                 const weight = parseInt($libraryOptions.filters.weight);
-                const avgweight = parseFloat(getValue(game.statistics.ratings.averageweight));
+                const avgweight = game.statistics.averageweight;
                 if (avgweight > weight) {
                     return false;
                 }
@@ -246,108 +244,103 @@
         setSearchParams();
     }
 
-    const fetchCollection = async () => {
-        setDisplayName();
+    const parseCollectionStream = async () => {
 
-        // Set options based on search params
+    }
+
+    const fetchCollection = async () => {
+        if (!$Library.username) {
+            // User landed here directly, validate username
+            const response = await fetch(`/api/user?username=${username}`);
+
+            if (response.status === 404) {
+                // User doesn't exist
+                const toast: ToastSettings = {
+                    message: 'Unable to find a user with that username. Please try again',
+                    background: 'variant-filled-primary',
+                    autohide: true,
+                    timeout: 5000
+                };
+                toastStore.trigger(toast);
+                goto('/');
+                return;
+            }
+        }
+
+        setDisplayName();
         setLibraryOptions();
+        posthog.identify(username, { username });
 
         collectionLoadAttempts = 0;
         loadingState = 'collection';
         let requestingCollection = true;
-        let attempts = 0;
-        let gameIds = [];
-        let coll = [];
-        let updateRequired = false;
+        let finalResponse = {};
+
         while (requestingCollection) {
             const response = await fetch(`/api/collection?username=${username}`);
-            // TODO: set updateRequired indicator & initiate a request retry
             if (response.ok) {
                 if (response.status === 202) {
                     // BGG preparing
                     await sleep(10000);
                     collectionLoadAttempts++;
                 } else {
-                    const res = await response.json();
-                    gameIds = Object.keys(res.collection);
-                    coll = res.collection;
-                    updateRequired = res.updateRequired;
                     requestingCollection = false;
-                    if (updateRequired) {
+                    loadingState = 'games';
+                    let collectionAccumulator = '';
+                    let isLast = false;
+                    let reader = response.body.getReader();
+                    let result;
+                    let decoder = new TextDecoder();
+                    while (!result?.done) {
+                        result = await reader.read();
+                        if (result.value) {
+                            let chunk = decoder.decode(result.value);
+
+                            if (chunk === 'error') {
+                                Sentry.captureException(new Error('collection stream failed'));
+                                return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
+                            }
+
+                            if (chunk.substring(0, 4) === 'last') {
+                                isLast = true;
+                                chunk = chunk.split('last:')[1];
+                            }
+
+                            if (isLast) {
+                                collectionAccumulator += chunk;
+                            } else {
+                                gameLoadingProgress = parseInt(chunk);
+                            }
+                        }
+                    }
+                    finalResponse = JSON.parse(collectionAccumulator);
+
+                    // TODO: Refactor background update
+                    if (finalResponse.updateRequired) {
                         backgroundUpdateRefresh();
                     }
                 }
             } else {
                 const { message } = await response.json();
-                if (response.status === 404) {
-                    // User doesn't exist
-                    const toast: ToastSettings = {
-                        message: 'Unable to find a user with that username. Please try again',
-                        background: 'variant-filled-primary',
-                        autohide: true,
-                        timeout: 5000
-                    };
-                    toastStore.trigger(toast);
-                    goto('/');
-                    return;
-                }
-
+                Sentry.captureException(new Error(message));
                 return Promise.reject({ status: response.status, message })
             }
         }
 
-        let collectionChunks = [];
-        collectionLength = gameIds.length;
-        loadingState = 'games';
-
-        posthog.identify(username, { username });
-
-        // Request details on items in collection
-        for (let i = 0; i < collectionLength; i += chunkSize) {
-            const currentChunk = gameIds.slice(i, i + chunkSize);
-
-            const tail = i + chunkSize > collectionLength ? collectionLength : i + chunkSize;
-            currentChunkRange = `${i + 1} - ${tail}`;
-
-            const response = await fetch('/api/games', {
-                method: 'POST',
-                body: JSON.stringify({ gameIds: currentChunk, username }),
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                const res = await response.json();
-                for (const g of res.games) {
-                    const id = g['@_id'];
-                    const game = { ...g, ...coll[id] };
-                    collectionChunks.push(game);
-                }
-                // Rate limit & let progress bar animate before next chunk
-                await sleep(1750);
-                currentChunkLoop++;
-                await sleep(150);
-            } else {
-                const { message } = await response.json();
-                return Promise.reject({ status: response.status, message });
-            }
-        }
-
         // Get counts
-        const expansionCount = collectionChunks.filter(g => g['@_type'] === 'boardgameexpansion').length;
-        const gameCount = collectionChunks.length - expansionCount;
+        const expansionCount = finalResponse.collection.filter(g => g.type === 'boardgameexpansion').length;
+        const gameCount = finalResponse.collection.length - expansionCount;
 
         loadingState = null;
         $Library = {
-            data: collectionChunks,
+            data: finalResponse.collection,
             username,
-            updateRequired,
+            updateRequired: finalResponse.updateRequired,
             loaded: true,
             gameCount,
             expansionCount
         };
-        collection = sortAndFilter(collectionChunks);
+        collection = sortAndFilter(finalResponse.collection);
         setSearchParams();
         await sleep(150);
     }
@@ -359,70 +352,66 @@
         // Lazy copy paste of main fetch
         let updatingBackground = true;
         let gameIds = [];
-        let coll = [];
+        let finalResponse = {};
         while (updatingBackground) {
-            const response = await fetch(`/api/collection?username=${username}`);
-            if (response.ok) {
-                if (response.status === 202) {
+            const res = await fetch(`/api/check_update?username=${username}`);
+            if (res.ok) {
+                if (res.status === 202) {
                     // BGG still preparing
-                    await sleep(20000);
+                    await sleep(15000);
                 } else {
-                    const res = await response.json();
-                    const updateRequired = res.updateRequired;
-                    if (updateRequired) {
-                        // BGG still preparing
-                        await sleep(20000);
-                    } else {
-                        gameIds = Object.keys(res.collection);
-                        coll = res.collection;
-                        updatingBackground = false;
+                    const response = await fetch(`/api/collection?username=${username}`);
+                    let collectionAccumulator = '';
+                    let isLast = false;
+                    let reader = response.body.getReader();
+                    let result;
+                    let decoder = new TextDecoder();
+                    while (!result?.done) {
+                        result = await reader.read();
+                        if (result.value) {
+                            let chunk = decoder.decode(result.value);
+
+                            if (chunk === 'error') {
+                                Sentry.captureException(new Error('collection stream failed'));
+                                return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
+                            }
+
+                            if (chunk.substring(0, 4) === 'last') {
+                                isLast = true;
+                                chunk = chunk.split('last:')[1];
+                            }
+
+                            if (isLast) {
+                                collectionAccumulator += chunk;
+                            } else {
+                                gameLoadingProgress = parseInt(chunk);
+                            }
+                        }
                     }
+                    finalResponse = JSON.parse(collectionAccumulator);
+                    updatingBackground = false;
                 }
             } else {
-                const { message } = await response.json();
-                return Promise.reject({ status: response.status, message })
+                const { message } = await res.json();
+                Sentry.captureException(new Error(message));
+                return Promise.reject({ status: res.status, message })
             }
         }
 
-        let collectionChunks = [];
-        collectionLength = gameIds.length;
+        // Get counts
+        const expansionCount = finalResponse.collection.filter(g => g.type === 'boardgameexpansion').length;
+        const gameCount = finalResponse.collection.length - expansionCount;
 
-        // Request details on items in collection
-        for (let i = 0; i < collectionLength; i += (chunkSize + 1)) {
-            const currentChunk = gameIds.slice(i, i + chunkSize + 1);
-
-            const tail = i + chunkSize > collectionLength ? collectionLength : i + chunkSize;
-            currentChunkRange = `${i || 1} - ${tail}`;
-
-            const response = await fetch('/api/games', {
-                method: 'POST',
-                body: JSON.stringify({ gameIds: currentChunk, username }),
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                const res = await response.json();
-                for (const g of res.games) {
-                    const id = g['@_id'];
-                    const game = { ...g, ...coll[id] };
-                    collectionChunks.push(game);
-                }
-                await sleep(1500);
-            } else {
-                const { message } = await response.json();
-                return Promise.reject({ status: response.status, message })
-            }
-        }
-
+        loadingState = null;
         $Library = {
-            data: collectionChunks,
+            data: finalResponse.collection,
             username,
             updateRequired: false,
-            loaded: true
+            loaded: true,
+            gameCount,
+            expansionCount
         };
-        collection = sortAndFilter(collectionChunks);
+        collection = sortAndFilter(finalResponse.collection);
 
         const toast: ToastSettings = {
             message: 'Collection updated',
@@ -486,7 +475,7 @@
                 </p>
             {:else if loadingState === 'games'}
                 <h3 class="mb-4">
-                    Collection loaded ({ collectionLength } games).<br/>Loading games {currentChunkRange}...
+                    Getting game data...
                 </h3>
                 <ProgressBar value={gameLoadingProgress} max={100} meter="bg-surface-900-50-token transition-[width]" />
             {/if}

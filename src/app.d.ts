@@ -9,22 +9,22 @@ declare namespace App {
 }
 
 interface Game {
-	'@_id': string,
-	'@_type': string,
+	id: string,
+	type: string,
 	description: string,
 	image: string,
-	link: ValueObject[],
-	maxplayers: ValueObject,
-	maxplaytime: ValueObject,
-	minage: ValueObject,
-	minplayers: ValueObject,
-	minplaytime: ValueObject,
+	link: Link,
+	maxplayers: number,
+	maxplaytime: number,
+	minage: number,
+	minplayers: number,
+	minplaytime: number,
 	name: string,
 	numplays: number,
-	playingtime: ValueObject,
+	playingtime: number,
 	poll: Poll[],
 	statistics: Statistics,
-	yearpublished: ValueObject
+	yearpublished: string
 }
 
 interface ValueObject {
@@ -34,8 +34,31 @@ interface ValueObject {
 }
 
 interface Statistics {
-	'@_page': string,
-	ratings: Ratings
+	average: string,
+	averageweight: string,
+	bayesaverage: string,
+	median: string,
+	numcomments: string,
+	numweights: string,
+	owned: string,
+	stddev: string,
+	trading: string,
+	usersrated: string,
+	wanting: string,
+	wishing: string,
+}
+
+interface Link {
+	boardgameaccessory: Array,
+	boardgameartist: Array,
+	boardgamecategory: Array,
+	boardgamecompilation: Array,
+	boardgamedesigner: Array,
+	boardgameexpansion: Array,
+	boardgamefamily: Array,
+	boardgameimplementation: Array,
+	boardgamemechanic: Array,
+	boardgamepublisher: Array,
 }
 
 interface Poll {
@@ -43,20 +66,4 @@ interface Poll {
 	'@_title': string,
 	'@_totalvotes': string
 	results: Array
-}
-
-interface Ratings {
-	average: ValueObject,
-	averageweight: ValueObject,
-	bayesaverage: ValueObject,
-	median: ValueObject,
-	numcomments: ValueObject,
-	numweights: ValueObject,
-	owned: ValueObject,
-	ranks: ValueObject[],
-	stddev: ValueObject,
-	trading: ValueObject,
-	usersrated: ValueObject,
-	wanting: ValueObject,
-	wishing: ValueObject
 }

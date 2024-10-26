@@ -17,15 +17,15 @@ export const getGameName = (game: Game) => {
 }
 
 export const getGameLink = (game: Game) => {
-    const id = game['@_id'];
-    const type = game['@_type'];
+    const id = game.id;
+    const type = game.type;
     return `https://boardgamegeek.com/${type}/${id}`;
 }
 
 export const parseGamePlayerCount = (game: Game) => {
     // If min and max are the same, only display one value
-    const min = getValue(game['minplayers']);
-    const max = getValue(game['maxplayers']);
+    const min = game.minplayers;
+    const max = game.maxplayers;
 
     return min === max ? min : `${min}-${max}`;
 }

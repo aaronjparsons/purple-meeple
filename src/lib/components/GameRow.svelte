@@ -31,7 +31,7 @@
                 <FireIcon class="w-6 h-6 mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Geek Rating:'}
-                    {convertToFloat(getValue(game.statistics.ratings[$ratingKey]), 1)}
+                    {convertToFloat(game.statistics[$ratingKey], 1)}
                 </p>
             </div>
             <div class="flex">
@@ -52,14 +52,14 @@
                 <ClockIcon class="w-6 h-6 mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Play Time:'}
-                    {getValue(game.playingtime)} mins
+                    {game.playingtime} mins
                 </p>
             </div>
             <div class="flex">
                 <ScaleIcon class="w-6 h-6 mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Weight:'}
-                    {convertToFloat(getValue(game.statistics.ratings.averageweight))}
+                    {convertToFloat(game.statistics.averageweight)}
                 </p>
             </div>
         </div>
