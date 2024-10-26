@@ -1,7 +1,6 @@
 <script lang="ts">
     import dayjs from 'dayjs';
     import posthog from 'posthog-js'
-    import * as Sentry from '@sentry/sveltekit';
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore, ProgressBar } from '@skeletonlabs/skeleton';
     import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
@@ -297,7 +296,6 @@
                             let chunk = decoder.decode(result.value);
 
                             if (chunk === 'error') {
-                                Sentry.captureException(new Error('collection stream failed'));
                                 return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
                             }
 
@@ -322,7 +320,6 @@
                 }
             } else {
                 const { message } = await response.json();
-                Sentry.captureException(new Error(message));
                 return Promise.reject({ status: response.status, message })
             }
         }
