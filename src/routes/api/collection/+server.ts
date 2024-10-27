@@ -4,6 +4,11 @@ import { supabase } from '$lib/supabaseClient';
 import { sortAndCompare, sleep } from '$lib/utils';
 import { parseGame } from '$lib/parseGame';
 
+export const config = {
+    // Use 'nodejs18.x' for Serverless
+    runtime: 'edge',
+};
+
 const mapPlays = (plays: object) => {
     return Object.entries(plays).map(([key, value]) => {
         return `${key}.${value}`;
