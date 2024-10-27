@@ -136,7 +136,7 @@ export const GET = async ({ url }) => {
 
     for (const play of parsed.plays.play) {
         const gameId = play.item['@_objectid'];
-        const gameName = play.item['@_name'];
+        const gameName = play.item['@_name'].replace(/&#039;/g,"'");
         const playTime = parseInt(play['@_length']);
         const playQuantity = parseInt(play['@_quantity']);
         const date = play['@_date'];
@@ -171,16 +171,36 @@ export const GET = async ({ url }) => {
 
         // Group by date
         if (groupedByDate[date]) {
-            groupedByDate[date] += playQuantity;
+            if (groupedByDate[date].games[gameName]) {
+                groupedByDate[date].games[gameName] += 1;
+            } else {
+                groupedByDate[date].games[gameName] = 1;
+            }
+            groupedByDate[date].count += playQuantity;
         } else {
-            groupedByDate[date] = playQuantity
+            groupedByDate[date] = {
+                count: playQuantity,
+                games: {
+                    [gameName]: 1
+                }
+            }
         }
 
         // Group by month
         if (groupedByMonth[month]) {
-            groupedByMonth[month] += playQuantity;
+            if (groupedByMonth[month].games[gameName]) {
+                groupedByMonth[month].games[gameName] += 1;
+            } else {
+                groupedByMonth[month].games[gameName] = 1;
+            }
+            groupedByMonth[month].count += playQuantity;
         } else {
-            groupedByMonth[month] = playQuantity;
+            groupedByMonth[month] = {
+                count: playQuantity,
+                games: {
+                    [gameName]: 1
+                }
+            }
         }
     }
 
@@ -196,11 +216,13 @@ export const GET = async ({ url }) => {
 
     // Get days most played
     const daysMostPlayedSorted = Object.entries(groupedByDate).sort((a, b) => {
-        return b[1] - a[1];
+        return b[1].count - a[1].count;
     });
-    const dayMostPlayedCount = daysMostPlayedSorted[0][1];
+
+    const dayMostPlayedCount = daysMostPlayedSorted[0][1].count;
+    console.log(dayMostPlayedCount)
     response.daysMostPlayed = daysMostPlayedSorted.filter(d => {
-        return d[1] === dayMostPlayedCount;
+        return d[1].count === dayMostPlayedCount;
     }).map(d => {
         return {
             date: d[0],
@@ -238,17 +260,17 @@ export const GET = async ({ url }) => {
     response.mostPlayedByTime = top5ByTime;
 
     const monthMostPlayed = Object.entries(groupedByMonth).sort((a, b) => {
-        return b[1] - a[1];
+        return b[1].count - a[1].count;
     })[0];
     response.monthMostPlayed = {
         month: months[parseInt(monthMostPlayed[0])],
-        playCount: monthMostPlayed[1]
+        plays: monthMostPlayed[1]
     }
 
     return new Response(JSON.stringify({
         ...response,
         categories,
         mechanics,
-        images
+        images,
     }));
 };

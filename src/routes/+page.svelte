@@ -62,8 +62,7 @@
                 { loading ? 'Loading...' : 'Submit' }
             </button>
         </form>
-        <!-- TODO: Year in review needs to be refactor tp accomodate BGG api changes -->
-        <!-- {#if month === 11 || month === 0}
+        {#if month === 11 || month === 0}
             <div class="mt-24 text-center">
                 <p class=" text-sm sm:text-base">Tracking your plays on BGG? View your yearly stats!</p>
                 <a class="font-title font-semibold text-4xl sm:text-5xl cursor-pointer" href="/year-in-review">
@@ -71,7 +70,7 @@
                     <p class="-mt-4 bg-gradient-to-br from-red-500 to-yellow-500 bg-clip-text text-transparent box-decoration-clone">{year}</p>
                 </a>
             </div>
-        {/if} -->
+        {/if}
     </div>
     {#if error}
         <aside class="alert variant-ghost-primary mt-6">

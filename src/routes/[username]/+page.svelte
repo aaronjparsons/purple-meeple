@@ -25,8 +25,6 @@
     let displayName = '';
     let collection: Game[] = [];
     let collectionLoadAttempts = 0;
-    let collectionLength = 0;
-    let chunkSize = 20;
     let loadingState: string|null = null;
     let gameLoadingProgress = 0;
 

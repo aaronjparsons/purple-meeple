@@ -157,32 +157,55 @@
                 </YearInReviewCard>
             </div>
 
-            <div class="grid grid-cols-2 gap-4" in:fly={{ delay: 600, y: -50 }}>
-                <YearInReviewCard bgClass="bg-gradient-to-br variant-gradient-primary-secondary">
-                    <p class="sm:text-xl">Busiest Day</p>
-                    <p class="text-2xl sm:text-5xl">{ dayjs(stats.daysMostPlayed[0].date).format('MMMM D') }</p>
-                    <div class="flex justify-between">
-                        <p>{ stats.daysMostPlayed[0].plays } games played</p>
-                        {#if stats.daysMostPlayed.length > 1}
-                            <p>(+{stats.daysMostPlayed.length - 1} other day{stats.daysMostPlayed.length - 1 === 1 ? '' : 's'})</p>
-                        {/if}
+            <div in:fly={{ delay: 600, y: -50 }}>
+                <div class="card flex rounded-md shadow-lg variant-ghost-surface">
+                    <YearInReviewCard bgClass="flex-shrink-0 flex flex-col justify-center items-start bg-gradient-to-br variant-gradient-primary-secondary">
+                        <p class="sm:text-xl">Busiest Day</p>
+                        <p class="text-2xl sm:text-5xl">{ dayjs(stats.daysMostPlayed[0].date).format('MMMM D') }</p>
+                        <div class="flex justify-between">
+                            <p>{ stats.daysMostPlayed[0].plays.count } games played</p>
+                            {#if stats.daysMostPlayed.length > 1}
+                                <p>(+{stats.daysMostPlayed.length - 1} other day{stats.daysMostPlayed.length - 1 === 1 ? '' : 's'})</p>
+                            {/if}
+                        </div>
+                    </YearInReviewCard>
+                    <div class="flex-grow p-4 grid grid-cols-2 gap-2">
+                        {#each Object.entries(stats.daysMostPlayed[0].plays.games) as [ game, plays ]}
+                            <div class="flex space-x-2">
+                                <p class="truncate">{game}</p>
+                                <p>x{plays}</p>
+                            </div>
+                        {/each}
                     </div>
-                </YearInReviewCard>
-                <YearInReviewCard bgClass="bg-gradient-to-br variant-gradient-primary-secondary">
-                    <p class="sm:text-xl">Busiest Month</p>
-                    <p class="text-2xl sm:text-5xl">{ stats.monthMostPlayed.month }</p>
-                    <p>{ stats.monthMostPlayed.playCount } games played</p>
-                </YearInReviewCard>
+                </div>
+            </div>
+
+            <div in:fly={{ delay: 700, y: -50 }}>
+                <div class="card flex rounded-md shadow-lg variant-ghost-surface">
+                    <div class="flex-grow p-4 grid grid-cols-2 gap-x-2 gap-y-1">
+                        {#each Object.entries(stats.monthMostPlayed.plays.games) as [ game, plays ]}
+                            <div class="flex space-x-2">
+                                <p class="truncate">{game}</p>
+                                <p>x{plays}</p>
+                            </div>
+                        {/each}
+                    </div>
+                    <YearInReviewCard bgClass="flex-shrink-0 flex flex-col justify-center items-end bg-gradient-to-br variant-gradient-primary-secondary">
+                        <p class="sm:text-xl">Busiest Month</p>
+                        <p class="text-2xl sm:text-5xl">{ stats.monthMostPlayed.month }</p>
+                        <p>{ stats.monthMostPlayed.plays.count } games played</p>
+                    </YearInReviewCard>
+                </div>
             </div>
 
             {#if hasTimeBasedStats}
-                <div in:fly={{ delay: 700, y: -50 }}>
+                <div in:fly={{ delay: 800, y: -50 }}>
                     <YearInReviewCard bgClass="variant-ghost-tertiary">
                         <p class="sm:text-xl">Total Time Played</p>
                         <p class="text-5xl">{ stats.totalTimePlayed }<span class="text-sm ml-2">minutes</span></p>
                     </YearInReviewCard>
                 </div>
-                <div in:fly={{ delay: 800, y: -50 }}>
+                <div in:fly={{ delay: 900, y: -50 }}>
                     <YearInReviewCard>
                         <div class="flex flex-col sm:flex-row-reverse items-center sm:items-start">
                             <img
