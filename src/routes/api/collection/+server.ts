@@ -142,7 +142,6 @@ export const GET = async ({ url }) => {
                         collection: parsedCollection,
                         updateRequired: updateRequired
                     })}`
-                    console.log('last chunk', lastChunk);
                     controller.enqueue(encoder.encode(lastChunk));
                     controller.close();
                 } catch (e) {

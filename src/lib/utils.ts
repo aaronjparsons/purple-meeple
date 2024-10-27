@@ -11,9 +11,10 @@ export const convertToFloat = (value: string, dec = 2) => {
 }
 
 export const getGameName = (game: Game) => {
-    const name = game.name;
+    return game.name;
 
-    return name.replace(/&#039;/g,"'");
+    // const name = game.name;
+    // return name.replace(/&#039;/g,"'");
 }
 
 export const getGameLink = (game: Game) => {

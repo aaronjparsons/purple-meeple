@@ -12,9 +12,13 @@
     class="card w-full max-w-[540px] flex rounded-md shadow-md mb-4"
 >
     <div
-        class="relative bg-cover bg-center flex-shrink-0 rounded-tl-md rounded-bl-md w-24"
-        style="background-image: url('{game.image}');"
+        class="relative flex-shrink-0 rounded-tl-md rounded-bl-md w-24 h-[120px]"
     >
+        <img
+            src={game.image}
+            loading="lazy"
+            class="rounded-tl-md rounded-bl-md object-cover object-center w-24 h-full"
+        />
         <a
             href={getGameLink(game)}
             target="_blank"
@@ -24,8 +28,8 @@
         </a>
     </div>
     <!-- <img class="flex-shrink-0 rounded-tl-md rounded-bl-md w-24 object-cover" src={game.image} alt="game cover" /> -->
-    <div class="pt-1 pb-2 px-2">
-        <h3 class="mb-1">{getGameName(game)}</h3>
+    <div class="pt-1 pb-2 px-2 truncate">
+        <h3 class="mb-1 truncate">{getGameName(game)}</h3>
         <div class="grid grid-cols-2 grid-rows-2 gap-x-4 gap-y-1 font-light">
             <div class="flex">
                 <FireIcon class="w-6 h-6 mr-2" />

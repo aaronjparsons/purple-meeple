@@ -25,7 +25,7 @@
 </script>
 
 <div class="card flex flex-col rounded-md shadow-lg h-96 w-80">
-    <div class="p-4 rounded-t-md truncate">
+    <div class="p-4 rounded-t-md truncate h-[55px]">
         {getGameName(game)}
     </div>
     <div class="h-full flex">
@@ -57,8 +57,7 @@
             <!-- <hr class="mx-2 opacity-50" /> -->
         </div>
         <div
-            class="relative flex-grow bg-cover bg-center rounded-tl-md rounded-br-md shadow-inner"
-            style="background-image: url('{game.image}');"
+            class="relative flex-grow rounded-tl-md rounded-br-md h-[332px]"
         >
             <!-- Extra info modal - Hidden until fully implemented -->
             <!-- <button class="absolute bottom-1 right-2" on:click={() => handleGameSelect(game)}>
@@ -73,6 +72,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                 </svg>
             </button> -->
+            <img
+                src={game.image}
+                loading="lazy"
+                class="rounded-tl-md rounded-br-md object-cover object-center w-full h-[332px]"
+            />
             <a
                 href={getGameLink(game)}
                 target="_blank"
