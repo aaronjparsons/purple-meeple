@@ -28,7 +28,7 @@ export const GET = async ({ url }) => {
         databaseCollection = row.collection;
     }
 
-    const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&own=1`;
+    const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&excludesubtype=boardgameexpansion&own=1`;
     const collectionResponse = await fetch(collectionUrl);
     console.log(`fetching collection - username: ${username}`);
 
@@ -117,9 +117,10 @@ export const GET = async ({ url }) => {
             async start(controller) {
                 try {
                     let index = 0;
+                    let retryDelay = 500;
                     while(index < gameIds.length) {
                         const currentChunk = gameIds.slice(index, index + chunkSize);
-                        const url = `https://boardgamegeek.com/xmlapi2/thing?id=${currentChunk}&stats=1&type=boardgame,boardgameexpansion`;
+                        const url = `https://boardgamegeek.com/xmlapi2/thing?id=${currentChunk}&stats=1&type=boardgame`;
                         const chunkResponse = await fetch(url);
                         if (chunkResponse.ok && chunkResponse.status === 200) {
                             const text = await chunkResponse.text();
@@ -131,9 +132,13 @@ export const GET = async ({ url }) => {
                             games.push(...res);
                             const percent = Math.round(games.length / gameIds.length * 100);
                             controller.enqueue(encoder.encode(JSON.stringify(percent)));
+                            index += chunkSize;
+                        } else if (chunkResponse.status === 429) {
+                            // Rate limited, increase delay between requests
+                            retryDelay += 500;
                         }
-                        await sleep(250);
-                        index += chunkSize;
+
+                        await sleep(retryDelay);
                     }
                     const parsedCollection = games.map(game => {
                         return parseGame({ ...game, ...databaseCollection[game['@_id']] });

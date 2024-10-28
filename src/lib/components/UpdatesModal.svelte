@@ -10,6 +10,12 @@
     <div class="max-h-[450px] overflow-y-auto">
         <div class="flex flex-col gap-y-4">
             <div>
+                <h4 class="h4">Oct 27, 2024</h4>
+                <p>
+                    Collections no longer load expansions, to help performance and load times for those with large collections.
+                </p>
+            </div>
+            <div>
                 <h4 class="h4">Oct 26, 2024</h4>
                 <p>
                     Changes to how game data is loaded, should be faster now.

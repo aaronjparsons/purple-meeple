@@ -112,9 +112,9 @@
 
     const applyFilters = (col: Game[]) => {
         col = col.filter((game: Game) => {
-            if (!$libraryOptions.includeExpansions && game.type !== 'boardgame') {
-                return false;
-            }
+            // if (!$libraryOptions.includeExpansions && game.type !== 'boardgame') {
+            //     return false;
+            // }
 
             if ($libraryOptions.filters.playerCount !== 'any') {
                 const playerCount = parseInt($libraryOptions.filters.playerCount);
@@ -279,8 +279,8 @@
             if (response.ok) {
                 if (response.status === 202) {
                     // BGG preparing
-                    await sleep(10000);
                     collectionLoadAttempts++;
+                    await sleep(10000);
                 } else {
                     requestingCollection = false;
                     loadingState = 'games';
@@ -332,8 +332,7 @@
         }
 
         // Get counts
-        const expansionCount = finalResponse.collection.filter(g => g.type === 'boardgameexpansion').length;
-        const gameCount = finalResponse.collection.length - expansionCount;
+        const gameCount = finalResponse.collection.length;
 
         loadingState = null;
         $Library = {
@@ -342,7 +341,6 @@
             updateRequired: finalResponse.updateRequired,
             loaded: true,
             gameCount,
-            expansionCount
         };
         collection = sortAndFilter(finalResponse.collection);
         setSearchParams();
@@ -403,8 +401,7 @@
         }
 
         // Get counts
-        const expansionCount = finalResponse.collection.filter(g => g.type === 'boardgameexpansion').length;
-        const gameCount = finalResponse.collection.length - expansionCount;
+        const gameCount = finalResponse.collection.length;;
 
         loadingState = null;
         $Library = {
@@ -413,7 +410,6 @@
             updateRequired: false,
             loaded: true,
             gameCount,
-            expansionCount
         };
         collection = sortAndFilter(finalResponse.collection);
 
@@ -433,7 +429,7 @@
 
     const setSearchParams = () => {
         const obj = {
-            includeExpansions: $libraryOptions.includeExpansions,
+            // includeExpansions: $libraryOptions.includeExpansions,
             useGeekRating: $libraryOptions.useGeekRating,
             selectedSort: $libraryOptions.selectedSort,
             sort: $libraryOptions.sort,
@@ -473,10 +469,11 @@
         <div class="text-center max-w-[750px] mt-8" transition:fade>
             {#if loadingState === 'collection'}
                 <h3 class="mb-4">Loading collection...</h3>
-                <p>
-                    If this is the first time loading your collection,
-                    this may take some time as BoardGameGeek has to process your collection first.
-                </p>
+                {#if collectionLoadAttempts >= 1}
+                    <p>
+                        BGG is processing your collection...
+                    </p>
+                {/if}
             {:else if loadingState === 'games'}
                 <h3 class="mb-4">
                     Getting game data...
@@ -513,9 +510,9 @@
         <p class="unstyled text-center text-base sm:text-lg">
             {displayName} Collection
         </p>
-        <p class="unstyled text-center text-sm sm:text-base">
-            {$Library.gameCount} games, {$Library.expansionCount} expansions
-        </p>
+        <!-- <p class="unstyled text-center text-sm sm:text-base">
+            {$Library.gameCount} games
+        </p> -->
         <p class="unstyled text-center text-xs sm:text-sm">
             Showing {collection.length} of {$Library.data.length} items
         </p>

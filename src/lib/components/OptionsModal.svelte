@@ -30,7 +30,7 @@
 <div class="card w-modal p-4 shadow-lg">
     <h1 class="h1 mb-8">Options</h1>
     <div class="flex flex-wrap">
-        <SlideToggle
+        <!-- <SlideToggle
             bind:checked={localOptions.includeExpansions}
             name="include-expansions"
             size="sm"
@@ -38,7 +38,7 @@
             class="mb-2 mr-6"
         >
             Include expansions
-        </SlideToggle>
+        </SlideToggle> -->
         <span class="flex">
             <SlideToggle
                 bind:checked={localOptions.useGeekRating}

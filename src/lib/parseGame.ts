@@ -19,7 +19,7 @@ export const parseGame = (game) => {
         minage: parseInt(game.minage['@_value']),
         minplayers: parseInt(game.minplayers['@_value']),
         minplaytime: parseInt(game.minplaytime['@_value']),
-        name: game.name.replace(/&#039;/g,"'"),
+        name: String(game.name).replace(/&#039;/g,"'"),
         numplays: game.numplays,
         playingtime: parseInt(game.playingtime['@_value']),
         poll: game.poll,
