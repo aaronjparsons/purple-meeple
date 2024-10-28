@@ -290,25 +290,31 @@
                     let result;
                     let decoder = new TextDecoder();
                     while (!result?.done) {
-                        result = await reader.read();
-                        if (result.value) {
-                            let chunk = decoder.decode(result.value);
+                        try {
+                            result = await reader.read();
+                            if (result.value) {
+                                let chunk = decoder.decode(result.value);
 
-                            if (chunk === 'error') {
-                                captureException(new Error('collection stream failed'));
-                                return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
-                            }
+                                if (chunk === 'error') {
+                                    captureException(new Error('collection stream failed'));
+                                    return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
+                                }
 
-                            if (chunk.substring(0, 4) === 'last') {
-                                isLast = true;
-                                chunk = chunk.split('last:')[1];
-                            }
+                                if (chunk.substring(0, 4) === 'last') {
+                                    isLast = true;
+                                    chunk = chunk.split('last:')[1];
+                                }
 
-                            if (isLast) {
-                                collectionAccumulator += chunk;
-                            } else {
-                                gameLoadingProgress = parseInt(chunk);
+                                if (isLast) {
+                                    collectionAccumulator += chunk;
+                                } else {
+                                    gameLoadingProgress = parseInt(chunk);
+                                }
                             }
+                        } catch (e) {
+                            // Error occurred while reading stream
+                            captureException(e);
+                            return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
                         }
                     }
                     finalResponse = JSON.parse(collectionAccumulator);
