@@ -62,7 +62,7 @@ export const GET = async ({ url }) => {
     if (playsResponse.ok) {
         res = await playsResponse.text();
     } else {
-        throw error(playsResponse.status);
+        error(playsResponse.status);
     }
 
     const parser = new XMLParser({ ignoreAttributes: false });
@@ -71,7 +71,7 @@ export const GET = async ({ url }) => {
 
     if (parsed.div && parsed.div['@_class'] === 'messagebox error') {
         // Bad username
-        throw error(404);
+        error(404);
     }
 
     // Check total to see if we need to fetch more
@@ -80,7 +80,7 @@ export const GET = async ({ url }) => {
 
     if (total === '0') {
         // User has no plays logged
-        throw error(404); // TODO: need diff error??
+        error(404); // TODO: need diff error??
     }
 
     if (total > pageSize) {
@@ -106,7 +106,7 @@ export const GET = async ({ url }) => {
                 page++;
                 currentTotal += 100;
             } else {
-                throw error(nextPageResponse.status);
+                error(nextPageResponse.status);
             }
         }
     }
@@ -250,7 +250,7 @@ export const GET = async ({ url }) => {
         const gamesParsed = parser.parse(text);
         [ images, categories, mechanics ] = parseGameData(gamesParsed.items.item, groupedByGame);
     } else {
-        throw error(gamesResponse.status);
+        error(gamesResponse.status);
     }
 
 

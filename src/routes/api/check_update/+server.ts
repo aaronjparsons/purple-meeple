@@ -14,6 +14,6 @@ export const GET = async ({ url }) => {
             return new Response(JSON.stringify({ status: 'ready' }), { status: 200 });
         }
     }else {
-        throw error(collectionResponse.status);
+        error(collectionResponse.status);
     }
 }
