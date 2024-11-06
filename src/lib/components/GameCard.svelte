@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import ExtraDataModal from '$lib/components/ExtraDataModal.svelte';
-    import { modalStore } from '@skeletonlabs/skeleton';
+    import { getModalStore } from '@skeletonlabs/skeleton';
     import {
         UserGroupSolid,
         ClockSolid,
@@ -14,6 +14,8 @@
     import { ratingKey } from "$lib/store";
 
     export let game: Game;
+
+    const modalStore = getModalStore();
 
     const handleGameSelect = (game: Game) => {
         const modalComponent: ModalComponent = {

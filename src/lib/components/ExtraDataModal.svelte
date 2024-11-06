@@ -1,9 +1,11 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { modalStore } from '@skeletonlabs/skeleton';
+    import { getModalStore } from '@skeletonlabs/skeleton';
     import { sleep, getRandomInt, getGameName } from '$lib/utils';
 
     export let game: Game;
+
+    const modalStore = getModalStore();
 
     onMount(async () => {
         const results = game.poll[0].results;

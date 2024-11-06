@@ -1,6 +1,7 @@
 <script lang="ts">
-    import type { ToastSettings } from '@skeletonlabs/skeleton';
-    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
+    import { getModalStore } from '@skeletonlabs/skeleton';
+
+    const modalStore = getModalStore();
 
     // TODO: create a json file for update data
 </script>

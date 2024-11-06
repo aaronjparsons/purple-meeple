@@ -3,12 +3,13 @@
     import { fade, crossfade } from 'svelte/transition';
     import { quintOut } from 'svelte/easing';
     import posthog from 'posthog-js'
-    import { modalStore } from '@skeletonlabs/skeleton';
+    import { getModalStore } from '@skeletonlabs/skeleton';
     import { sleep, getRandomInt, getGameName } from '$lib/utils';
     import { Library } from "$lib/store";
 
     export let currentGameList: Game[] = [];
 
+    const modalStore = getModalStore();
     let listContainer: HTMLElement;
     let gameList: Game[] = [];
     let translateVal = 0;

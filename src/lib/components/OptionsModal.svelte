@@ -9,10 +9,11 @@
         PlayCircleSolid,
         BestPlayerCount
     } from './icons';
-    import { SlideToggle, modalStore, RadioGroup, RadioItem, popup } from '@skeletonlabs/skeleton';
+    import { SlideToggle, getModalStore, RadioGroup, RadioItem, popup } from '@skeletonlabs/skeleton';
     import type { PopupSettings } from "@skeletonlabs/skeleton";
     import { libraryOptions } from '$lib/store';
 
+    const modalStore = getModalStore();
     const localOptions = {
         ...$libraryOptions,
         filters: {

@@ -1,10 +1,11 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import posthog from 'posthog-js'
-    import { SlideToggle, modalStore } from '@skeletonlabs/skeleton';
+    import { SlideToggle, getModalStore } from '@skeletonlabs/skeleton';
     import logo from '$lib/assets/purple_meeple_150.png';
     import { Library, libraryOptions } from "$lib/store";
 
+    const modalStore = getModalStore();
     let QRCodeStyling;
     let qrEl: HTMLElement;
     let qrCode;

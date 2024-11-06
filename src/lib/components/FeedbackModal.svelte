@@ -1,7 +1,9 @@
 <script lang="ts">
     import type { ToastSettings } from '@skeletonlabs/skeleton';
-    import { modalStore, toastStore } from '@skeletonlabs/skeleton';
+    import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
 
+    const modalStore = getModalStore();
+    const toastStore = getToastStore();
     let submitting = false;
 
     const handleSubmit = async (event) => {

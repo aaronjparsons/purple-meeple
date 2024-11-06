@@ -3,7 +3,7 @@
     import posthog from 'posthog-js'
     import { captureException } from '@sentry/sveltekit'
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
-    import { RadioGroup, RadioItem, modalStore, toastStore, ProgressBar } from '@skeletonlabs/skeleton';
+    import { RadioGroup, RadioItem, getModalStore, getToastStore, ProgressBar } from '@skeletonlabs/skeleton';
     import { GridSolid, ListSolid } from '$lib/components/icons';
     import { onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
@@ -19,6 +19,9 @@
     import RandomGameModal from "$lib/components/RandomGameModal.svelte";
     import { sleep, getGameName, parseBestPlayerCount } from "$lib/utils";
     import { Library, libraryOptions, ratingKey } from "$lib/store";
+
+    const modalStore = getModalStore();
+    const toastStore = getToastStore();
 
     const username = $page.params.username;
     let displayType = 'grid';

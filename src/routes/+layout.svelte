@@ -1,10 +1,10 @@
 <script lang="ts">
     import '../purp-theme.postcss';
-    import '@skeletonlabs/skeleton/styles/skeleton.css';
+    // import '@skeletonlabs/skeleton/styles/skeleton.css';
     import "../app.css";
     import posthog from 'posthog-js'
     import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-    import { AppShell, Modal, Toast, storePopup, modalStore } from '@skeletonlabs/skeleton';
+    import { initializeStores, AppShell, Modal, Toast, storePopup } from '@skeletonlabs/skeleton';
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
@@ -21,6 +21,7 @@
     let showScrollToTopBtn = false;
 
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+    initializeStores();
 
     onMount(() => {
         if (browser) {
