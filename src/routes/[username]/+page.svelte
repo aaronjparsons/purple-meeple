@@ -4,7 +4,7 @@
     import { captureException } from '@sentry/sveltekit'
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore, ProgressBar } from '@skeletonlabs/skeleton';
-    import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
+    import { GridSolid, ListSolid } from '$lib/components/icons';
     import { onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { writable, type Writable } from 'svelte/store';
@@ -538,10 +538,10 @@
             </button>
             <RadioGroup active="variant-filled-secondary" hover="hover:variant-soft-secondary">
                 <RadioItem bind:group={displayType} name="display-type" value="list">
-                    <ViewListIcon class="h-6 w-5" />
+                    <ListSolid class="h-6 w-5" />
                 </RadioItem>
                 <RadioItem bind:group={displayType} name="display-type" value="grid">
-                    <ViewGridIcon class="h-6 w-5" />
+                    <GridSolid class="h-6 w-5" />
                 </RadioItem>
             </RadioGroup>
         </div>

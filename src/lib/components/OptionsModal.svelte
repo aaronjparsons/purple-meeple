@@ -1,6 +1,14 @@
 <script lang="ts">
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ArrowSmDownIcon, ArrowSmUpIcon, PlayIcon } from "@rgossiaux/svelte-heroicons/solid";
-    import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
+    import {
+        UserGroupSolid,
+        ClockSolid,
+        FireSolid,
+        ScaleSolid,
+        ArrowDownSolid,
+        ArrowUpSolid,
+        PlayCircleSolid,
+        BestPlayerCount
+    } from './icons';
     import { SlideToggle, modalStore, RadioGroup, RadioItem, popup } from '@skeletonlabs/skeleton';
     import type { PopupSettings } from "@skeletonlabs/skeleton";
     import { libraryOptions } from '$lib/store';
@@ -70,10 +78,10 @@
         <div class="w-1/2">
             <RadioGroup active="variant-filled-secondary" hover="hover:variant-soft-secondary" class="h-[42px]">
                 <RadioItem bind:group={localOptions.sort} name="sort" value="asc">
-                    <ArrowSmUpIcon class="h-6 w-5" />
+                    <ArrowUpSolid class="h-6 w-5" />
                 </RadioItem>
                 <RadioItem bind:group={localOptions.sort} name="sort" value="desc">
-                    <ArrowSmDownIcon class="h-6 w-5" />
+                    <ArrowDownSolid class="h-6 w-5" />
                 </RadioItem>
             </RadioGroup>
         </div>
@@ -82,7 +90,7 @@
     <div class="flex space-x-4">
         <label class="label w-1/2">
             <span class="align-middle">
-                <FireIcon class="inline-block h-6 w-6 mr-2" />Min { localOptions.useGeekRating ? 'Geek' : 'Avg' } Rating
+                <FireSolid class="inline-block h-6 w-6 mr-2" />Min { localOptions.useGeekRating ? 'Geek' : 'Avg' } Rating
             </span>
             <select bind:value={localOptions.filters.rating} class="select" name="rating" id="rating">
                 <option value="any">Any</option>
@@ -99,7 +107,7 @@
         </label>
         <label class="label w-1/2 mb-4">
             <span>
-                <UserGroupIcon class="inline-block h-6 w-6 mr-2" />
+                <UserGroupSolid class="inline-block h-6 w-6 mr-2" />
                 Player Count
             </span>
             <select bind:value={localOptions.filters.playerCount} class="select" name="playercount" id="playercount">
@@ -119,7 +127,7 @@
     <div class="flex space-x-4">
         <label class="label w-1/2 mb-4">
             <span>
-                <BestPlayerCountIcon class="inline-block mr-2" />
+                <BestPlayerCount class="inline-block mr-2" />
                 Best Player Count
             </span>
             <select bind:value={localOptions.filters.bestPlayerCount} class="select" name="bestplayercount" id="bestplayercount">
@@ -137,7 +145,7 @@
         </label>
         <label class="input-label w-1/2">
             <span class="align-middle">
-                <ClockIcon class="inline-block h-6 w-6 mr-2" />Max Play Time
+                <ClockSolid class="inline-block h-6 w-6 mr-2" />Max Play Time
             </span>
             <select bind:value={localOptions.filters.playtime} class="select" name="playtime" id="playtime">
                 <option value="any">Any</option>
@@ -154,7 +162,7 @@
     <div class="flex space-x-4">
         <label class="input-label w-1/2 mb-4">
             <span>
-                <ScaleIcon class="inline-block h-6 w-6 mr-2" />
+                <ScaleSolid class="inline-block h-6 w-6 mr-2" />
                 Max Weight
             </span>
             <select bind:value={localOptions.filters.weight} class="select" name="weight" id="weight">
@@ -168,7 +176,7 @@
         </label>
         <label class="input-label w-1/2 mb-4">
             <span>
-                <PlayIcon class="inline-block h-6 w-6 mr-2" />
+                <PlayCircleSolid class="inline-block h-6 w-6 mr-2" />
                 Played
             </span>
             <select bind:value={localOptions.filters.played} class="select" name="played" id="played">

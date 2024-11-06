@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ExternalLinkIcon } from "@rgossiaux/svelte-heroicons/solid";
-    import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
+    import { UserGroupSolid, ClockSolid, FireSolid, ScaleSolid, ExternalLinkSolid, BestPlayerCount } from './icons';
     import { getGameName, convertToFloat, getValue, parseGamePlayerCount, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { isScreenSmall, ratingKey } from "$lib/store";
 
@@ -24,7 +23,7 @@
             target="_blank"
             class="absolute bottom-2 right-2 bg-gray-800 bg-opacity-70 p-1 rounded-full"
         >
-            <ExternalLinkIcon class="h-5 w-5" />
+            <ExternalLinkSolid class="h-5 w-5" />
         </a>
     </div>
     <!-- <img class="flex-shrink-0 rounded-tl-md rounded-bl-md w-24 object-cover" src={game.image} alt="game cover" /> -->
@@ -32,35 +31,35 @@
         <h3 class="mb-1 truncate">{getGameName(game)}</h3>
         <div class="grid grid-cols-2 grid-rows-2 gap-x-4 gap-y-1 font-light">
             <div class="flex">
-                <FireIcon class="w-6 h-6 mr-2" />
+                <FireSolid class="w-6 h-6 mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Geek Rating:'}
                     {convertToFloat(game.statistics[$ratingKey], 1)}
                 </p>
             </div>
             <div class="flex">
-                <UserGroupIcon class="w-6 h-6 mr-2" />
+                <UserGroupSolid class="w-6 h-6 mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Player Count:'}
                     {parseGamePlayerCount(game)}
                 </p>
             </div>
             <div class="flex">
-                <BestPlayerCountIcon class="mr-2" />
+                <BestPlayerCount class="mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Best Player Count:'}
                     {parseBestPlayerCount(game)}
                 </p>
             </div>
             <div class="flex">
-                <ClockIcon class="w-6 h-6 mr-2" />
+                <ClockSolid class="w-6 h-6 mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Play Time:'}
                     {game.playingtime} mins
                 </p>
             </div>
             <div class="flex">
-                <ScaleIcon class="w-6 h-6 mr-2" />
+                <ScaleSolid class="w-6 h-6 mr-2" />
                 <p>
                     {$isScreenSmall ? '' : 'Weight:'}
                     {convertToFloat(game.statistics.averageweight)}

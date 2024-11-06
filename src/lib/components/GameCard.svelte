@@ -2,8 +2,14 @@
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import ExtraDataModal from '$lib/components/ExtraDataModal.svelte';
     import { modalStore } from '@skeletonlabs/skeleton';
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon, ExternalLinkIcon } from "@rgossiaux/svelte-heroicons/solid";
-    import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
+    import {
+        UserGroupSolid,
+        ClockSolid,
+        FireSolid,
+        ScaleSolid,
+        ExternalLinkSolid,
+        BestPlayerCount
+    } from './icons';
     import { getGameName, parseGamePlayerCount, getValue, convertToFloat, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { ratingKey } from "$lib/store";
 
@@ -31,27 +37,27 @@
     <div class="h-full flex">
         <div class="flex-col space-y-2">
             <div class="margin-auto text-center min-w-[56px]">
-                <FireIcon class="inline-block h-6 w-6" />
+                <FireSolid class="inline-block h-6 w-6" />
                 <p>{convertToFloat(game.statistics[$ratingKey], 1)}</p>
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
-                <UserGroupIcon class="inline-block h-6 w-6" />
+                <UserGroupSolid class="inline-block h-6 w-6" />
                 <p>{parseGamePlayerCount(game)}</p>
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
-                <BestPlayerCountIcon class="inline-block" />
+                <BestPlayerCount class="inline-block" />
                 <p>{parseBestPlayerCount(game)}</p>
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
-                <ClockIcon class="inline-block h-6 w-6" />
+                <ClockSolid class="inline-block h-6 w-6" />
                 <p>{game.playingtime}</p>
             </div>
             <hr class="mx-2 opacity-50" />
             <div class="margin-auto text-center min-w-[56px]">
-                <ScaleIcon class="inline-block h-6 w-6" />
+                <ScaleSolid class="inline-block h-6 w-6" />
                 <p>{convertToFloat(game.statistics.averageweight, 1)}</p>
             </div>
             <!-- <hr class="mx-2 opacity-50" /> -->
@@ -82,7 +88,7 @@
                 target="_blank"
                 class="absolute bottom-2 right-2 bg-gray-800 bg-opacity-70 p-1 rounded-full"
             >
-                <ExternalLinkIcon class="h-5 w-5" />
+                <ExternalLinkSolid class="h-5 w-5" />
             </a>
         </div>
     </div>
