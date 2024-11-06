@@ -17,18 +17,20 @@ const config = {
 			'../**/*.{html,js,svelte,ts}'
 		)
 	],
-	extend: {
-        colors: {
-            'light-shade': '#FAFAF9',
-            'light-accent': '#94A9A7',
-            'brand': '#F69E2E',
-            'dark-accent': '#905D3F',
-            'dark-shade': '#14202A'
-        },
-        fontFamily: {
-            sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-            title: ['Delicious Handrawn', ...defaultTheme.fontFamily.sans]
-        }
+	theme: {
+		extend: {
+			colors: {
+				'light-shade': '#FAFAF9',
+				'light-accent': '#94A9A7',
+				'brand': '#F69E2E',
+				'dark-accent': '#905D3F',
+				'dark-shade': '#14202A'
+			},
+			fontFamily: {
+				sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+				title: ['Delicious Handrawn', ...defaultTheme.fontFamily.sans]
+			}
+		}
     },
 	plugins: [
         forms,
