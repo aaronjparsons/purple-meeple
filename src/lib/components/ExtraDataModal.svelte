@@ -3,7 +3,11 @@
     import { getModalStore } from '@skeletonlabs/skeleton';
     import { sleep, getRandomInt, getGameName } from '$lib/utils';
 
-    export let game: Game;
+    interface Props {
+        game: Game;
+    }
+
+    let { game }: Props = $props();
 
     const modalStore = getModalStore();
 
@@ -26,6 +30,6 @@
 
     <hr class="my-4" />
     <div class="flex justify-end">
-        <button class="btn btn-ringed-surface" on:click={() => modalStore.close()}>Close</button>
+        <button class="btn btn-ringed-surface" onclick={() => modalStore.close()}>Close</button>
     </div>
 </div>

@@ -3,13 +3,14 @@
     import { goto } from '$app/navigation';
     import logo from '$lib/assets/purple_meeple_150.png';
 
-    let username = '';
-    let error: null|number = null;
-    let loading = false;
+    let username = $state('');
+    let error: null|number = $state(null);
+    let loading = $state(false);
     const month = dayjs().month();
     const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         loading = true;
         // First validate the username exists
         const response = await fetch(`/api/user?username=${username}`);
@@ -39,7 +40,7 @@
         <p class="text-center mb-6">
             Enter your BoardGameGeek username to view stats of your logged plays over the past year!
         </p>
-        <form class="flex flex-col items-center space-y-2" on:submit|preventDefault={handleSubmit}>
+        <form class="flex flex-col items-center space-y-2" onsubmit={handleSubmit}>
             <input
                 bind:value={username}
                 class="input"

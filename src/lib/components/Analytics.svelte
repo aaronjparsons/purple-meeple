@@ -1,14 +1,14 @@
 <script lang="ts">
     import { page } from '$app/stores'
 
-    $: {
+    $effect(() => {
         if (typeof gtag !== 'undefined') {
             gtag('config', 'G-PJKRPZK15K', {
                 page_title: document.title,
                 page_path: $page.url.pathname,
             })
         }
-    }
+    });
 </script>
 
 <svelte:head>

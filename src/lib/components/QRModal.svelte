@@ -7,11 +7,11 @@
 
     const modalStore = getModalStore();
     let QRCodeStyling;
-    let qrEl: HTMLElement;
+    let qrEl: HTMLElement = $state();
     let qrCode;
     let baseUrl = `${window.location.origin}${window.location.pathname}`;
     let optionsUrl = window.location.href;
-    let includeOptions = false;
+    let includeOptions = $state(false);
     const sortingMap = {
         alphabetical: 'Alphabetical',
         release: 'Release Date',
@@ -125,7 +125,7 @@
     </div>
     <hr class="my-4" />
     <div class="flex justify-end">
-        <button class="btn variant-ringed-surface mr-6" on:click={() => modalStore.close()}>Close</button>
-        <button class="btn variant-filled-secondary" on:click={downloadQr}>Download</button>
+        <button class="btn variant-ringed-surface mr-6" onclick={() => modalStore.close()}>Close</button>
+        <button class="btn variant-filled-secondary" onclick={downloadQr}>Download</button>
     </div>
 </div>

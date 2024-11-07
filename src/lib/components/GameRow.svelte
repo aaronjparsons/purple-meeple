@@ -3,7 +3,11 @@
     import { getGameName, convertToFloat, getValue, parseGamePlayerCount, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { isScreenSmall, ratingKey } from "$lib/store";
 
-    export let game: Game;
+    interface Props {
+        game: Game;
+    }
+
+    let { game }: Props = $props();
 
 </script>
 

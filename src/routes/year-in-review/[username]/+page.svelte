@@ -6,9 +6,9 @@
     import YearInReviewCard from '$lib/components/YearInReviewCard.svelte';
 
     const username = $page.params.username;
-    let displayName = '';
+    let displayName = $state('');
     const year = dayjs().month() === 0 ? dayjs().year() - 1 : dayjs().year();
-    let hasTimeBasedStats = true;
+    let hasTimeBasedStats = $state(true);
 
     const setDisplayName = () => {
         const lastLetter = username.charAt(username.length - 1);
@@ -89,7 +89,7 @@
                                 <div class="space-y-1">
                                     {#each stats.mostPlayedByCount as game}
                                         <div class="flex justify-between text-lg sm:text-xl space-x-4">
-                                            <p>{@html game.name }</p>
+                                            <p>{@html game.name}</p>
                                             <p>{ game.playCount }</p>
                                         </div>
                                     {/each}
@@ -116,7 +116,7 @@
                                     <div class="space-y-1">
                                         {#each stats.mostPlayedByTime as game}
                                             <div class="flex justify-between text-lg sm:text-xl space-x-4">
-                                                <p>{@html game.name }</p>
+                                                <p>{@html game.name}</p>
                                                 <p class="whitespace-nowrap">{ game.length } <span class="text-sm">mins</span></p>
                                             </div>
                                         {/each}

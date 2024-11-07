@@ -4,14 +4,16 @@
     import logo from '$lib/assets/purple_meeple_150.png';
     import { Library } from "$lib/store";
 
-    let username = '';
-    let loading = false;
-    let error: null|number = null;
+    let username = $state('');
+    let loading = $state(false);
+    let error: null|number = $state(null);
 
     const month = dayjs().month();
     const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event) => {
+        console.log(event)
+        event.preventDefault();
         loading = true;
         // First validate the username exists
         const response = await fetch(`/api/user?username=${username}`);
@@ -43,7 +45,7 @@
         <p class="text-center mb-6">
             Enter your BoardGameGeek username to view your board game library. Create a QR code with preset options, filters & sorting for quick access in the future.
         </p>
-        <form class="flex flex-col items-center space-y-2" on:submit|preventDefault={handleSubmit}>
+        <form class="flex flex-col items-center space-y-2" onsubmit={handleSubmit}>
             <input
                 bind:value={username}
                 class="input"

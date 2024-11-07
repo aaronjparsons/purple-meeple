@@ -67,7 +67,7 @@
         </div>
     </div>
     <div class="flex justify-end mt-4">
-        <button class="btn variant-ringed-surface mr-6" on:click|preventDefault={() => modalStore.close()}>
+        <button class="btn variant-ringed-surface mr-6" onclick={() => modalStore.close()}>
             Close
         </button>
     </div>

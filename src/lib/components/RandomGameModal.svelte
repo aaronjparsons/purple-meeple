@@ -7,15 +7,19 @@
     import { sleep, getRandomInt, getGameName } from '$lib/utils';
     import { Library } from "$lib/store";
 
-    export let currentGameList: Game[] = [];
+    interface Props {
+        currentGameList?: Game[];
+    }
+
+    let { currentGameList = [] }: Props = $props();
 
     const modalStore = getModalStore();
-    let listContainer: HTMLElement;
-    let gameList: Game[] = [];
-    let translateVal = 0;
+    let listContainer: HTMLElement = $state();
+    let gameList: Game[] = $state([]);
+    let translateVal = $state(0);
     let spinDuration = 2000;
-    let modalState = 'start'; // start|spinner|display
-    let selectedGame: Game;
+    let modalState = $state('start'); // start|spinner|display
+    let selectedGame: Game = $state();
 
     onMount(async () => {
         buildList();
@@ -95,7 +99,7 @@
             <div class="flex justify-center">
                 <button
                     class="w-36 h-36 outline outline-surface-600 rounded-full font-semibold text-3xl"
-                    on:click={spin}
+                    onclick={spin}
                 >
                     Spin
                 </button>
@@ -115,7 +119,7 @@
                                 out:send="{{key: game['@_id']}}"
                                 class="h-[150px] w-[150px] flex-shrink-0 bg-cover bg-center rounded-md"
                                 style="background-image: url('{game.image}');"
-                            />
+></div>
                         {/each}
                     </div>
                 </div>
@@ -139,8 +143,8 @@
     <hr class="my-4" />
     <div class="flex justify-end">
         {#if modalState === 'display'}
-            <button class="btn variant-ringed-surface mr-6" on:click={respin}>Spin again</button>
+            <button class="btn variant-ringed-surface mr-6" onclick={respin}>Spin again</button>
         {/if}
-        <button class="btn variant-ringed-surface" on:click={() => modalStore.close()}>Close</button>
+        <button class="btn variant-ringed-surface" onclick={() => modalStore.close()}>Close</button>
     </div>
 </div>

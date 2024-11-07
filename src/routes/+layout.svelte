@@ -16,9 +16,14 @@
     import UpdatesModal from '$lib/components/UpdatesModal.svelte';
     import { Library, isScreenSmall } from "$lib/store";
     import kofi from '$lib/assets/kofi_s_logo_nolabel.webp';
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
 
-    let wrapper: HTMLElement;
-    let showScrollToTopBtn = false;
+    let { children }: Props = $props();
+
+    let wrapper: HTMLElement = $state();
+    let showScrollToTopBtn = $state(false);
 
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
     initializeStores();
@@ -85,34 +90,36 @@
     }
 </script>
 
-<svelte:window on:resize={handleScreenWidthChange} />
+<svelte:window onresize={handleScreenWidthChange} />
 <AppShell class="font-sans">
-    <slot />
+    {@render children?.()}
     {#if showScrollToTopBtn}
         <button
             transition:fade
             class="fixed bottom-6 right-6 btn-icon btn-icon-lg variant-filled-secondary shadow-md"
             style="padding: 10px;"
-            on:click={() => wrapper.scrollTo(0, 0)}
+            onclick={() => wrapper.scrollTo(0, 0)}
         >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75" />
             </svg>
         </button>
     {/if}
-    <svelte:fragment slot="pageFooter">
-        <div class="flex justify-center items-center">
-            <!--<span class="mr-6">Made by X</span> | -->
-            <button type="button" class="btn btn-sm !bg-transparent" on:click={openFeedback}>Submit feedback</button>
-            <span>|</span>
-            <button type="button" class="btn btn-sm !bg-transparent" on:click={openUpdates}>View updates</button>
-            <span>|</span>
-            <a href='https://ko-fi.com/G2G4TNFSY' target='_blank' class="btn btn-sm !bg-transparent">
-                <img src={kofi} class="w-8 h-8" alt="Buy me a coffee at ko-fi.com" />
-                Buy me a coffee
-            </a>
-        </div>
-    </svelte:fragment>
+    {#snippet pageFooter()}
+    
+            <div class="flex justify-center items-center">
+                <!--<span class="mr-6">Made by X</span> | -->
+                <button type="button" class="btn btn-sm !bg-transparent" onclick={openFeedback}>Submit feedback</button>
+                <span>|</span>
+                <button type="button" class="btn btn-sm !bg-transparent" onclick={openUpdates}>View updates</button>
+                <span>|</span>
+                <a href='https://ko-fi.com/G2G4TNFSY' target='_blank' class="btn btn-sm !bg-transparent">
+                    <img src={kofi} class="w-8 h-8" alt="Buy me a coffee at ko-fi.com" />
+                    Buy me a coffee
+                </a>
+            </div>
+        
+    {/snippet}
 </AppShell>
 <Modal />
 <Toast zIndex="z-[1000]" />

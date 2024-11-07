@@ -14,12 +14,12 @@
     import { libraryOptions } from '$lib/store';
 
     const modalStore = getModalStore();
-    const localOptions = {
+    const localOptions = $state({
         ...$libraryOptions,
         filters: {
             ...$libraryOptions.filters
         }
-    }
+    })
 
     const apply = () => {
         if ($modalStore[0].response) {
@@ -189,12 +189,12 @@
     </div>
     <hr class="my-4" />
     <div class="flex justify-end">
-        <button class="btn variant-ringed-surface mr-6" on:click={() => modalStore.close()}>Close</button>
-        <button class="btn variant-filled-secondary" on:click={apply}>Apply</button>
+        <button class="btn variant-ringed-surface mr-6" onclick={() => modalStore.close()}>Close</button>
+        <button class="btn variant-filled-secondary" onclick={apply}>Apply</button>
     </div>
 </div>
 
 <div class="card p-2 variant-filled-primary max-w-[200px] shadow-lg" data-popup="geekRatingTooltip">
 	<p class="text-center">Toggle between Geek rating or Average rating. (BGG uses a Bayesian average to determine a games geek rating)</p>
-	<div class="arrow variant-filled-primary" />
+	<div class="arrow variant-filled-primary"></div>
 </div>

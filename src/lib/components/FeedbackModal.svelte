@@ -4,9 +4,10 @@
 
     const modalStore = getModalStore();
     const toastStore = getToastStore();
-    let submitting = false;
+    let submitting = $state(false);
 
     const handleSubmit = async (event) => {
+        event.preventDefault();
         submitting = true;
         const data = new FormData(event.target);
 
@@ -42,16 +43,16 @@
 
 <div class="card w-modal p-4 shadow-lg">
     <h1 class="h1 mb-6">Feedback</h1>
-    <form on:submit|preventDefault={handleSubmit}>
+    <form onsubmit={handleSubmit}>
         <textarea
             class="textarea"
             name="message"
             rows="4"
             placeholder="Feedback or suggestions?"
             required
-        />
+    ></textarea>
         <div class="flex justify-end mt-4">
-            <button class="btn variant-ringed-surface mr-6" on:click|preventDefault={() => modalStore.close()}>
+            <button class="btn variant-ringed-surface mr-6" onclick={(event) => modalStore.close()}>
                 Close
             </button>
             <button class="btn variant-filled-secondary" type="submit" disabled={submitting}>

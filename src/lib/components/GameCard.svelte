@@ -13,7 +13,11 @@
     import { getGameName, parseGamePlayerCount, getValue, convertToFloat, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { ratingKey } from "$lib/store";
 
-    export let game: Game;
+    interface Props {
+        game: Game;
+    }
+
+    let { game }: Props = $props();
 
     const modalStore = getModalStore();
 
