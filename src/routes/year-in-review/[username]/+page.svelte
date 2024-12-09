@@ -169,7 +169,7 @@
                             {/if}
                         </div>
                     </YearInReviewCard>
-                    <div class="flex-grow p-4 grid grid-cols-2 gap-2">
+                    <div class="flex-grow p-4 grid-cols-1 sm:grid-cols-2 gap-2">
                         {#each Object.entries(stats.daysMostPlayed[0].plays.games) as [ game, plays ]}
                             <div class="flex space-x-2">
                                 <p class="truncate">{game}</p>
@@ -182,7 +182,7 @@
 
             <div in:fly={{ delay: 700, y: -50 }}>
                 <div class="card flex rounded-md shadow-lg variant-ghost-surface">
-                    <div class="flex-grow p-4 grid grid-cols-2 gap-x-2 gap-y-1">
+                    <div class="flex-grow p-4 grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1">
                         {#each Object.entries(stats.monthMostPlayed.plays.games) as [ game, plays ]}
                             <div class="flex space-x-2">
                                 <p class="truncate">{game}</p>
