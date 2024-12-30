@@ -43,6 +43,7 @@
 		"dayjs": "^1.11.10",
 		"fast-xml-parser": "^4.0.12",
 		"posthog-js": "^1.131.0",
-		"qr-code-styling": "^1.6.0-rc.1"
+		"qr-code-styling": "^1.6.0-rc.1",
+		"svelte-component-to-image": "^0.1.0"
 	}
 }
