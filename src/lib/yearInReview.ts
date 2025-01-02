@@ -10,24 +10,26 @@ const parseGameData = (games: Game[], groupedByGame) => {
 
         images[id] = game.image;
 
-        for (const link of game.link) {
-            if (link['@_type'] === 'boardgamecategory') {
-                if (categories[link['@_id']]) {
-                    categories[link['@_id']].playCount += 1;
-                } else {
-                    categories[link['@_id']] = {
-                        name: link['@_value'],
-                        playCount: 1,
+        if (game.link && Array.isArray(game.link)) {
+            for (const link of game.link) {
+                if (link['@_type'] === 'boardgamecategory') {
+                    if (categories[link['@_id']]) {
+                        categories[link['@_id']].playCount += 1;
+                    } else {
+                        categories[link['@_id']] = {
+                            name: link['@_value'],
+                            playCount: 1,
+                        }
                     }
                 }
-            }
-            if (link['@_type'] === 'boardgamemechanic') {
-                if (mechanics[link['@_id']]) {
-                    mechanics[link['@_id']].playCount += 1;
-                } else {
-                    mechanics[link['@_id']] = {
-                        name: link['@_value'],
-                        playCount: 1,
+                if (link['@_type'] === 'boardgamemechanic') {
+                    if (mechanics[link['@_id']]) {
+                        mechanics[link['@_id']].playCount += 1;
+                    } else {
+                        mechanics[link['@_id']] = {
+                            name: link['@_value'],
+                            playCount: 1,
+                        }
                     }
                 }
             }
