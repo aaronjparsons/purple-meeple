@@ -10,6 +10,12 @@
     <div class="max-h-[450px] overflow-y-auto">
         <div class="flex flex-col gap-y-4">
             <div>
+                <h4 class="h4">March 30, 2025</h4>
+                <p>
+                    Fixed an issue when loading collections due to duplicate database entries.
+                </p>
+            </div>
+            <div>
                 <h4 class="h4">Oct 27, 2024</h4>
                 <p>
                     Collections no longer load expansions, to help performance and load times for those with large collections.

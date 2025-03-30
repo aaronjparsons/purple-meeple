@@ -97,11 +97,20 @@ export const GET = async ({ url }) => {
                     databaseCollection = collection;
                 }
             } else {
-                // First time user, create collection entry in DB
-                const { data, error } = await supabase.from('collections').insert([{
-                    username,
-                    collection
-                }])
+                if (data && data.length) {
+                    // User has an entry in the DB but no collection
+                    // Update it with the new collection
+                    const { error } = await supabase.from('collections').update({
+                        collection
+                    }).eq('username', username);
+                    databaseCollection = collection;
+                } else {
+                    // First time user, create collection entry in DB
+                    const { data, error } = await supabase.from('collections').insert([{
+                        username,
+                        collection
+                    }])
+                }
 
                 if (error) {
                     // TODO ?? Just silent fail??
@@ -140,6 +149,7 @@ export const GET = async ({ url }) => {
 
                         await sleep(retryDelay);
                     }
+
                     const parsedCollection = games.map(game => {
                         return parseGame({ ...game, ...databaseCollection[game['@_id']] });
                     })
