@@ -22,6 +22,10 @@
 
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
+    const handleScreenWidthChange = () => {
+        $isScreenSmall = window.innerWidth <= 570;
+    }
+
     onMount(() => {
         if (browser) {
             posthog.init(
@@ -32,6 +36,7 @@
 
             wrapper = document.querySelector('#page');
             wrapper.addEventListener('scroll', handleScroll);
+            handleScreenWidthChange();
         }
     })
 
@@ -40,10 +45,6 @@
             wrapper.removeEventListener('scroll', handleScroll);
         }
     })
-
-    const handleScreenWidthChange = () => {
-        $isScreenSmall = window.innerWidth <= 570;
-    }
 
     const handleScroll = () => {
         if (wrapper.scrollTop > 500) {

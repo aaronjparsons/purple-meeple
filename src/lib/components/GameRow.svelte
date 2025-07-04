@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ExternalLinkIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ExternalLinkIcon, PlayIcon } from "@rgossiaux/svelte-heroicons/solid";
     import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
     import { getGameName, convertToFloat, getValue, parseGamePlayerCount, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { isScreenSmall, ratingKey } from "$lib/store";
@@ -15,7 +15,7 @@
         class="relative flex-shrink-0 rounded-tl-md rounded-bl-md w-24 h-[120px]"
     >
         <img
-            src={game.image}
+            src={game.thumbnail}
             loading="lazy"
             class="rounded-tl-md rounded-bl-md object-cover object-center w-24 h-full"
         />
@@ -64,6 +64,13 @@
                 <p>
                     {$isScreenSmall ? '' : 'Weight:'}
                     {convertToFloat(game.statistics.averageweight)}
+                </p>
+            </div>
+            <div class="flex">
+                <PlayIcon class="w-6 h-6 mr-2" />
+                <p>
+                    {$isScreenSmall ? '' : 'Plays:'}
+                    {game.numplays}
                 </p>
             </div>
         </div>

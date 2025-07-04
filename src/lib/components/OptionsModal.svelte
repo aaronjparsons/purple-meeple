@@ -65,6 +65,7 @@
                 <option value="release">Release Date</option>
                 <option value="rating">{ localOptions.useGeekRating ? 'Geek' : 'Avg' } Rating</option>
                 <option value="weight">Weight</option>
+                <option value="playcount">Play Count</option>
             </select>
         </label>
         <div class="w-1/2">

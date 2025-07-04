@@ -2,7 +2,7 @@
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import ExtraDataModal from '$lib/components/ExtraDataModal.svelte';
     import { modalStore } from '@skeletonlabs/skeleton';
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon, ExternalLinkIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon, ExternalLinkIcon, PlayIcon } from "@rgossiaux/svelte-heroicons/solid";
     import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
     import { getGameName, parseGamePlayerCount, getValue, convertToFloat, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { ratingKey } from "$lib/store";
@@ -29,7 +29,7 @@
         {getGameName(game)}
     </div>
     <div class="h-full flex">
-        <div class="flex-col space-y-2">
+        <div class="flex-col space-y-0.5">
             <div class="margin-auto text-center min-w-[56px]">
                 <FireIcon class="inline-block h-6 w-6" />
                 <p>{convertToFloat(game.statistics[$ratingKey], 1)}</p>
@@ -53,6 +53,11 @@
             <div class="margin-auto text-center min-w-[56px]">
                 <ScaleIcon class="inline-block h-6 w-6" />
                 <p>{convertToFloat(game.statistics.averageweight, 1)}</p>
+            </div>
+            <hr class="mx-2 opacity-50" />
+            <div class="margin-auto text-center min-w-[56px]">
+                <PlayIcon class="inline-block h-6 w-6" />
+                <p>{game.numplays}</p>
             </div>
             <!-- <hr class="mx-2 opacity-50" /> -->
         </div>

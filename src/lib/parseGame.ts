@@ -4,6 +4,7 @@ export const parseGame = (game) => {
         type: game['@_type'],
         description: game.description,
         image: game.image,
+        thumbnail: game.thumbnail,
         link: game.link.reduce((o, link) => {
             const type = link['@_type'];
             const value = link['@_value'];

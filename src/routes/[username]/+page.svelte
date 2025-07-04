@@ -95,6 +95,15 @@
                         : ratingA > ratingB ? 1 : -1
                 });
                 break;
+            case 'playcount':
+                sorted = col.sort((a: Game, b: Game) => {
+                    const playCountA = a.numplays;
+                    const playCountB = b.numplays;
+                    return isAsc
+                        ? playCountA > playCountB ? -1 : 1
+                        : playCountA > playCountB ? 1 : -1
+                });
+                break;
             case 'alphabetical':
             default:
                 sorted = col.sort((a: Game, b: Game) => {
