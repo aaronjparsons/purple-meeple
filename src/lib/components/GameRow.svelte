@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ExternalLinkIcon, PlayIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ExternalLinkIcon, PlayIcon } from "$lib/components/icons/solid";
     import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
     import { getGameName, convertToFloat, getValue, parseGamePlayerCount, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { isScreenSmall, ratingKey } from "$lib/store";

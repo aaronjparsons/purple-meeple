@@ -4,7 +4,6 @@
     import { captureException } from '@sentry/sveltekit'
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore, ProgressBar } from '@skeletonlabs/skeleton';
-    import { ViewListIcon, ViewGridIcon } from '@rgossiaux/svelte-heroicons/solid';
     import { onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { writable, type Writable } from 'svelte/store';
@@ -17,6 +16,7 @@
     import OptionsModal from "$lib/components/OptionsModal.svelte";
     import QRModal from "$lib/components/QRModal.svelte";
     import RandomGameModal from "$lib/components/RandomGameModal.svelte";
+    import { ViewListIcon, ViewGridIcon } from '$lib/components/icons/solid';
     import { sleep, getGameName, parseBestPlayerCount } from "$lib/utils";
     import { Library, libraryOptions, ratingKey } from "$lib/store";
 

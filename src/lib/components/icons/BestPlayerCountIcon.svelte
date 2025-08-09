@@ -1,5 +1,5 @@
 <script>
-    import { UserGroupIcon, StarIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, StarIcon } from "$lib/components/icons/solid";
 </script>
 
 <div class="relative h-6 w-6 {$$props.class || ''}">

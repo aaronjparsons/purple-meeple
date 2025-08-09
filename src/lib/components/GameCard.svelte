@@ -2,7 +2,7 @@
     import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
     import ExtraDataModal from '$lib/components/ExtraDataModal.svelte';
     import { modalStore } from '@skeletonlabs/skeleton';
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon, ExternalLinkIcon, PlayIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, StarIcon, ExternalLinkIcon, PlayIcon } from "$lib/components/icons/solid";
     import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
     import { getGameName, parseGamePlayerCount, getValue, convertToFloat, parseBestPlayerCount, getGameLink } from "$lib/utils";
     import { ratingKey } from "$lib/store";

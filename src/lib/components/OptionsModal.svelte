@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ArrowSmDownIcon, ArrowSmUpIcon, PlayIcon } from "@rgossiaux/svelte-heroicons/solid";
+    import { UserGroupIcon, ClockIcon, FireIcon, ScaleIcon, ArrowSmDownIcon, ArrowSmUpIcon, PlayIcon } from "$lib/components/icons/solid";
     import BestPlayerCountIcon from '$lib/components/icons/BestPlayerCountIcon.svelte';
     import { SlideToggle, modalStore, RadioGroup, RadioItem, popup } from '@skeletonlabs/skeleton';
     import type { PopupSettings } from "@skeletonlabs/skeleton";
