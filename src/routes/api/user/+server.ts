@@ -15,18 +15,18 @@ export const GET = async ({ url }) => {
 
             if (parsed?.html?.head?.title.includes('404')) {
                 // Handle 404 html response
-                throw error(404);
+                error(404);
             }
 
             if (parsed?.user['@_id'].length === 0) {
                 // Handle no username (may be a deprecated response)
-                throw error(404);
+                error(404);
             }
 
             // No error, user exists
             return new Response(JSON.stringify({ success: true }));
         }
     } else {
-        throw error(response.status);
+        error(response.status);
     }
 }

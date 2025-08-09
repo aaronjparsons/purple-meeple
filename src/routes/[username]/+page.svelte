@@ -8,8 +8,8 @@
     import { onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { writable, type Writable } from 'svelte/store';
-    import { page } from '$app/stores';
-    import { goto } from '$app/navigation';
+    import { page } from '$app/state';
+    import { goto, replaceState } from '$app/navigation';
     import logo from '$lib/assets/purple_meeple_150.png';
     import Dice from '$lib/icons/dice.png';
     import GameCard from "$lib/components/GameCard.svelte";
@@ -20,7 +20,7 @@
     import { sleep, getGameName, parseBestPlayerCount } from "$lib/utils";
     import { Library, libraryOptions, ratingKey } from "$lib/store";
 
-    const username = $page.params.username;
+    const username = page.params.username;
     let displayType = 'grid';
     let displayName = '';
     let collection: Game[] = [];
@@ -458,7 +458,8 @@
                 }
         }).join('&');
 
-        window.history.replaceState(null, '', `?${url}`);
+
+        replaceState(`?${url}`, null);
     }
 </script>
 

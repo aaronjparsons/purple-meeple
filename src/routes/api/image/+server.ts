@@ -44,6 +44,6 @@ export const GET: RequestHandler = (async ({url}) => {
         return response
     } catch (e) {
         console.error(e)
-        throw error(500, 'Error trying to generate image from component.',)
+        error(500, 'Error trying to generate image from component.',);
     }
 }) satisfies RequestHandler

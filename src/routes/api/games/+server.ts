@@ -23,7 +23,7 @@ export const POST = async ({ request }) => {
         }
     } else {
         console.log('Chunk error - ', chunkResponse.status)
-        throw error(chunkResponse.status);
+        error(chunkResponse.status);
     }
 
     return new Response(JSON.stringify({games}));

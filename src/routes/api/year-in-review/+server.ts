@@ -16,6 +16,6 @@ export const GET = async ({ url }) => {
 
         return new Response(JSON.stringify(payload));
     } catch (e) {
-        throw error(e.message)
+        error(e.message);
     }
 };

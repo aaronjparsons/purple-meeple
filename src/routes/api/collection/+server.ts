@@ -55,7 +55,7 @@ export const GET = async ({ url }) => {
 
             // No items in collection
             if (parsed.items['@_totalitems'] === '0') {
-                throw error(400, 'No games in BGG collection.');
+                error(400, 'No games in BGG collection.');
             }
 
             const items = Array.isArray(parsed.items.item)
@@ -172,6 +172,6 @@ export const GET = async ({ url }) => {
             status: 200
         });
     } else {
-        throw error(collectionResponse.status);
+        error(collectionResponse.status);
     }
 }

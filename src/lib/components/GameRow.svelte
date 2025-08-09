@@ -15,7 +15,7 @@
         class="relative flex-shrink-0 rounded-tl-md rounded-bl-md w-24 h-[120px]"
     >
         <img
-            src={game.thumbnail}
+            src={game.image}
             loading="lazy"
             class="rounded-tl-md rounded-bl-md object-cover object-center w-24 h-full"
         />

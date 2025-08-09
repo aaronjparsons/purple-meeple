@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { page } from '$app/stores';
+    import { page } from '$app/state';
     import dayjs from 'dayjs';
     import logo from '$lib/assets/purple_meeple_150.png';
     import YearInReview from '$lib/components/YearInReview.svelte';
 
-    const username = $page.params.username;
+    const username = page.params.username;
     let displayName = '';
     const year = dayjs().month() === 0 ? dayjs().year() - 1 : dayjs().year();
 
