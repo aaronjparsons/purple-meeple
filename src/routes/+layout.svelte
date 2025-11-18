@@ -14,6 +14,7 @@
     import Analytics from '$lib/components/Analytics.svelte';
     import FeedbackModal from '$lib/components/FeedbackModal.svelte';
     import UpdatesModal from '$lib/components/UpdatesModal.svelte';
+    import TempRegistrationModal from '$lib/components/TempRegistrationModal.svelte';
     import { Library, isScreenSmall } from "$lib/store";
     import kofi from '$lib/assets/kofi_s_logo_nolabel.webp';
 
@@ -83,6 +84,24 @@
         };
         modalStore.trigger(d);
     }
+
+    // Temporary modal to inform users of BGG registration status
+    // Remove once approved
+    const openRegistrationModal = () => {
+        const modalComponent: ModalComponent = {
+            // Pass a reference to your custom component
+            ref: TempRegistrationModal,
+            // Add your props as key/value pairs
+            props: {  },
+        };
+        const d: ModalSettings = {
+            type: 'component',
+            component: modalComponent,
+            // response: applyOptions
+        };
+        modalStore.trigger(d);
+    }
+    openRegistrationModal();
 </script>
 
 <svelte:window on:resize={handleScreenWidthChange} />
@@ -115,6 +134,11 @@
     </svelte:fragment>
 </AppShell>
 <Modal />
+
+<!-- TEMP: Remove after BGG approval. Block click events -->
+<div class="fixed inset-0 z-[10000]"></div>
+<!--  -->
+
 <Toast zIndex="z-[1000]" />
 <!-- <Analytics /> -->
 
