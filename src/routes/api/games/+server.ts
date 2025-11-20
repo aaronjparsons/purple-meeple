@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { XMLParser } from 'fast-xml-parser';
+import { BGG_BEARER_TOKEN } from "$env/static/private"
 
 
 export const POST = async ({ request }) => {
@@ -8,7 +9,11 @@ export const POST = async ({ request }) => {
 
     console.log(`Fetching ${req.gameIds.length} games for ${req.username}`);
     const url = `https://boardgamegeek.com/xmlapi2/thing?id=${req.gameIds}&stats=1&type=boardgame,boardgameexpansion`;
-    const chunkResponse = await fetch(url);
+    const chunkResponse = await fetch(url, {
+        headers: {
+            'Authorization': `Bearer ${BGG_BEARER_TOKEN}`
+        }
+    });
     console.log('Chunk response - ', chunkResponse.status);
     const games = [];
     if (chunkResponse.ok && chunkResponse.status === 200) {

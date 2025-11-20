@@ -3,6 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { supabase } from '$lib/supabaseClient';
 import { sortAndCompare, sleep } from '$lib/utils';
 import { parseGame } from '$lib/parseGame';
+import { BGG_BEARER_TOKEN } from "$env/static/private"
 
 export const config = {
     // Use 'nodejs18.x' for Serverless
@@ -29,7 +30,11 @@ export const GET = async ({ url }) => {
     }
 
     const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&excludesubtype=boardgameexpansion&own=1`;
-    const collectionResponse = await fetch(collectionUrl);
+    const collectionResponse = await fetch(collectionUrl, {
+        headers: {
+            'Authorization': `Bearer ${BGG_BEARER_TOKEN}`
+        }
+    });
     console.log(`fetching collection - username: ${username}`);
 
     const parser = new XMLParser({ ignoreAttributes: false });
@@ -130,7 +135,11 @@ export const GET = async ({ url }) => {
                     while(index < gameIds.length) {
                         const currentChunk = gameIds.slice(index, index + chunkSize);
                         const url = `https://boardgamegeek.com/xmlapi2/thing?id=${currentChunk}&stats=1&type=boardgame`;
-                        const chunkResponse = await fetch(url);
+                        const chunkResponse = await fetch(url, {
+                            headers: {
+                                'Authorization': `Bearer ${BGG_BEARER_TOKEN}`
+                            }
+                        });
                         if (chunkResponse.ok && chunkResponse.status === 200) {
                             const text = await chunkResponse.text();
                             const parsedChunk = parser.parse(text);

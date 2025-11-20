@@ -1,5 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import { months } from '$lib/utils';
+import { BGG_BEARER_TOKEN } from "$env/static/private"
 
 const parseGameData = (games: Game[], groupedByGame) => {
     const images = {};
@@ -48,7 +49,11 @@ const parseGameData = (games: Game[], groupedByGame) => {
 
 export const getYearInReview = async ({ username, year }) => {
     const playsUrl = `https://boardgamegeek.com/xmlapi2/plays?username=${username}&mindate=${year}-01-01&maxdate=${year}-12-31`;
-    const playsResponse = await fetch(playsUrl);
+    const playsResponse = await fetch(playsUrl, {
+        headers: {
+            'Authorization': `Bearer ${BGG_BEARER_TOKEN}`
+        }
+    });
     let res = '';
 
     if (playsResponse.ok) {
@@ -244,7 +249,11 @@ export const getYearInReview = async ({ username, year }) => {
     response.uniquePlayed = Object.keys(groupedByGame).length;
 
     const gamesUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${gameIds}`;
-    const gamesResponse = await fetch(gamesUrl);
+    const gamesResponse = await fetch(gamesUrl, {
+        headers: {
+            'Authorization': `Bearer ${BGG_BEARER_TOKEN}`
+        }
+    });
     let images = {};
     let categories = {};
     let mechanics = {};

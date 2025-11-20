@@ -1,11 +1,16 @@
 import { error } from '@sveltejs/kit';
 import { XMLParser } from 'fast-xml-parser';
+import { BGG_BEARER_TOKEN } from "$env/static/private"
 
 export const GET = async ({ url }) => {
     const username = url.searchParams.get('username');
     const userUrl = `https://boardgamegeek.com/xmlapi2/user?name=${username}`;
 
-    const response = await fetch(userUrl);
+    const response = await fetch(userUrl, {
+        headers: {
+            'Authorization': `Bearer ${BGG_BEARER_TOKEN}`
+        }
+    });
 
     if (response.ok) {
         if (response.status === 200) {
