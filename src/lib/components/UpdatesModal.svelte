@@ -10,6 +10,12 @@
     <div class="max-h-[450px] overflow-y-auto">
         <div class="flex flex-col gap-y-4">
             <div>
+                <h4 class="h4">December 8, 2025</h4>
+                <p>
+                    Fixed an issue that caused an error when loading the Year in Review for some users.'
+                </p>
+            </div>
+            <div>
                 <h4 class="h4">March 30, 2025</h4>
                 <p>
                     Fixed an issue when loading collections due to duplicate database entries.
