@@ -86,7 +86,11 @@ export const getYearInReview = async ({ username, year }) => {
         let currentTotal = 100;
         while (currentTotal < total) {
             const nextPageUrl = `${playsUrl}&page=${page}`;
-            const nextPageResponse = await fetch(nextPageUrl);
+            const nextPageResponse = await fetch(nextPageUrl, {
+                headers: {
+                    'Authorization': `Bearer ${BGG_BEARER_TOKEN}`
+                }
+            });
             let currentRes = '';
 
             if (nextPageResponse.ok) {
