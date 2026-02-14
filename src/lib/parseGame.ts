@@ -1,4 +1,8 @@
+import { bggToSimplifiedMechanics } from '$lib/mechanicsMap';
+
 export const parseGame = (game) => {
+    const usedMechanics: string[] = [];
+
     return {
         id: game['@_id'],
         type: game['@_type'],
@@ -15,6 +19,15 @@ export const parseGame = (game) => {
             }
             return o;
         }, {}),
+        mechanics: game.link.map(link => {
+            if (link['@_type'] === 'boardgamemechanic') {
+                const mappedName = bggToSimplifiedMechanics[link['@_value']];
+                if (mappedName && !usedMechanics.includes(mappedName)) {
+                    usedMechanics.push(mappedName);
+                    return mappedName;
+                }
+            }
+        }).filter(mechanic => mechanic),
         maxplayers: parseInt(game.maxplayers['@_value']),
         maxplaytime: parseInt(game.maxplaytime['@_value']),
         minage: parseInt(game.minage['@_value']),

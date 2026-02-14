@@ -9,6 +9,7 @@ import FireIcon from './Fire.svelte';
 import PlayIcon from './Play.svelte';
 import ScaleIcon from './Scale.svelte';
 import ExternalLinkIcon from './ExternalLink.svelte';
+import ChartIcon from './Chart.svelte';
 
 export {
     ViewGridIcon,
@@ -21,5 +22,6 @@ export {
     FireIcon,
     PlayIcon,
     ScaleIcon,
-    ExternalLinkIcon
+    ExternalLinkIcon,
+    ChartIcon
 };

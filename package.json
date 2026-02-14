@@ -38,6 +38,7 @@
 		"@sentry/sveltekit": "^7.55.2",
 		"@supabase/supabase-js": "^2.31.0",
 		"@tailwindcss/forms": "^0.5.3",
+		"chart.js": "^4.5.1",
 		"dayjs": "^1.11.10",
 		"fast-xml-parser": "^4.0.12",
 		"posthog-js": "^1.131.0",

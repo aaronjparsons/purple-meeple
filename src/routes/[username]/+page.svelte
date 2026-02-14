@@ -13,10 +13,11 @@
     import Dice from '$lib/icons/dice.png';
     import GameCard from "$lib/components/GameCard.svelte";
     import GameRow from "$lib/components/GameRow.svelte";
+    import StatsView from '$lib/components/StatsView.svelte';
     import OptionsModal from "$lib/components/OptionsModal.svelte";
     import QRModal from "$lib/components/QRModal.svelte";
     import RandomGameModal from "$lib/components/RandomGameModal.svelte";
-    import { ViewListIcon, ViewGridIcon } from '$lib/components/icons/solid';
+    import { ViewListIcon, ViewGridIcon, ChartIcon } from '$lib/components/icons/solid';
     import { sleep, getGameName, parseBestPlayerCount } from "$lib/utils";
     import { Library, libraryOptions, ratingKey } from "$lib/store";
 
@@ -513,8 +514,10 @@
         </a>
     {/if}
     <div class="w-full flex justify-center">
-        <img class="h-8 w-8 mt-5 sm:h-14 sm:w-14 sm:mt-4 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />
-        <h1 class="font-title text-center text-4xl sm:text-6xl font-bold my-4">Purple Meeple</h1>
+        <a href="/" class="flex">
+            <img class="h-8 w-8 mt-5 sm:h-14 sm:w-14 sm:mt-4 mr-2 -rotate-12" alt="Purple Meeple logo" src={logo} />
+            <h1 class="font-title text-center text-4xl sm:text-6xl font-bold my-4">Purple Meeple</h1>
+        </a>
     </div>
     <div transition:fade class="flex flex-col items-center px-4 m-auto sm:max-w-[1020px]">
         <p class="unstyled text-center text-base sm:text-lg">
@@ -532,21 +535,24 @@
             </p>
         {/if}
         <div class="w-full flex justify-end mb-4 mt-2 h-[42px]">
-            <button class="btn variant-filled-secondary mr-4" on:click={openRandomGame}>
+            <button disabled={displayType === 'stats'} class="btn variant-filled-secondary mr-4" on:click={openRandomGame}>
                 <img src={Dice} alt="dice icon" class="h-6 w-6" />
             </button>
-            <button class="btn variant-filled-secondary mr-4" on:click={openQR}>
+            <button disabled={displayType === 'stats'} class="btn variant-filled-secondary mr-4" on:click={openQR}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
                 </svg>
             </button>
-            <button class="btn variant-filled-secondary mr-4" on:click={openOptions}>
+            <button disabled={displayType === 'stats'} class="btn variant-filled-secondary mr-4" on:click={openOptions}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />
                 </svg>
             </button>
             <RadioGroup active="variant-filled-secondary" hover="hover:variant-soft-secondary">
+                <RadioItem bind:group={displayType} name="display-type" value="stats">
+                    <ChartIcon class="h-6 w-5" />
+                </RadioItem>
                 <RadioItem bind:group={displayType} name="display-type" value="list">
                     <ViewListIcon class="h-6 w-5" />
                 </RadioItem>
@@ -563,6 +569,8 @@
                     <p class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-xl py-12">No results based on current filters</p>
                 {/each}
             </div>
+        {:else if displayType === 'stats'}
+            <StatsView {collection} />
         {:else}
             {#each collection as game}
                 <GameRow {game} />
@@ -613,5 +621,9 @@
     -ms-animation: pulse 8s infinite ease-in-out;
     -moz-animation: pulse 8s infinite ease-in-out;
     animation: pulse 8s infinite ease-in-out;
+}
+
+:global(.radio-item) {
+    @apply px-2;
 }
 </style>
