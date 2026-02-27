@@ -79,7 +79,6 @@
             </button> -->
             <img
                 src={game.image}
-                loading="lazy"
                 class="rounded-tl-md rounded-br-md object-cover object-center w-full h-[332px]"
             />
             <a

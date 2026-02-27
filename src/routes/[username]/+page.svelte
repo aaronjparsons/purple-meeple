@@ -4,15 +4,15 @@
     import { captureException } from '@sentry/sveltekit'
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore, ProgressBar } from '@skeletonlabs/skeleton';
-    import { onDestroy } from 'svelte';
+    import { onDestroy, onMount, tick } from 'svelte';
     import { fade } from 'svelte/transition';
     import { writable, type Writable } from 'svelte/store';
     import { page } from '$app/state';
     import { goto, replaceState } from '$app/navigation';
     import logo from '$lib/assets/purple_meeple_150.png';
     import Dice from '$lib/icons/dice.png';
-    import GameCard from "$lib/components/GameCard.svelte";
-    import GameRow from "$lib/components/GameRow.svelte";
+    import VirtualGridList from "$lib/components/VirtualGridList.svelte";
+    import VirtualRowList from "$lib/components/VirtualRowList.svelte";
     import StatsView from '$lib/components/StatsView.svelte';
     import OptionsModal from "$lib/components/OptionsModal.svelte";
     import QRModal from "$lib/components/QRModal.svelte";
@@ -28,6 +28,31 @@
     let collectionLoadAttempts = 0;
     let loadingState: string|null = null;
     let gameLoadingProgress = 0;
+    let scrollElement: HTMLElement | null = null;
+    let scrollMargin: number = 0;
+    let listContainer: HTMLElement;
+
+    onMount(() => {
+        scrollElement = document.querySelector('#page');
+    });
+
+    const updateScrollMargin = async () => {
+        await tick();
+        if (listContainer && scrollElement) {
+            scrollMargin = listContainer.offsetTop;
+        }
+    };
+
+    $: if (collection && listContainer) {
+        updateScrollMargin();
+    }
+
+    // Scroll to top when collection changes (filter/sort)
+    let prevCollectionRef: Game[] | null = null;
+    $: if (collection && scrollElement && prevCollectionRef !== null && prevCollectionRef !== collection) {
+        scrollElement.scrollTo(0, 0);
+    }
+    $: prevCollectionRef = collection;
 
     const month = dayjs().month();
     const year = month === 0 ? dayjs().year() - 1 : dayjs().year();
@@ -561,23 +586,15 @@
                 </RadioItem>
             </RadioGroup>
         </div>
-        {#if displayType === 'grid'}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
-                {#each collection as game}
-                    <GameCard {game} />
-                {:else}
-                    <p class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-xl py-12">No results based on current filters</p>
-                {/each}
-            </div>
-        {:else if displayType === 'stats'}
-            <StatsView {collection} />
-        {:else}
-            {#each collection as game}
-                <GameRow {game} />
+        <div bind:this={listContainer} class="w-full pb-4">
+            {#if displayType === 'grid'}
+                <VirtualGridList {collection} {scrollElement} {scrollMargin} />
+            {:else if displayType === 'stats'}
+                <StatsView {collection} />
             {:else}
-                <p class="text-center text-xl py-12">No results based on current filters</p>
-            {/each}
-        {/if}
+                <VirtualRowList {collection} {scrollElement} {scrollMargin} />
+            {/if}
+        </div>
     </div>
 {:catch error}
     <div class="h-full flex flex-col justify-center items-center">

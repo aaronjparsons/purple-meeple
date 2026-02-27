@@ -16,7 +16,6 @@
     >
         <img
             src={game.image}
-            loading="lazy"
             class="rounded-tl-md rounded-bl-md object-cover object-center w-24 h-full"
         />
         <a
