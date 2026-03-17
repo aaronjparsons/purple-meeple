@@ -197,10 +197,15 @@
                     }
                 }
 
-                if (designers.hasOwnProperty(game.link.boardgamedesigner)) {
-                    designers[game.link.boardgamedesigner]++;
-                } else {
-                    designers[game.link.boardgamedesigner] = 1;
+                if (typeof game.link.boardgamedesigner === 'string') {
+                    game.link.boardgamedesigner = [game.link.boardgamedesigner];
+                }
+                for (let designer of game.link.boardgamedesigner) {
+                    if (designers.hasOwnProperty(designer)) {
+                        designers[designer]++;
+                    } else {
+                        designers[designer] = 1;
+                    }
                 }
 
                 const owned = Number(game.statistics.owned);
@@ -237,8 +242,6 @@
         createPlayerCountChart();
         createWeightChart();
         createMechanicsChart();
-
-        console.log('libraryStats:', $libraryStats);
     })
 </script>
 
@@ -285,7 +288,7 @@
         <div class="card rounded-md shadow-lg p-4 variant-ghost-tertiary col-span-2 sm:col-span-1">
             <div class="flex-grow flex justify-center">
                 <div class="w-full ml-4">
-                    <p class="text-xl sm:text-2xl text-center my-2">Favorite Designer(s)</p>
+                    <p class="text-xl sm:text-2xl text-center my-2">Favorite Designer</p>
                     <hr class="my-2" />
                     <p class="text-xl sm:text-2xl text-center my-2">{$libraryStats.topDesigner.name}</p>
                     <p class="text-center">{$libraryStats.topDesigner.count} games owned</p>
