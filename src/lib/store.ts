@@ -62,5 +62,7 @@ export const libraryStats = writable({
         '2-3': 0,
         '3-4': 0,
         '4-5': 0,
-    }
+    },
+    listingStats: null,
+    gamesWithoutListings: []
 });

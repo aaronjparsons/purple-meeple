@@ -75,7 +75,7 @@
                 style="height: {row.size}px; transform: translateY({row.start - scrollMargin}px);"
             >
                 <div class="flex justify-center gap-4">
-                    {#each getRowGames(row.index) as game (game.id)}
+                    {#each getRowGames(row.index) as game, index (`${game.id}-${index}`)}
                         <GameCard {game} />
                     {/each}
                 </div>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount, tick } from "svelte";
     import Chart from "chart.js/auto";
+    import CollectionValueCard from "./CollectionValueCard.svelte";
     import { bggToSimplifiedMechanics } from "$lib/mechanicsMap";
     import { libraryStats, isScreenSmall } from "$lib/store";
 
@@ -201,6 +202,7 @@
                     game.link.boardgamedesigner = [game.link.boardgamedesigner];
                 }
                 for (let designer of game.link.boardgamedesigner) {
+                    if (designer === '(Uncredited)') continue;
                     if (designers.hasOwnProperty(designer)) {
                         designers[designer]++;
                     } else {
@@ -286,14 +288,10 @@
         </div>
 
         <div class="card rounded-md shadow-lg p-4 variant-ghost-tertiary col-span-2 sm:col-span-1">
-            <div class="flex-grow flex justify-center">
-                <div class="w-full ml-4">
-                    <p class="text-xl sm:text-2xl text-center my-2">Favorite Designer</p>
-                    <hr class="my-2" />
-                    <p class="text-xl sm:text-2xl text-center my-2">{$libraryStats.topDesigner.name}</p>
-                    <p class="text-center">{$libraryStats.topDesigner.count} games owned</p>
-                </div>
-            </div>
+            <p class="text-xl sm:text-2xl text-center my-2">Favorite Designer</p>
+            <hr class="my-2" />
+            <p class="text-xl sm:text-2xl text-center my-2">{$libraryStats.topDesigner.name}</p>
+            <p class="text-center">{$libraryStats.topDesigner.count} games owned</p>
         </div>
 
         <div class="card rounded-md shadow-lg p-4 variant-ghost-tertiary col-span-2 sm:col-span-1">
@@ -319,6 +317,8 @@
                 {/if}
             </div>
         </div>
+
+        <CollectionValueCard />
 
         <div class="card rounded-md shadow-lg p-4 variant-ghost-tertiary col-span-2">
             <p class="text-xl sm:text-2xl text-center my-2">Player Count Distribution</p>
