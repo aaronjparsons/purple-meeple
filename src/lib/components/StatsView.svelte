@@ -198,15 +198,17 @@
                     }
                 }
 
-                if (typeof game.link.boardgamedesigner === 'string') {
-                    game.link.boardgamedesigner = [game.link.boardgamedesigner];
-                }
-                for (let designer of game.link.boardgamedesigner) {
-                    if (designer === '(Uncredited)') continue;
-                    if (designers.hasOwnProperty(designer)) {
-                        designers[designer]++;
-                    } else {
-                        designers[designer] = 1;
+                if (game.link.boardgamedesigner) {
+                    if (typeof game.link.boardgamedesigner === 'string') {
+                        game.link.boardgamedesigner = [game.link.boardgamedesigner];
+                    }
+                    for (let designer of game.link.boardgamedesigner) {
+                        if (designer === '(Uncredited)') continue;
+                        if (designers.hasOwnProperty(designer)) {
+                            designers[designer]++;
+                        } else {
+                            designers[designer] = 1;
+                        }
                     }
                 }
 
