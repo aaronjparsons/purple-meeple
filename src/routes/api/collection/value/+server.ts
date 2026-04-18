@@ -1,8 +1,8 @@
 import { XMLParser } from 'fast-xml-parser';
 import { supabase } from '$lib/supabaseClient';
-import { sortAndCompare, sleep } from '$lib/utils';
-import { parseGame } from '$lib/parseGame';
+import { sleep } from '$lib/utils';
 import { BGG_BEARER_TOKEN } from "$env/static/private"
+import * as Sentry from '@sentry/sveltekit';
 
 export const config = {
     // Use 'nodejs18.x' for Serverless
@@ -22,41 +22,59 @@ export const GET = async ({ url }) => {
     }
 
     const chunkSize = 20;
-    const games = [];
+    const concurrency = 2;
     const encoder = new TextEncoder();
     const parser = new XMLParser({ ignoreAttributes: false });
+
+    const chunks: string[][] = [];
+    for (let i = 0; i < gameIds.length; i += chunkSize) {
+        chunks.push(gameIds.slice(i, i + chunkSize));
+    }
 
     const customReadable = new ReadableStream({
         async start(controller) {
             try {
-                let index = 0;
-                let retryDelay = 500;
-                while(index < gameIds.length) {
-                    const currentChunk = gameIds.slice(index, index + chunkSize);
-                    const url = `https://boardgamegeek.com/xmlapi2/thing?id=${currentChunk}&marketplace=1&type=boardgame`;
-                    const chunkResponse = await fetch(url, {
-                        headers: {
-                            'Authorization': `Bearer ${BGG_BEARER_TOKEN}`
-                        }
-                    });
-                    if (chunkResponse.ok && chunkResponse.status === 200) {
-                        const text = await chunkResponse.text();
-                        const parsedChunk = parser.parse(text);
-                        let res = parsedChunk.items.item;
-                        if (!Array.isArray(res)) {
-                            res = [res];
-                        }
-                        games.push(...res);
-                        const percent = Math.round(games.length / gameIds.length * 100);
-                        controller.enqueue(encoder.encode(JSON.stringify(percent)));
-                        index += chunkSize;
-                    } else if (chunkResponse.status === 429) {
-                        // Rate limited, increase delay between requests
-                        retryDelay += 500;
-                    }
+                let completedGames = 0;
+                const queue = [...chunks];
 
-                    await sleep(retryDelay);
-                }
+                const fetchChunk = async (chunkIds: string[]): Promise<any[]> => {
+                    let retries = 0;
+                    while (true) {
+                        const chunkUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${chunkIds}&marketplace=1&type=boardgame`;
+                        const chunkResponse = await fetch(chunkUrl, {
+                            headers: { 'Authorization': `Bearer ${BGG_BEARER_TOKEN}` }
+                        });
+                        if (chunkResponse.ok) {
+                            const text = await chunkResponse.text();
+                            const parsedChunk = parser.parse(text);
+                            let res = parsedChunk.items.item;
+                            return Array.isArray(res) ? res : [res];
+                        } else if (chunkResponse.status === 429) {
+                            retries++;
+                            await sleep(500 * retries);
+                        } else {
+                            throw new Error(`BGG API error: ${chunkResponse.status}`);
+                        }
+                    }
+                };
+
+                const worker = async (): Promise<any[]> => {
+                    const localGames: any[] = [];
+                    while (queue.length) {
+                        const chunk = queue.shift()!;
+                        const chunkGames = await fetchChunk(chunk);
+                        localGames.push(...chunkGames);
+                        completedGames += chunkGames.length;
+                        const percent = Math.round(completedGames / gameIds.length * 100);
+                        controller.enqueue(encoder.encode(JSON.stringify(percent) + '\n'));
+                    }
+                    return localGames;
+                };
+
+                const workerResults = await Promise.all(
+                    Array.from({ length: Math.min(concurrency, chunks.length) }, worker)
+                );
+                const games = workerResults.flat();
 
 
                 let eurToUsd = 1.08;
@@ -122,11 +140,11 @@ export const GET = async ({ url }) => {
                     listingStats,
                     gamesWithoutListings
                 })}`
-                controller.enqueue(encoder.encode(lastChunk));
+                controller.enqueue(encoder.encode(lastChunk + '\n'));
                 controller.close();
             } catch (e) {
-                console.log(e)
-                controller.enqueue('error');
+                Sentry.captureException(e, { extra: { username, gameCount: gameIds.length } });
+                controller.enqueue(encoder.encode('error\n'));
                 controller.close();
             }
         },

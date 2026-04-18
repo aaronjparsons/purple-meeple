@@ -15,37 +15,34 @@
         const response = await fetch(`/api/collection/value?username=${username}`);
         if (response.ok) {
             let collectionAccumulator = '';
-            let isLast = false;
             let reader = response.body.getReader();
             let result;
             let decoder = new TextDecoder();
+            let lineBuffer = '';
             let finalResponse;
             while (!result?.done) {
                 try {
                     result = await reader.read();
                     if (result.value) {
-                        let chunk = decoder.decode(result.value);
-
-                        if (chunk === 'error') {
-                            captureException(new Error('collection value stream failed'));
-                            return Promise.reject({ status: response.status, message: 'An error ocurred while loading listing data' })
-                        }
-
-                        if (chunk.substring(0, 4) === 'last') {
-                            isLast = true;
-                            chunk = chunk.split('last:')[1];
-                        }
-
-                        if (isLast) {
-                            collectionAccumulator += chunk;
-                        } else {
-                            gameLoadingProgress = parseInt(chunk);
+                        lineBuffer += decoder.decode(result.value, { stream: true });
+                        const lines = lineBuffer.split('\n');
+                        lineBuffer = lines.pop() ?? '';
+                        for (const line of lines) {
+                            if (!line) continue;
+                            if (line === 'error') {
+                                captureException(new Error('collection value stream failed'), { user: { username } });
+                                return Promise.reject({ status: response.status, message: 'An error ocurred while loading listing data' });
+                            }
+                            if (line.startsWith('last:')) {
+                                collectionAccumulator = line.slice(5);
+                            } else {
+                                gameLoadingProgress = parseInt(line);
+                            }
                         }
                     }
                 } catch (e) {
-                    // Error occurred while reading stream
-                    captureException(e);
-                    return Promise.reject({ status: response.status, message: 'An error ocurred while loading listing data' })
+                    captureException(e, { user: { username } });
+                    return Promise.reject({ status: response.status, message: 'An error ocurred while loading listing data' });
                 }
             }
             finalResponse = JSON.parse(collectionAccumulator);

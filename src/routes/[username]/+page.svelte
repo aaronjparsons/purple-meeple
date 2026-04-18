@@ -2,6 +2,7 @@
     import dayjs from 'dayjs';
     import posthog from 'posthog-js'
     import { captureException } from '@sentry/sveltekit'
+    import * as Sentry from '@sentry/sveltekit'
     import type { ModalSettings, ModalComponent, ToastSettings } from '@skeletonlabs/skeleton';
     import { RadioGroup, RadioItem, modalStore, toastStore, ProgressBar } from '@skeletonlabs/skeleton';
     import { onDestroy, onMount, tick } from 'svelte';
@@ -303,6 +304,7 @@
         setDisplayName();
         setLibraryOptions();
         posthog.identify(username, { username });
+        Sentry.setUser({ username });
 
         collectionLoadAttempts = 0;
         loadingState = 'collection';
@@ -320,35 +322,33 @@
                     requestingCollection = false;
                     loadingState = 'games';
                     let collectionAccumulator = '';
-                    let isLast = false;
                     let reader = response.body.getReader();
                     let result;
                     let decoder = new TextDecoder();
+                    let lineBuffer = '';
                     while (!result?.done) {
                         try {
                             result = await reader.read();
                             if (result.value) {
-                                let chunk = decoder.decode(result.value);
-
-                                if (chunk === 'error') {
-                                    captureException(new Error('collection stream failed'));
-                                    return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
-                                }
-
-                                if (chunk.substring(0, 4) === 'last') {
-                                    isLast = true;
-                                    chunk = chunk.split('last:')[1];
-                                }
-
-                                if (isLast) {
-                                    collectionAccumulator += chunk;
-                                } else {
-                                    gameLoadingProgress = parseInt(chunk);
+                                lineBuffer += decoder.decode(result.value, { stream: true });
+                                const lines = lineBuffer.split('\n');
+                                lineBuffer = lines.pop() ?? '';
+                                for (const line of lines) {
+                                    if (!line) continue;
+                                    if (line === 'error') {
+                                        captureException(new Error('collection stream failed'), { user: { username } });
+                                        return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' });
+                                    }
+                                    if (line.startsWith('last:')) {
+                                        collectionAccumulator = line.slice(5);
+                                    } else {
+                                        gameLoadingProgress = parseInt(line);
+                                    }
                                 }
                             }
                         } catch (e) {
                             // Error occurred while reading stream
-                            captureException(e);
+                            captureException(e, { user: { username } });
                             return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
                         }
                     }
@@ -361,7 +361,7 @@
                 }
             } else {
                 const { message } = await response.json();
-                captureException(new Error(message));
+                captureException(new Error(message), { user: { username } });
                 return Promise.reject({ status: response.status, message })
             }
         }
@@ -399,29 +399,27 @@
                 } else {
                     const response = await fetch(`/api/collection?username=${username}`);
                     let collectionAccumulator = '';
-                    let isLast = false;
                     let reader = response.body.getReader();
                     let result;
                     let decoder = new TextDecoder();
+                    let lineBuffer = '';
                     while (!result?.done) {
                         result = await reader.read();
                         if (result.value) {
-                            let chunk = decoder.decode(result.value);
-
-                            if (chunk === 'error') {
-                                captureException(new Error('collection stream failed'));
-                                return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' })
-                            }
-
-                            if (chunk.substring(0, 4) === 'last') {
-                                isLast = true;
-                                chunk = chunk.split('last:')[1];
-                            }
-
-                            if (isLast) {
-                                collectionAccumulator += chunk;
-                            } else {
-                                gameLoadingProgress = parseInt(chunk);
+                            lineBuffer += decoder.decode(result.value, { stream: true });
+                            const lines = lineBuffer.split('\n');
+                            lineBuffer = lines.pop() ?? '';
+                            for (const line of lines) {
+                                if (!line) continue;
+                                if (line === 'error') {
+                                    captureException(new Error('collection stream failed'), { user: { username } });
+                                    return Promise.reject({ status: response.status, message: 'An error ocurred while loading game data' });
+                                }
+                                if (line.startsWith('last:')) {
+                                    collectionAccumulator = line.slice(5);
+                                } else {
+                                    gameLoadingProgress = parseInt(line);
+                                }
                             }
                         }
                     }
@@ -430,7 +428,7 @@
                 }
             } else {
                 const { message } = await res.json();
-                captureException(new Error(message));
+                captureException(new Error(message), { user: { username } });
                 return Promise.reject({ status: res.status, message })
             }
         }

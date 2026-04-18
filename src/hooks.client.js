@@ -7,7 +7,7 @@ if (dev) {
 } else {
     Sentry.init({
         dsn: 'https://c980617967ff4243a1a9a32d6074bc71@o4505361360289792.ingest.sentry.io/4505361365204992',
-        tracesSampleRate: 1.0,
+        tracesSampleRate: 0.2,
 
         // This sets the sample rate to be 10%. You may want this to be 100% while
         // in development and sample at a lower rate in production
