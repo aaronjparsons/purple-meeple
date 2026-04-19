@@ -4,7 +4,6 @@ import { supabase } from '$lib/supabaseClient';
 import { sortAndCompare, sleep } from '$lib/utils';
 import { parseGame } from '$lib/parseGame';
 import { BGG_BEARER_TOKEN } from "$env/static/private"
-import * as Sentry from '@sentry/sveltekit';
 
 export const config = {
     // Use 'nodejs18.x' for Serverless
@@ -179,7 +178,6 @@ export const GET = async ({ url }) => {
                     controller.enqueue(encoder.encode(lastChunk + '\n'));
                     controller.close();
                 } catch (e) {
-                    Sentry.captureException(e, { extra: { username, gameCount: gameIds.length } });
                     controller.enqueue(encoder.encode('error\n'));
                     controller.close();
                 }
