@@ -45,7 +45,8 @@
     // Preload images for visible items so they're cached before DOM elements mount
     $: {
         for (const item of items) {
-            for (const game of getRowGames(item.index)) {
+            const start = item.index * columns;
+            for (const game of collection.slice(start, start + columns)) {
                 if (game?.image) {
                     const img = new Image();
                     img.src = game.image;
@@ -53,11 +54,6 @@
             }
         }
     }
-
-    const getRowGames = (rowIndex: number): Game[] => {
-        const start = rowIndex * columns;
-        return collection.slice(start, start + columns);
-    };
 </script>
 
 <svelte:window on:resize={updateColumns} />
@@ -75,7 +71,7 @@
                 style="height: {row.size}px; transform: translateY({row.start - scrollMargin}px);"
             >
                 <div class="flex justify-center gap-4">
-                    {#each getRowGames(row.index) as game, index (`${game.id}-${index}`)}
+                    {#each collection.slice(row.index * columns, row.index * columns + columns) as game, index (`${game.id}-${index}`)}
                         <GameCard {game} />
                     {/each}
                 </div>
