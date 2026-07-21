@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { fly } from 'svelte/transition';
     import dayjs from 'dayjs';
+    import logo from '$lib/assets/purple_meeple_150.png';
     import YearInReviewCard from '$lib/components/YearInReviewCard.svelte';
 
     export let username = '';
@@ -184,5 +185,10 @@
                 </YearInReviewCard>
             </div>
         {/if}
+
+        <div class="flex justify-center" in:fly={{ delay: 1000, y: -50 }}>
+            <img class="h-8 w-8 mr-1 -rotate-12" alt="Purple Meeple logo" src={logo} />
+            <p class="font-title text-3xl">Purple Meeple</p>
+        </div>
     </div>
 </div>

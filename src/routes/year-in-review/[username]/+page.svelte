@@ -95,18 +95,31 @@
 
             // BGG's image CDN blocks cross-origin, so route game cover
             // images through our own same-origin proxy just for this capture.
+            const imageLoadPromises: Promise<void>[] = [];
             wrapper.querySelectorAll('img').forEach((img) => {
                 const originalSrc = img.src;
-                let hostname = '';
                 try {
-                    hostname = new URL(originalSrc).hostname;
+                    const hostname = new URL(originalSrc).hostname;
+                    if (hostname.endsWith('geekdo-images.com')) {
+                        img.src = `/api/image-proxy?url=${encodeURIComponent(originalSrc)}`;
+                    }
                 } catch {
-                    return;
+                    // not a valid absolute URL - leave src as-is
                 }
-                if (!hostname.endsWith('geekdo-images.com')) return;
 
-                img.src = `/api/image-proxy?url=${encodeURIComponent(originalSrc)}`;
+                // Reassigning `src` above restarts loading, and images that were
+                // already mid-flight may not be finished either - wait for both
+                // cases so the capture doesn't race the proxied images loading.
+                if (!img.complete) {
+                    imageLoadPromises.push(
+                        new Promise<void>((resolve) => {
+                            img.addEventListener('load', () => resolve(), { once: true });
+                            img.addEventListener('error', () => resolve(), { once: true });
+                        })
+                    );
+                }
             });
+            await Promise.all(imageLoadPromises);
 
             // html-to-image reads styles via the bare `window` global in a few spots
             // instead of the node's own ownerDocument view, which breaks for elements
