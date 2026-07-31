@@ -1,5 +1,9 @@
 [
     {
+        "date": "July 31, 2026",
+        "description": "Can now click into each mechanic on the stats view to see the list of games for each mechanic."
+    },
+    {
         "date": "July 20, 2026",
         "description": "Added download button to the Year in Review page."
     },

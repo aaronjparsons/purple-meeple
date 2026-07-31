@@ -588,7 +588,7 @@
             {#if displayType === 'grid'}
                 <VirtualGridList {collection} {scrollElement} {scrollMargin} />
             {:else if displayType === 'stats'}
-                <StatsView {collection} />
+                <StatsView collection={$Library.data} />
             {:else}
                 <VirtualRowList {collection} {scrollElement} {scrollMargin} />
             {/if}

@@ -1,7 +1,9 @@
 <script lang="ts">
     import { onMount, tick } from "svelte";
     import Chart from "chart.js/auto";
-    import CollectionValueCard from "./CollectionValueCard.svelte";
+    import { modalStore } from '@skeletonlabs/skeleton';
+    import CollectionValueCard from "$lib/components/CollectionValueCard.svelte";
+    import MechanicsGameModal from "$lib/components/MechanicsGameModal.svelte";
     import { bggToSimplifiedMechanics } from "$lib/mechanicsMap";
     import { libraryStats, isScreenSmall } from "$lib/store";
 
@@ -164,7 +166,32 @@
                             color: "#fff",
                         }
                     }
-                }
+                },
+                onClick: (event, _elements, chart) => {
+                    const hits = chart.getElementsAtEventForMode(
+                        event, 'index', { axis: 'y', intersect: false }, false
+                    );
+                    if (!hits.length) return;
+                    const mechanic = chart.data.labels[hits[0].index];
+                    const games = $libraryStats.mechanics[mechanic];
+                    if (!games?.length) return;
+                    modalStore.trigger({
+                        type: 'component',
+                        component: { ref: MechanicsGameModal, props: { mechanic, games } }
+                    });
+                },
+                onHover(event, elements, chart) {
+                    const hits = chart.getElementsAtEventForMode(
+                        event, 'index', { axis: 'y', intersect: false }, false
+                    );
+                    if (!hits.length) {
+                        chart.canvas.style.cursor = 'default';
+                        return;
+                    }
+                    const mechanic = chart.data.labels[hits[0].index];
+                    const games = $libraryStats.mechanics[mechanic];
+                    chart.canvas.style.cursor = games.length ? 'pointer' : 'default';
+                },
             }
         });
     }
@@ -333,7 +360,8 @@
         </div>
 
         <div class="card rounded-md shadow-lg p-4 variant-ghost-tertiary col-span-2">
-            <p class="text-xl sm:text-2xl text-center my-2">Mechanics Distribution</p>
+            <p class="text-xl sm:text-2xl text-center mt-2">Mechanics Distribution</p>
+            <p class="text-xs sm:text-sm text-center mb-2">Click a mechanic to see its games</p>
             <canvas height={$isScreenSmall ? 500 : 300} bind:this={mechanicsChartCanvas}></canvas>
         </div>
     </div>
