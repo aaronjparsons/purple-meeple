@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
-import { supabase } from '$lib/supabaseClient';
+import { getCachedCollection } from '$lib/convexClient';
 import { sleep } from '$lib/utils';
 import { BGG_BEARER_TOKEN } from "$env/static/private"
 
@@ -11,14 +11,8 @@ export const config = {
 export const GET = async ({ url }) => {
     const username = url.searchParams.get('username').toLowerCase();
 
-    let databaseCollection = null;
-    let gameIds = [];
-    const { data } = await supabase.from('collections').select().eq('username', username);
-    if (data && data.length) {
-        const row = data[0];
-        databaseCollection = row.collection;
-        gameIds = Object.keys(databaseCollection);
-    }
+    const databaseCollection = await getCachedCollection(username);
+    const gameIds = databaseCollection ? Object.keys(databaseCollection) : [];
 
     const chunkSize = 20;
     const concurrency = 2;

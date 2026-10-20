@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { XMLParser } from 'fast-xml-parser';
-import { supabase } from '$lib/supabaseClient';
+import { getCachedCollection, saveCollection } from '$lib/convexClient';
 import { sortAndCompare, sleep } from '$lib/utils';
 import { parseGame } from '$lib/parseGame';
 import { BGG_BEARER_TOKEN } from "$env/static/private"
@@ -20,14 +20,8 @@ export const GET = async ({ url }) => {
     const username = url.searchParams.get('username').toLowerCase();
 
     // Check db for collection
-    let databaseCollection = null;
+    let databaseCollection = await getCachedCollection(username);
     let updateRequired = false;
-
-    const { data } = await supabase.from('collections').select().eq('username', username);
-    if (data && data.length) {
-        const row = data[0];
-        databaseCollection = row.collection;
-    }
 
     const collectionUrl = `https://boardgamegeek.com/xmlapi2/collection?username=${username}&excludesubtype=boardgameexpansion&own=1`;
     const collectionResponse = await fetch(collectionUrl, {
@@ -92,24 +86,15 @@ export const GET = async ({ url }) => {
                 const mappedBggPlays = mapPlays(plays);
                 playsAreSame = sortAndCompare(mappedEntryPlays, mappedBggPlays);
 
-                if (!gamesAreSame || !playsAreSame || !databaseCollection) {
+                if (!gamesAreSame || !playsAreSame) {
                     // Entry out of date, update it
-                    // Note: we also check if the dbCollection is null, for backwards compatibility
-                    // With existing users who don't have a collection entry in the DB
-                    await supabase.from('collections').update({ collection }).eq('username', username);
+                    await saveCollection(username, collection);
                     databaseCollection = collection;
                 }
             } else {
-                if (data && data.length) {
-                    // User has an entry in the DB but no collection
-                    // Update it with the new collection
-                    await supabase.from('collections').update({ collection }).eq('username', username);
-                    databaseCollection = collection;
-                } else {
-                    // First time user, create collection entry in DB
-                    await supabase.from('collections').insert([{ username, collection }]);
-                    databaseCollection = collection;
-                }
+                // First time user, create collection entry in DB
+                await saveCollection(username, collection);
+                databaseCollection = collection;
             }
         }
 
